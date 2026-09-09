@@ -1,0 +1,24 @@
+{
+  "descripcion": "Preguntas doradas: para cada una, qué documento DEBERÍA recuperarse. Es el instrumento que convierte 'creo que responde bien' en una cifra. Objetivo: 25-30 preguntas, escritas como las formularía un visitante real, no como las formularía quien conoce el corpus.",
+  "preguntas": [
+    {
+      "pregunta": "¿por qué eligió PostgreSQL en lugar de una base de datos vectorial dedicada?",
+      "esperado": ["proyectos/sitio-personal-rag"],
+      "seccion": "Decisiones técnicas"
+    },
+    {
+      "pregunta": "¿qué problemas tuvo al dividir los documentos en fragmentos?",
+      "esperado": ["proyectos/sitio-personal-rag"],
+      "seccion": "Retos"
+    },
+    {
+      "pregunta": "¿ha trabajado con pgvector?",
+      "esperado": ["proyectos/sitio-personal-rag"]
+    },
+    {
+      "pregunta": "¿qué experiencia tiene en diseño gráfico?",
+      "esperado": [],
+      "nota": "Pregunta sin respuesta en el corpus. Vale para comprobar que el asistente admite no saberlo en vez de improvisar."
+    }
+  ]
+}
