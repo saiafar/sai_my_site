@@ -1,0 +1,76 @@
+# =============================================================================
+# Despliegue en Dokploy como servicio de tipo Compose.
+#
+# Por qué Compose y no "Application": Dokploy corre en modo Swarm y despliega
+# sus Applications como servicios Swarm, que solo pueden conectarse a redes
+# overlay. El PostgreSQL de este proyecto vive en una red bridge propia, así que
+# una Application no podría alcanzarlo. La salida fácil sería añadir PostgreSQL
+# a dokploy-network, pero esa red la comparten todos los servicios del panel
+# —n8n incluido, que ejecuta workflows arbitrarios—, y abrir la base de datos a
+# todos ellos para ahorrarse un paso de configuración no es un intercambio
+# razonable.
+#
+# Un contenedor de Compose sí puede pertenecer a dos redes: la overlay por la
+# que Traefik lo alcanza, y la bridge en la que está PostgreSQL.
+# =============================================================================
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+
+    environment:
+      NODE_ENV: production
+      # El host es "postgres", el alias que el contenedor de la base de datos ya
+      # tiene en su red. Nunca una dirección IP: Docker las reasigna al recrear
+      # el contenedor y el sitio se caería en el siguiente redespliegue de la
+      # base de datos.
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-Xenova/multilingual-e5-small}
+      EMBEDDING_DIM: ${EMBEDDING_DIM:-384}
+
+    networks:
+      - dokploy-network   # entrada: Traefik
+      - database          # salida: PostgreSQL + pgvector
+
+    # Sin volúmenes, a propósito. El único estado del sistema vive en
+    # PostgreSQL, que tiene su propio servicio y su propia copia de seguridad.
+
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=dokploy-network
+      # Redirección de HTTP a HTTPS.
+      - traefik.http.routers.sai-web.rule=Host(`${SITE_DOMAIN}`)
+      - traefik.http.routers.sai-web.entrypoints=web
+      - traefik.http.routers.sai-web.middlewares=sai-web-https
+      - traefik.http.middlewares.sai-web-https.redirectscheme.scheme=https
+      # HTTPS. El certResolver "letsencrypt" ya está configurado a nivel de
+      # entrypoint en este Traefik, pero se declara aquí también para que el
+      # fichero sea legible sin tener que ir a mirar la configuración global.
+      - traefik.http.routers.sai-web-secure.rule=Host(`${SITE_DOMAIN}`)
+      - traefik.http.routers.sai-web-secure.entrypoints=websecure
+      - traefik.http.routers.sai-web-secure.tls=true
+      - traefik.http.routers.sai-web-secure.tls.certresolver=letsencrypt
+      - traefik.http.services.sai-web.loadbalancer.server.port=3000
+
+    # El i3 tiene 4 núcleos y 8 GB compartidos con PostgreSQL, Traefik, n8n y
+    # Affine. Sin un tope, una ingestión grande puede provocar que el OOM killer
+    # del núcleo elija a otro proceso —tu base de datos, por ejemplo— antes que
+    # a este. El límite convierte un fallo del sistema en un fallo del servicio.
+    deploy:
+      resources:
+        limits:
+          memory: 1500M
+
+networks:
+  dokploy-network:
+    external: true
+
+  database:
+    external: true
+    # Nombre de la red del servicio PostgreSQL en Dokploy. Cambia si se recrea
+    # el servicio: compruébalo con `docker network ls`.
+    name: ${POSTGRES_NETWORK:-sai-postgrespgvector-th12oq_default}
