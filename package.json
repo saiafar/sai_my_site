@@ -12,7 +12,8 @@
     "ask": "tsx scripts/ask.ts",
     "eval": "tsx scripts/eval.ts",
     "typecheck": "tsc --noEmit",
-    "chat": "tsx scripts/chat.ts"
+    "chat": "tsx scripts/chat.ts",
+    "assets": "tsx scripts/optimize-assets.ts"
   },
   "dependencies": {
     "@google/genai": "^2.21.0",

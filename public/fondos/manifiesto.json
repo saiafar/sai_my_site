@@ -1,0 +1,48 @@
+[
+  {
+    "escena": "atardecer",
+    "capa": "base",
+    "ancho": 1672,
+    "alto": 941,
+    "transparente": false,
+    "variantes": [
+      {
+        "formato": "avif",
+        "ancho": 1672,
+        "ruta": "/fondos/atardecer/base-1672.avif",
+        "bytes": 165135
+      },
+      {
+        "formato": "webp",
+        "ancho": 1672,
+        "ruta": "/fondos/atardecer/base-1672.webp",
+        "bytes": 156314
+      },
+      {
+        "formato": "avif",
+        "ancho": 1280,
+        "ruta": "/fondos/atardecer/base-1280.avif",
+        "bytes": 121384
+      },
+      {
+        "formato": "webp",
+        "ancho": 1280,
+        "ruta": "/fondos/atardecer/base-1280.webp",
+        "bytes": 107120
+      },
+      {
+        "formato": "avif",
+        "ancho": 828,
+        "ruta": "/fondos/atardecer/base-828.avif",
+        "bytes": 66934
+      },
+      {
+        "formato": "webp",
+        "ancho": 828,
+        "ruta": "/fondos/atardecer/base-828.webp",
+        "bytes": 53910
+      }
+    ],
+    "lqip": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAAAwBACdASoYAA4APu1iqk2ppaQiMAgBMB2JbACdACPq2proCoZ+5WUt8gAA/ulalYPss4JOy/LLgs8fLEqFZYe9vj/exkqtKHKOQR+3wfayXdBh860MY/WAVaP4G8cPAu/mKsqAAAA="
+  }
+]
