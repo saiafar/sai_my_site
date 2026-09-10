@@ -21,7 +21,7 @@ const sans = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Rafaias Villán — Desarrollo backend, datos e IA',
+  title: 'Rafaías Villán — Desarrollo backend, datos e IA',
   description:
     'Trayectoria profesional consultable: pregunta en lenguaje natural sobre proyectos, tecnologías y decisiones técnicas.',
   // Mientras el corpus no esté listo, el sitio se sirve con noindex. Va aquí

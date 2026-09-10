@@ -45,7 +45,7 @@ export function Pie({ github, ano }: { github?: string; ano: number }) {
       </div>
 
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3 pb-12 text-[11px] text-ink-faint">
-        <p>© {ano} Rafaias Villán</p>
+        <p>© {ano} Rafaías Villán</p>
         <div className="flex gap-4">
           <Link href="/#asistente" className="transition-colors hover:text-ink-muted">
             Preguntar al asistente

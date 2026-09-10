@@ -29,7 +29,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!documento) return { title: 'No encontrado' };
 
   return {
-    title: `${documento.title} — Rafaias Villán`,
+    title: `${documento.title} — Rafaías Villán`,
     ...(documento.summary ? { description: documento.summary } : {}),
   };
 }

@@ -47,11 +47,15 @@ export interface AnswerOptions {
   matchCount?: number;
 }
 
+const PROMPT_FINGERPRINT = createHash('sha256').update(SYSTEM_PROMPT).digest('hex').slice(0, 16);
+
 /**
  * Clave de caché. Normaliza la pregunta para que las variantes triviales
  * («¿Qué experiencia tiene?» / «que experiencia tiene») compartan entrada, e
- * incluye el modelo: cambiar de modelo no debe servir respuestas generadas por
- * el anterior.
+ * incluye el modelo y una huella del prompt del sistema: cambiar de modelo o de
+ * instrucciones no debe servir respuestas generadas con los anteriores. Sin la
+ * huella del prompt, un despliegue que corrige las instrucciones seguiría
+ * sirviendo las respuestas viejas hasta el siguiente cambio del corpus.
  */
 function cacheKey(question: string, model: string): string {
   const normalized = question
@@ -61,7 +65,7 @@ function cacheKey(question: string, model: string): string {
     .replace(/[^\p{L}\p{N}\s]/gu, '')
     .replace(/\s+/g, ' ')
     .trim();
-  return createHash('sha256').update(`${model}|${normalized}`).digest('hex');
+  return createHash('sha256').update(`${model}|${PROMPT_FINGERPRINT}|${normalized}`).digest('hex');
 }
 
 function sourcesFrom(chunks: readonly RetrievedChunk[]): AnswerSource[] {

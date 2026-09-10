@@ -38,7 +38,7 @@ services:
       # septiembre de 2026. Ver src/lib/env.ts para la comparativa medida.
       GEMINI_MODEL: ${GEMINI_MODEL:-gemini-3.5-flash-lite}
       GEMINI_THINKING_LEVEL: ${GEMINI_THINKING_LEVEL:-minimal}
-      SITE_OWNER: ${SITE_OWNER:-Rafaias Villán}
+      SITE_OWNER: ${SITE_OWNER:-Rafaías Villán}
 
       # Sal del hash que identifica a un visitante sin almacenar su IP. Su valor
       # por defecto en el código es una constante de desarrollo, y dejarla en

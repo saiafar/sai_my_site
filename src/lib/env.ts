@@ -47,7 +47,7 @@ export const env = {
   // low | medium | high y responde 400 con "minimal".
   geminiThinkingLevel: optional('GEMINI_THINKING_LEVEL', 'minimal'),
 
-  siteOwner: optional('SITE_OWNER', 'Rafaias Villán'),
+  siteOwner: optional('SITE_OWNER', 'Rafaías Villán'),
 
   // Sal para el hash que identifica a un visitante sin guardar su IP. En
   // producción debe fijarse: si cambia en cada arranque, los límites por
