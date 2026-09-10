@@ -69,7 +69,29 @@ export default async function Home() {
               mayúsculas con CSS, porque un lector de pantalla deletrea el texto
               que ya viene en mayúsculas en lugar de leerlo como un nombre. */}
           <div className="escena-bloque flex flex-col items-center px-6 text-center">
-            <img src="/logo.svg" alt="" width={72} height={72} className="escena-logo" />
+            {/* Dos copias del mismo logo superpuestas: debajo, en blanco (el
+                filtro convierte en blanco cualquier forma conservando su
+                transparencia, así que sirve también si se sustituye el logo);
+                encima, el original, que aparece a lo largo del recorrido. Al
+                principio el degradado naranja se confundiría con las nubes del
+                atardecer; cuando la imagen ya se ha oscurecido, recupera su
+                color. Es el mismo fichero, así que es una única descarga. */}
+            <span className="escena-logo relative block">
+              <img
+                src="/logo.svg"
+                alt=""
+                width={72}
+                height={72}
+                className="escena-logo-blanco absolute inset-0 size-full brightness-0 invert"
+              />
+              <img
+                src="/logo.svg"
+                alt=""
+                width={72}
+                height={72}
+                className="escena-logo-color relative size-full"
+              />
+            </span>
             <h1 className="escena-nombre font-brand font-semibold uppercase leading-none tracking-[0.14em] text-ink">
               {env.siteOwner}
             </h1>

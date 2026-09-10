@@ -52,6 +52,8 @@
   /* Tamaño inicial respecto al final. En móvil es menor porque el nombre
      ampliado tiene que seguir cabiendo en una línea. */
   --escala-hero: 1.3;
+  /* Escala adicional solo del logo al principio, sobre la del bloque. */
+  --escala-logo: 1.3;
 }
 
 @media (min-width: 40rem) {
@@ -59,6 +61,7 @@
     --logo-hero: 4.5rem;
     --nombre-hero: 2.1rem;
     --escala-hero: 1.55;
+    --escala-logo: 1.35;
   }
 }
 
@@ -209,10 +212,22 @@
 .escena-logo {
   width: var(--logo-hero);
   height: var(--logo-hero);
-  /* Al principio el logo está algo más separado del nombre y baja hasta
-     juntarse con él. */
-  transform: translateY(calc(-0.9rem * (1 - var(--p-mov))));
+  /* Al principio el logo es más grande que el resto del bloque y está algo más
+     separado del nombre; durante el recorrido baja hasta juntarse con él y
+     vuelve a su tamaño. Crece desde su borde inferior, hacia arriba, para no
+     invadir el nombre. */
+  transform-origin: 50% 100%;
+  transform:
+    translateY(calc(-0.9rem * (1 - var(--p-mov))))
+    scale(calc(1 + (var(--escala-logo) - 1) * (1 - var(--p-mov))));
 }
+
+/* El color entra entre el 20 % y el 80 % del recorrido. El blanco de debajo no
+   se retira hasta que el color es ya opaco: si se cruzaran a la vez, a mitad de
+   camino el logo se volvería translúcido, y si el blanco no se retirara nunca,
+   asomaría como un filo claro en los bordes suavizados del logo de color. */
+.escena-logo-color  { opacity: clamp(0, calc((var(--p) - 0.2) / 0.6), 1); }
+.escena-logo-blanco { opacity: calc(1 - clamp(0, calc((var(--p) - 0.8) / 0.2), 1)); }
 
 .escena-nombre {
   margin-top: var(--hueco-hero);
