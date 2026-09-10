@@ -52,6 +52,12 @@ export const env = {
   // Límites por visitante, por hora.
   rateLimitPerHour: Number(optional('RATE_LIMIT_PER_HOUR', '30')),
   maxQuestionChars: Number(optional('MAX_QUESTION_CHARS', '500')),
+
+  // Un buscador solo pasa por un dominio nuevo una vez con atención plena, y
+  // lo que encuentre esa primera vez condiciona cómo lo trata después. Mientras
+  // el corpus esté a medias conviene que no lo mire: el sitio se sirve con
+  // noindex hasta que se ponga esta variable a "true" de forma explícita.
+  siteIndexable: optional('SITE_INDEXABLE', 'false') === 'true',
 } as const;
 
 // La dimensión del vector está fijada en el esquema SQL como vector(384) y no

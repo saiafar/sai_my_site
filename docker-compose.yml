@@ -23,12 +23,37 @@ services:
 
     environment:
       NODE_ENV: production
+
+      # También dentro del contenedor, no solo en las etiquetas de Traefik: el
+      # sitemap y el robots.txt necesitan saber en qué dominio se sirven para
+      # componer URL absolutas.
+      SITE_DOMAIN: ${SITE_DOMAIN}
       # El host es "postgres", el alias que el contenedor de la base de datos ya
       # tiene en su red. Nunca una dirección IP: Docker las reasigna al recrear
       # el contenedor y el sitio se caería en el siguiente redespliegue de la
       # base de datos.
       DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      GEMINI_MODEL: ${GEMINI_MODEL:-gemini-2.5-flash}
+      SITE_OWNER: ${SITE_OWNER:-Rafaias Villán}
+
+      # Sal del hash que identifica a un visitante sin almacenar su IP. Su valor
+      # por defecto en el código es una constante de desarrollo, y dejarla en
+      # producción anularía la protección: el espacio de direcciones IPv4 es lo
+      # bastante pequeño como para recorrerlo entero y reconstruir la tabla de
+      # hashes. Tiene que ser un valor aleatorio y, sobre todo, estable: si
+      # cambia en cada despliegue, los límites por visitante se reinician con él.
+      CLIENT_KEY_SALT: ${CLIENT_KEY_SALT}
+
+      # Techo de gasto mensual y límite por visitante y hora.
+      MONTHLY_BUDGET_USD: ${MONTHLY_BUDGET_USD:-5}
+      RATE_LIMIT_PER_HOUR: ${RATE_LIMIT_PER_HOUR:-30}
+
+      # Mientras el corpus esté a medias, el sitio se sirve con noindex: la
+      # primera impresión que un buscador se lleve del dominio es difícil de
+      # corregir después.
+      SITE_INDEXABLE: ${SITE_INDEXABLE:-false}
+
       EMBEDDING_MODEL: ${EMBEDDING_MODEL:-Xenova/multilingual-e5-small}
       EMBEDDING_DIM: ${EMBEDDING_DIM:-384}
 
