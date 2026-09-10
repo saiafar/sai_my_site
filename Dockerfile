@@ -23,7 +23,7 @@ RUN npm ci --omit=dev --no-audit --no-fund
 # onnxruntime-node se distribuye con los binarios de todas las plataformas y
 # aceleradores: 513 MB, de los cuales 302 MB son el proveedor CUDA para GPU
 # NVIDIA. El servidor es un i3 sin GPU y la imagen es linux/amd64, así que todo
-# lo demás es peso muerto. Quedan unos 35 MB.
+# lo demás es peso muerto.
 RUN set -eux; \
     ORT="node_modules/onnxruntime-node/bin/napi-v6"; \
     rm -rf "${ORT}/darwin" "${ORT}/win32" "${ORT}/linux/arm64"; \
@@ -38,7 +38,12 @@ RUN set -eux; \
 # Sus 33 MB de @img/sharp, en cambio, se quedan: parecen igual de innecesarios
 # —aquí solo se vectoriza texto— pero transformers.js los importa de forma
 # estática y quitarlos rompe la carga del modelo. Comprobado, no supuesto.
-RUN rm -rf node_modules/onnxruntime-web \
+RUN rm -rf node_modules/onnxruntime-web
+
+# El compilador SWC de Next se distribuye como un binario por plataforma y npm
+# instala varios. La imagen base es Debian, con glibc, así que la variante musl
+# —pensada para Alpine— son 91 MB que no se cargarán nunca.
+RUN rm -rf node_modules/@next/swc-linux-x64-musl \
  && du -sh node_modules
 
 # -----------------------------------------------------------------------------
@@ -54,25 +59,52 @@ COPY scripts ./scripts
 RUN node_modules/.bin/tsx scripts/fetch-model.ts
 
 # -----------------------------------------------------------------------------
-# 3. Imagen final
+# 3. Compilación de la aplicación
+#
+# Necesita las dependencias de desarrollo (TypeScript, Tailwind), que no llegan
+# a la imagen final. `next build` no toca la base de datos: todas las páginas
+# que leen datos están marcadas como dinámicas precisamente para que construir
+# la imagen no requiera acceso a producción.
+# -----------------------------------------------------------------------------
+FROM ${NODE_IMAGE} AS builder
+WORKDIR /app
+
+COPY package.json package-lock.json ./
+RUN npm ci --no-audit --no-fund
+
+COPY tsconfig.json next.config.ts postcss.config.mjs ./
+COPY src ./src
+COPY public ./public
+RUN npm run build
+
+# -----------------------------------------------------------------------------
+# 4. Imagen final
 # -----------------------------------------------------------------------------
 FROM ${NODE_IMAGE} AS runtime
 WORKDIR /app
 
 ENV NODE_ENV=production \
-    TRANSFORMERS_CACHE=/app/.models
+    PORT=3000 \
+    HOSTNAME=0.0.0.0 \
+    # La caché del modelo se fija de forma absoluta: los scripts de ingestión y
+    # el servidor de Next no comparten directorio de trabajo, y una ruta
+    # relativa haría que uno de los dos no encontrara el modelo y lo volviera a
+    # descargar en silencio en cada arranque.
+    MODEL_CACHE_DIR=/app/.models
 
-COPY --from=deps  --chown=node:node /app/node_modules ./node_modules
-COPY --from=model --chown=node:node /app/.models      ./.models
+COPY --from=deps    --chown=node:node /app/node_modules ./node_modules
+COPY --from=model   --chown=node:node /app/.models      ./.models
+COPY --from=builder --chown=node:node /app/.next        ./.next
 
-COPY --chown=node:node package.json tsconfig.json ./
-COPY --chown=node:node src        ./src
-COPY --chown=node:node scripts    ./scripts
-COPY --chown=node:node db         ./db
-COPY --chown=node:node eval       ./eval
+COPY --chown=node:node package.json tsconfig.json next.config.ts ./
+COPY --chown=node:node public    ./public
+COPY --chown=node:node src       ./src
+COPY --chown=node:node scripts   ./scripts
+COPY --chown=node:node db        ./db
+COPY --chown=node:node eval      ./eval
 # El corpus. No es un volumen: es contenido versionado, y forma parte de la
 # identidad de esta imagen igual que el código.
-COPY --chown=node:node knowledge  ./knowledge
+COPY --chown=node:node knowledge ./knowledge
 
 COPY --chmod=755 docker-entrypoint.sh /usr/local/bin/
 
@@ -80,11 +112,4 @@ USER node
 EXPOSE 3000
 
 ENTRYPOINT ["docker-entrypoint.sh"]
-
-# El entrypoint ya deja el esquema y el contenido al día; este CMD es solo el
-# proceso principal que queda vivo después.
-#
-# Fase 4: pasará a ser ["node", "server.js"] cuando exista la aplicación
-# Next.js. Hasta entonces el contenedor hace su trabajo de arranque y termina,
-# que es exactamente para lo que sirve hoy: ingestar.
-CMD ["sh", "-c", "echo '[web] sin aplicación que servir todavía (fase 4 pendiente)'"]
+CMD ["node_modules/.bin/next", "start"]

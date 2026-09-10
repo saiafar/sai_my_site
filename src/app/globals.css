@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+/* ---------------------------------------------------------------------------
+   Sistema de color.
+
+   Valores muestreados de la referencia, no estimados a ojo. El fondo no es
+   negro puro sino un negro con matiz cálido, y el texto claro es un blanco roto
+   igualmente cálido: esa desviación mínima respecto al gris neutro es lo que
+   evita que un tema oscuro se vea barato.
+
+   Los escalones de elevación son deliberadamente estrechos —cinco unidades
+   entre el fondo y la tarjeta— porque a esa distancia la superficie se percibe
+   sin dibujarse. Es el borde, no el relleno, lo que define la tarjeta.
+--------------------------------------------------------------------------- */
+@theme {
+  --color-ground: #121210;
+  --color-surface: #171716;
+  --color-surface-raised: #1b1b1a;
+  --color-line: #242422;
+  --color-line-strong: #33332f;
+
+  --color-ink: #e6e1da;
+  --color-ink-muted: #9a958c;
+  --color-ink-faint: #6b675f;
+
+  --color-accent: #e15d3b;
+  --color-accent-soft: #432c25;
+
+  --font-sans: var(--fuente-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--fuente-display), ui-serif, Georgia, serif;
+
+  /* La columna de la referencia mide 911 px de 2560. Esa contención —dos
+     tercios de la pantalla en aire— es la mitad de su carácter. */
+  --container-lectura: 60rem;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--color-ground);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Quien haya pedido menos movimiento al sistema operativo no debería recibir
+     desplazamiento animado ni transiciones. */
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-ground);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Cuerpo de las fichas.
+
+   El Markdown ingestado se renderiza con estas reglas. Se declaran a mano en
+   lugar de instalar un plugin de tipografía porque son pocas y porque un plugin
+   trae su propia escala de tamaños y colores, que habría que sobreescribir
+   entera para que coincidiera con la del resto del sitio.
+--------------------------------------------------------------------------- */
+.prose-sitio {
+  color: var(--color-ink-muted);
+  font-size: 14px;
+  line-height: 1.75;
+}
+
+.prose-sitio > * + * { margin-top: 1rem; }
+
+.prose-sitio h2 {
+  color: var(--color-ink);
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  margin-top: 2.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--color-line);
+}
+
+.prose-sitio h3 {
+  color: var(--color-ink);
+  font-size: 13px;
+  font-weight: 500;
+  margin-top: 1.75rem;
+}
+
+.prose-sitio strong { color: var(--color-ink); font-weight: 500; }
+.prose-sitio em { color: var(--color-ink); }
+
+.prose-sitio a {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-sitio ul, .prose-sitio ol { padding-left: 1.1rem; }
+.prose-sitio ul { list-style: disc; }
+.prose-sitio ol { list-style: decimal; }
+.prose-sitio li::marker { color: var(--color-ink-faint); }
+.prose-sitio li + li { margin-top: 0.35rem; }
+
+.prose-sitio blockquote {
+  border-left: 2px solid var(--color-line-strong);
+  padding-left: 1rem;
+  color: var(--color-ink-faint);
+}
+
+.prose-sitio code {
+  background-color: var(--color-surface-raised);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  padding: 0.1em 0.35em;
+  font-size: 0.9em;
+  color: var(--color-ink);
+}
+
+.prose-sitio pre {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 0.6rem;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+.prose-sitio pre code { background: none; border: 0; padding: 0; }
+
+.prose-sitio hr { border-color: var(--color-line); margin: 2rem 0; }

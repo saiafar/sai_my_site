@@ -10,3 +10,5 @@ dist/
 .models/
 coverage/
 .env.deploy
+tsconfig.tsbuildinfo
+next-env.d.ts

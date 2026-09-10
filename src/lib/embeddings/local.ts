@@ -15,7 +15,15 @@ import type { EmbeddingProvider } from './types.ts';
 // El modelo se cachea en el repositorio, no en el home del usuario: así la
 // imagen de Docker puede llevarlo dentro y el arranque en producción no depende
 // de poder alcanzar Hugging Face.
-hfEnv.cacheDir = './.models';
+//
+// La ruta se puede fijar por entorno porque el directorio de trabajo no es el
+// mismo en todos los contextos: los scripts de CLI corren desde la raíz del
+// repositorio, pero el servidor de Next en modo standalone arranca desde
+// .next/standalone, y una ruta relativa apuntaría ahí a un directorio que no
+// existe. En ese caso el modelo se volvería a descargar en cada arranque en
+// lugar de fallar, que es peor: funciona en desarrollo y sangra tiempo y red
+// en producción sin avisar.
+hfEnv.cacheDir = process.env['MODEL_CACHE_DIR'] ?? './.models';
 
 /** Cargar el modelo cuesta unos 4 s, así que se hace una sola vez por proceso. */
 let extractorPromise: Promise<FeatureExtractionPipeline> | undefined;
