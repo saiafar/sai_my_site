@@ -17,6 +17,7 @@
  *   npm run ingest            solo lo que haya cambiado
  *   npm run ingest -- --force revectoriza todo (tras cambiar el troceado)
  *   npm run ingest -- --dry   analiza y muestra el plan, sin escribir
+ *   npm run ingest -- --allow-prune  autoriza un borrado masivo de huérfanos
  */
 import { readdir, readFile } from 'node:fs/promises';
 import path from 'node:path';
@@ -29,6 +30,25 @@ import { slugify } from '../src/lib/knowledge/slug.ts';
 const KNOWLEDGE_DIR = path.join(process.cwd(), 'knowledge');
 const force = process.argv.includes('--force');
 const dryRun = process.argv.includes('--dry');
+const allowPrune = process.argv.includes('--allow-prune');
+
+/**
+ * Umbrales del freno de borrado masivo.
+ *
+ * Borrar los documentos que ya no tienen fichero es correcto: el Markdown es la
+ * fuente de verdad y la base de datos su proyección. Pero eso convierte a un
+ * knowledge/ incompleto en una orden de borrado, y hay una forma muy fácil de
+ * llegar a esa situación sin darse cuenta: desplegar una imagen cuyo corpus es
+ * anterior al que ya está ingestado. Al arrancar, el contenedor vería sus
+ * propios documentos como los únicos válidos y eliminaría el resto.
+ *
+ * Perder tres documentos porque los renombraste es un martes cualquiera. Perder
+ * dieciséis nunca es lo que querías: significa que el corpus no se cargó, no
+ * que lo borraras. El freno distingue ambos casos por proporción y por número
+ * absoluto, y ante la duda para y lo cuenta en lugar de ejecutar.
+ */
+const PRUNE_MAX_RATIO = 0.3;
+const PRUNE_MAX_ABSOLUTE = 2;
 
 /** Ficheros con prefijo "_" son borradores: se ignoran. */
 async function findMarkdown(dir: string, prefix = ''): Promise<string[]> {
@@ -247,9 +267,30 @@ async function main(): Promise<void> {
       );
     }
 
-    for (const slug of orphans) {
-      await query('delete from documents where slug = $1', [slug]);
-      console.log(`  ✗  ${slug} (eliminado: ya no existe el fichero)`);
+    if (orphans.length > 0) {
+      const proporcion = existing.size > 0 ? orphans.length / existing.size : 0;
+      const masivo =
+        orphans.length > PRUNE_MAX_ABSOLUTE && proporcion > PRUNE_MAX_RATIO;
+
+      if (masivo && !allowPrune) {
+        console.error(
+          `\n  Se han detectado ${orphans.length} documento(s) en la base de datos sin ` +
+            `fichero correspondiente,\n  de un total de ${existing.size}: ` +
+            `un ${Math.round(proporcion * 100)} % del corpus.\n\n` +
+            `  No se ha borrado nada. Una eliminación de este tamaño casi nunca es\n` +
+            `  intencionada: lo habitual es que knowledge/ esté incompleto, por ejemplo\n` +
+            `  al arrancar un contenedor cuya imagen lleva un corpus anterior.\n\n` +
+            `  Si de verdad quieres borrarlos, repite con --allow-prune.\n\n` +
+            `  Documentos afectados:\n` +
+            orphans.map((slug) => `    · ${slug}`).join('\n'),
+        );
+        throw new Error('Borrado masivo detenido por seguridad.');
+      }
+
+      for (const slug of orphans) {
+        await query('delete from documents where slug = $1', [slug]);
+        console.log(`  ✗  ${slug} (eliminado: ya no existe el fichero)`);
+      }
     }
 
     const links = await syncLinks(parsed);
