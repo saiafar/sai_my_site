@@ -295,6 +295,22 @@ async function main(): Promise<void> {
 
     const links = await syncLinks(parsed);
 
+    // Cualquier cambio en el corpus invalida las respuestas cacheadas. No basta
+    // con evitar cachear los «no consta»: la búsqueda siempre devuelve algún
+    // fragmento, aunque sea irrelevante, así que una respuesta de «eso no
+    // consta» se cachea igual que cualquier otra. Sin este vaciado, escribir el
+    // documento que resolvía una pregunta no cambiaría la respuesta nunca. Se
+    // vacía entera y no por documento porque una respuesta puede depender de
+    // un documento que no recuperó, precisamente porque aún no existía.
+    if (changed.length > 0 || orphans.length > 0) {
+      const flushed = await query<{ count: string }>(
+        `with borradas as (delete from response_cache returning 1)
+         select count(*)::text as count from borradas`,
+      );
+      const count = Number(flushed[0]?.count ?? 0);
+      if (count > 0) console.log(`  ↺  caché de respuestas vaciada (${count} entrada(s))`);
+    }
+
     await query(
       `update ingest_runs set finished_at = now(), status = 'ok',
          documents_seen = $2, documents_changed = $3, documents_deleted = $4,

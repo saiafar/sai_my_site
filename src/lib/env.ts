@@ -31,12 +31,21 @@ export const env = {
   embeddingModel: optional('EMBEDDING_MODEL', 'Xenova/multilingual-e5-small'),
   embeddingDim: Number(optional('EMBEDDING_DIM', '384')),
 
-  // gemini-3.8-flash sigue instrucciones con fiabilidad, que es lo que aquí
-  // importa: el guardarraíl anti-alucinación es una instrucción, y un modelo
-  // que la incumple de vez en cuando hace inservible todo el sistema. Sale a
-  // unos 0,004 $ por pregunta. gemini-2.5-flash-lite cuesta la décima parte y
-  // es la alternativa a medir con el set de evaluación antes de adoptarla.
-  geminiModel: optional('GEMINI_MODEL', 'gemini-3.8-flash'),
+  // Medido el 10/09/2026 con preguntas reales sobre el corpus:
+  //   gemini-3.8-flash (low)          primer token 1,2–12,5 s, total 6–18 s,
+  //                                   y una respuesta cortada a media frase.
+  //   gemini-3.5-flash-lite (minimal) primer token ~0,9 s, total ~2,6 s,
+  //                                   calidad equivalente y «no consta» correcto.
+  // Para sintetizar fragmentos ya recuperados, el modelo pequeño sin
+  // razonamiento es un orden de magnitud más rápido y además más barato
+  // (0,30 $ / 2,50 $ por millón frente a 0,75 $ / 3,75 $). Dos preguntas son una
+  // muestra corta: si el set de evaluación de respuestas detecta pérdida de
+  // calidad, se sube con GEMINI_MODEL sin tocar código.
+  geminiModel: optional('GEMINI_MODEL', 'gemini-3.5-flash-lite'),
+
+  // "minimal" solo lo aceptan los modelos lite; gemini-3.8-flash exige
+  // low | medium | high y responde 400 con "minimal".
+  geminiThinkingLevel: optional('GEMINI_THINKING_LEVEL', 'minimal'),
 
   siteOwner: optional('SITE_OWNER', 'Rafaias Villán'),
 
