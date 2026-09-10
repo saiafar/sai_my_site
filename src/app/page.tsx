@@ -5,6 +5,7 @@ import { Seccion, SeccionVacia } from '@/components/seccion';
 import { TarjetaProyecto, EntradaExperiencia } from '@/components/tarjetas';
 import { Etiqueta } from '@/components/etiqueta';
 import { Pie } from '@/components/pie';
+import { EscenaHero } from '@/components/escena-hero';
 import { getByKind, getStats, getTechnologies } from '@/lib/site/queries';
 import { env } from '@/lib/env';
 
@@ -38,61 +39,84 @@ export default async function Home() {
 
   return (
     <>
-      <BarraSuperior github={GITHUB} />
+      <BarraSuperior github={GITHUB} sobreImagen />
+      <EscenaHero />
 
-      <div className="relative">
-        <FondoHero />
+      {/* Sin JavaScript no hay nadie que actualice --p: la escena se queda en
+          su estado final, con todo el contenido visible. */}
+      <noscript>
+        <style>{'[data-escena],[data-escena-barra]{--p:1!important}'}</style>
+      </noscript>
 
-        <div className="mx-auto max-w-lectura px-6">
-          {/* ---------------------------------------------------------------
-              Hero. El asistente es lo primero que se ofrece, no una función
-              escondida: lo que distingue a este sitio de un CV es que se le
-              puede preguntar, y eso tiene que ser evidente en el primer
-              pantallazo.
-          --------------------------------------------------------------- */}
-          <section className="pb-16 pt-20 text-center sm:pt-28">
-            {/* El nombre es el <h1>: identifica la página ante buscadores y
-                lectores de pantalla. Se escribe en minúsculas y se pasa a
-                mayúsculas con CSS, porque un lector de pantalla deletrea el
-                texto que ya viene en mayúsculas en lugar de leerlo como un
-                nombre. */}
-            <div className="mb-6 flex flex-col items-center gap-4">
-              <img src="/logo.svg" alt="" width={72} height={72} className="size-16 sm:size-[4.5rem]" />
-              <h1 className="font-brand text-[1.65rem] font-semibold uppercase leading-none tracking-[0.14em] text-ink sm:text-[2.1rem]">
-                {env.siteOwner}
-              </h1>
-            </div>
+      {/* -----------------------------------------------------------------------
+          Hero. Al abrir la página solo están la imagen, el logo y el nombre. Al
+          hacer scroll el bloque del nombre se queda fijo en el centro mientras
+          se encoge, la imagen se funde con el fondo y el texto sube desde abajo
+          hasta juntarse con él; a partir de ahí todo sigue subiendo con la
+          página. El mecanismo está descrito en globals.css («Escena de entrada»).
 
-            <p className="mx-auto mt-5 max-w-md text-[14px] leading-relaxed text-ink-muted">
-              {presentacion?.summary ??
-                'Desarrollo backend, bases de datos e inteligencia artificial. Pregunta en lenguaje natural: el asistente responde con documentación real y cita de dónde sale cada dato.'}
-            </p>
+          --p empieza a 0 en el propio HTML para que el primer pintado ya sea el
+          de la escena inicial, sin esperar a que cargue el JavaScript.
+      ----------------------------------------------------------------------- */}
+      <div data-escena className="relative" style={{ '--p': 0 } as React.CSSProperties}>
+        <div className="relative">
+          <FondoHero />
 
-            <ul className="mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-ink-faint">
-              <li>
-                <span className="text-ink-muted">{stats.proyectos}</span>{' '}
-                {stats.proyectos === 1 ? 'proyecto' : 'proyectos'}
-              </li>
-              <li>
-                <span className="text-ink-muted">{stats.tecnologias}</span>{' '}
-                {stats.tecnologias === 1 ? 'tecnología' : 'tecnologías'}
-              </li>
-              <li>
-                <span className="text-ink-muted">{stats.fragmentos}</span>{' '}
-                {stats.fragmentos === 1 ? 'fragmento indexado' : 'fragmentos indexados'}
-              </li>
-              {stats.primerAno ? (
-                <li>
-                  desde <span className="text-ink-muted">{stats.primerAno}</span>
-                </li>
-              ) : null}
-            </ul>
+          <div aria-hidden className="escena-entrada" />
 
-            <div className="mx-auto mt-9 max-w-xl">
-              <Asistente />
-            </div>
-          </section>
+          {/* El nombre es el <h1>: identifica la página ante buscadores y
+              lectores de pantalla. Se escribe en minúsculas y se pasa a
+              mayúsculas con CSS, porque un lector de pantalla deletrea el texto
+              que ya viene en mayúsculas en lugar de leerlo como un nombre. */}
+          <div className="escena-bloque flex flex-col items-center px-6 text-center">
+            <img src="/logo.svg" alt="" width={72} height={72} className="escena-logo" />
+            <h1 className="escena-nombre font-brand font-semibold uppercase leading-none tracking-[0.14em] text-ink">
+              {env.siteOwner}
+            </h1>
+          </div>
+
+          <div aria-hidden data-recorrido className="escena-recorrido" />
         </div>
+
+        <section className="mx-auto max-w-lectura px-6 pb-16 pt-6 text-center">
+          <p
+            className="escena-sube mx-auto max-w-md text-[14px] leading-relaxed text-ink-muted"
+            style={{ '--desde': 0.35 } as React.CSSProperties}
+          >
+            {presentacion?.summary ??
+              'Desarrollo backend, bases de datos e inteligencia artificial. Pregunta en lenguaje natural: el asistente responde con documentación real y cita de dónde sale cada dato.'}
+          </p>
+
+          <ul
+            className="escena-sube mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-ink-faint"
+            style={{ '--desde': 0.45 } as React.CSSProperties}
+          >
+            <li>
+              <span className="text-ink-muted">{stats.proyectos}</span>{' '}
+              {stats.proyectos === 1 ? 'proyecto' : 'proyectos'}
+            </li>
+            <li>
+              <span className="text-ink-muted">{stats.tecnologias}</span>{' '}
+              {stats.tecnologias === 1 ? 'tecnología' : 'tecnologías'}
+            </li>
+            <li>
+              <span className="text-ink-muted">{stats.fragmentos}</span>{' '}
+              {stats.fragmentos === 1 ? 'fragmento indexado' : 'fragmentos indexados'}
+            </li>
+            {stats.primerAno ? (
+              <li>
+                desde <span className="text-ink-muted">{stats.primerAno}</span>
+              </li>
+            ) : null}
+          </ul>
+
+          <div
+            className="escena-sube mx-auto mt-9 max-w-xl"
+            style={{ '--desde': 0.55 } as React.CSSProperties}
+          >
+            <Asistente />
+          </div>
+        </section>
       </div>
 
       <main className="mx-auto max-w-lectura space-y-14 px-6 pb-4">

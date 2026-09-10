@@ -35,6 +35,33 @@
   --container-lectura: 60rem;
 }
 
+/* ---------------------------------------------------------------------------
+   Medidas del hero.
+
+   Viven en variables porque la escena de entrada necesita conocerlas para
+   centrar el logo y el nombre en la ventana: la altura del bloque es
+   exactamente logo + hueco + nombre (el nombre va con interlineado 1, así que
+   su caja mide lo mismo que su cuerpo de letra). Si se cambia un tamaño aquí,
+   el centrado se recalcula solo.
+--------------------------------------------------------------------------- */
+:root {
+  --altura-barra: 3.25rem;
+  --logo-hero: 4rem;
+  --nombre-hero: 1.65rem;
+  --hueco-hero: 1rem;
+  /* Tamaño inicial respecto al final. En móvil es menor porque el nombre
+     ampliado tiene que seguir cabiendo en una línea. */
+  --escala-hero: 1.3;
+}
+
+@media (min-width: 40rem) {
+  :root {
+    --logo-hero: 4.5rem;
+    --nombre-hero: 2.1rem;
+    --escala-hero: 1.55;
+  }
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -137,3 +164,111 @@
 .prose-sitio pre code { background: none; border: 0; padding: 0; }
 
 .prose-sitio hr { border-color: var(--color-line); margin: 2rem 0; }
+
+/* ---------------------------------------------------------------------------
+   Escena de entrada.
+
+   Todo el hero se describe en función de una única variable, --p, que va de 0
+   (página recién abierta) a 1 (el bloque del nombre ya se ha unido al texto).
+   La calcula escena-hero.tsx a partir del desplazamiento; aquí solo se declara
+   qué le pasa a cada pieza a lo largo de ese recorrido. Ligar la animación a la
+   posición del scroll, y no a un disparador, hace que sea reversible: al volver
+   arriba se deshace, y el estado nunca depende de por dónde se entró.
+
+   Solo se animan transform y opacity, que el navegador resuelve sin volver a
+   calcular la maquetación de la página en cada fotograma.
+--------------------------------------------------------------------------- */
+[data-escena] {
+  --p: 1;
+  /* Las propiedades que implican movimiento leen --p-mov en lugar de --p. Con
+     «reducir movimiento» activado se quedan en su estado final y solo se
+     conservan los fundidos de opacidad. */
+  --p-mov: var(--p);
+  --alto-bloque: calc(var(--logo-hero) + var(--hueco-hero) + var(--nombre-hero));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-escena] { --p-mov: 1; }
+}
+
+/* Hueco hasta el bloque: lo deja centrado en la ventana al cargar. */
+.escena-entrada {
+  height: calc(50svh - var(--altura-barra) - var(--alto-bloque) / 2);
+}
+
+/* El bloque del nombre se queda fijo en el centro mientras dura el recorrido.
+   Cuando termina, el final de su contenedor lo arrastra y sigue subiendo
+   pegado al texto que viene detrás. */
+.escena-bloque {
+  position: sticky;
+  top: calc(50svh - var(--alto-bloque) / 2);
+  transform: scale(calc(1 + (var(--escala-hero) - 1) * (1 - var(--p-mov))));
+  transform-origin: 50% 50%;
+}
+
+.escena-logo {
+  width: var(--logo-hero);
+  height: var(--logo-hero);
+  /* Al principio el logo está algo más separado del nombre y baja hasta
+     juntarse con él. */
+  transform: translateY(calc(-0.9rem * (1 - var(--p-mov))));
+}
+
+.escena-nombre {
+  margin-top: var(--hueco-hero);
+  font-size: var(--nombre-hero);
+  /* Sobre la imagen sin velo, el nombre necesita separarse de las nubes más
+     claras. La sombra desaparece a medida que la imagen se oscurece. */
+  text-shadow: 0 2px 28px rgb(0 0 0 / calc(0.6 * (1 - var(--p))));
+}
+
+/* Distancia de scroll durante la que el bloque permanece fijo. */
+.escena-recorrido {
+  height: 50svh;
+}
+
+/* Lo que sube desde abajo. Cada elemento empieza a aparecer en un punto
+   distinto del recorrido (--desde), lo que produce un escalonado sin
+   necesidad de temporizadores. */
+.escena-sube {
+  --o: clamp(0, calc((var(--p) - var(--desde, 0.4)) / (1 - var(--desde, 0.4))), 1);
+  --o-mov: clamp(0, calc((var(--p-mov) - var(--desde, 0.4)) / (1 - var(--desde, 0.4))), 1);
+  opacity: var(--o);
+  transform: translateY(calc((1 - var(--o-mov)) * 2rem));
+}
+
+/* Capas del fondo. --p no está definida fuera de la portada, de ahí los
+   valores por defecto. */
+.escena-velo     { opacity: calc(0.15 + 0.45 * var(--p, 1)); }
+.escena-cierre   { opacity: var(--p, 1); }
+.escena-vineta   { opacity: calc(0.45 + 0.55 * var(--p, 1)); }
+.escena-cabecera { opacity: calc(1 - var(--p, 1)); }
+
+/* La barra superior es transparente sobre la imagen y recupera su fondo en la
+   primera mitad del recorrido. En el resto de páginas --p no existe y la barra
+   se ve siempre opaca. */
+.barra-fondo {
+  opacity: clamp(0, calc(var(--p, 1) * 2), 1);
+}
+
+/* ---------------------------------------------------------------------------
+   Aparición de las secciones.
+
+   Solo se ocultan cuando escena-hero.tsx ha añadido .aparecer-activo al
+   documento: sin JavaScript, o antes de que cargue, todo es visible. Cada
+   sección aparece una sola vez, al entrar en pantalla.
+--------------------------------------------------------------------------- */
+.aparecer-activo [data-aparecer] {
+  transition:
+    opacity 0.7s ease-out,
+    transform 0.8s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.aparecer-activo [data-aparecer]:not([data-visible]) {
+  opacity: 0;
+  transform: translateY(1.75rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .aparecer-activo [data-aparecer]:not([data-visible]) { transform: none; }
+}

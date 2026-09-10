@@ -21,7 +21,7 @@ export function Seccion({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="scroll-mt-20 border-t border-line pt-10">
+    <section id={id} data-aparecer className="scroll-mt-20 border-t border-line pt-10">
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-[15px] font-medium tracking-tight text-ink">{titulo}</h2>
         {recuento ? (
