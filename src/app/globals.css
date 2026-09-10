@@ -28,6 +28,7 @@
 
   --font-sans: var(--fuente-sans), ui-sans-serif, system-ui, sans-serif;
   --font-display: var(--fuente-display), ui-serif, Georgia, serif;
+  --font-brand: var(--fuente-marca), ui-sans-serif, system-ui, sans-serif;
 
   /* La columna de la referencia mide 911 px de 2560. Esa contención —dos
      tercios de la pantalla en aire— es la mitad de su carácter. */

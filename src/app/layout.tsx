@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Instrument_Serif, Inter } from 'next/font/google';
+import { Instrument_Serif, Inter, Poppins } from 'next/font/google';
 import { env } from '@/lib/env';
 import './globals.css';
 
@@ -20,6 +20,15 @@ const sans = Inter({
   display: 'swap',
 });
 
+// Solo para el nombre del hero. Poppins no es una fuente variable, así que
+// cada grosor es un fichero aparte: se carga únicamente el que se usa.
+const marca = Poppins({
+  subsets: ['latin'],
+  weight: '600',
+  variable: '--fuente-marca',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: 'Rafaías Villán — Desarrollo backend, datos e IA',
   description:
@@ -32,7 +41,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${display.variable} ${sans.variable}`}>
+    <html lang="es" className={`${display.variable} ${sans.variable} ${marca.variable}`}>
       <body>{children}</body>
     </html>
   );

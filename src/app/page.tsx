@@ -6,6 +6,7 @@ import { TarjetaProyecto, EntradaExperiencia } from '@/components/tarjetas';
 import { Etiqueta } from '@/components/etiqueta';
 import { Pie } from '@/components/pie';
 import { getByKind, getStats, getTechnologies } from '@/lib/site/queries';
+import { env } from '@/lib/env';
 
 /**
  * Renderizado dinámico, no estático.
@@ -49,13 +50,25 @@ export default async function Home() {
               puede preguntar, y eso tiene que ser evidente en el primer
               pantallazo.
           --------------------------------------------------------------- */}
-          <section className="pb-16 pt-24 text-center sm:pt-32">
-            <h1 className="font-display text-[2.75rem] leading-[1.1] tracking-tight text-ink sm:text-6xl">
+          <section className="pb-16 pt-20 text-center sm:pt-28">
+            {/* El nombre es el <h1>: identifica la página ante buscadores y
+                lectores de pantalla mejor que el lema. Se escribe en minúsculas
+                y se pasa a mayúsculas con CSS, porque un lector de pantalla
+                deletrea el texto que ya viene en mayúsculas en lugar de leerlo
+                como un nombre. */}
+            <div className="mb-9 flex flex-col items-center gap-4">
+              <img src="/logo.svg" alt="" width={72} height={72} className="size-16 sm:size-[4.5rem]" />
+              <h1 className="font-brand text-[1.65rem] font-semibold uppercase leading-none tracking-[0.14em] text-ink sm:text-[2.1rem]">
+                {env.siteOwner}
+              </h1>
+            </div>
+
+            <p className="font-display text-[2.75rem] leading-[1.1] tracking-tight text-ink sm:text-6xl">
               Una trayectoria{' '}
               <em className="not-italic text-accent">
                 <span className="italic">consultable</span>
               </em>
-            </h1>
+            </p>
 
             <p className="mx-auto mt-5 max-w-md text-[14px] leading-relaxed text-ink-muted">
               {presentacion?.summary ??

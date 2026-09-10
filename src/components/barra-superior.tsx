@@ -17,11 +17,8 @@ export function BarraSuperior({ github }: { github?: string }) {
   return (
     <header className="sticky top-0 z-50 border-b border-line/60 bg-ground/70 backdrop-blur-md">
       <nav className="mx-auto flex max-w-lectura items-center justify-between px-6 py-3">
-        <Link
-          href="/"
-          className="font-display text-base text-ink transition-colors hover:text-accent"
-        >
-          RV
+        <Link href="/" aria-label="Inicio" className="transition-opacity hover:opacity-80">
+          <img src="/logo.svg" alt="" width={24} height={24} className="size-6" />
         </Link>
 
         <div className="flex items-center gap-5 text-xs text-ink-muted">
