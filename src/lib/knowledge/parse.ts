@@ -185,8 +185,26 @@ function chunkBody(body: string, title: string): ParsedChunk[] {
 }
 
 export function parseDocument(sourcePath: string, raw: string): ParsedDocument {
-  const { data, content } = matter(raw);
-  const meta = data as Record<string, unknown>;
+  let data: Record<string, unknown>;
+  let content: string;
+  try {
+    const parsed = matter(raw);
+    data = parsed.data as Record<string, unknown>;
+    content = parsed.content;
+  } catch (error) {
+    // El error que lanza el analizador de YAML no menciona el fichero, solo una
+    // línea y una columna, y con veinte documentos eso obliga a buscar a ciegas
+    // cuál de ellos ha fallado. La causa casi siempre es la misma: dos puntos
+    // seguidos de espacio dentro de un valor sin comillas.
+    const detalle = error instanceof Error ? error.message.split('\n')[0] : String(error);
+    throw new Error(
+      `Frontmatter no válido en "${sourcePath}": ${detalle}\n` +
+        `  Causa habitual: un valor que contiene ": " sin comillas. ` +
+        `Escribe  summary: \"Texto: con dos puntos\"  entre comillas.`,
+    );
+  }
+
+  const meta = data;
 
   const segments = sourcePath.replace(/\.md$/, '').split('/');
   const folder = segments[0] ?? '';
