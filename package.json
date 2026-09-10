@@ -10,10 +10,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "migrate": "tsx scripts/migrate.ts",
+    "nuevo": "tsx scripts/nuevo.ts",
     "ingest": "tsx scripts/ingest.ts",
     "ask": "tsx scripts/ask.ts",
     "eval": "tsx scripts/eval.ts",
+    "migrate": "tsx scripts/migrate.ts",
     "chat": "tsx scripts/chat.ts",
     "assets": "tsx scripts/optimize-assets.ts",
     "typecheck": "tsc --noEmit"

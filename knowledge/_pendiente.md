@@ -80,6 +80,30 @@ problemas dio el hardware? ¿Por qué ESP32?
 - **`knowledge/notas/`**: vacío. Decisiones técnicas y aprendizajes escritos al
   detalle, sin proyecto asociado.
 
+## Nuevo, pendiente de aclarar
+
+**Estadísticas deportivas.** LinkedIn dice «béisbol y softbol» para el sistema
+de Estudio Creativo Saltamontes, pero después has mencionado **fútbol**. ¿Fue el
+mismo sistema ampliado, o un proyecto distinto? Si es distinto: ¿para quién,
+cuándo y con qué? De momento el documento de Saltamontes mantiene lo que decía
+el origen y no he añadido el fútbol a ningún sitio.
+
+**Instituto Nacional de Higiene.** Ya tiene ficha propia con lo que me contaste.
+Para completarla: ¿qué tamaño tenía «gigantesca» —filas, gigas, años de
+histórico—? ¿Qué base de datos era? ¿Qué se rompía por el volumen: las
+consultas, los informes, la carga? ¿Cómo lo resolviste? ¿Qué había antes,
+papel u otro sistema?
+
+**Señalización digital.** Aparece en tres etapas —IMVINET, Neo Sepelios y
+Portalweb— repartida entre documentos, sin una ficha que cuente la línea
+completa. Son quince años sobre el mismo problema y ahora mismo no se lee como
+tal.
+
+**Los proyectos que faltan.** Has dicho que son muchos más de ocho. Cuando los
+redactes, el criterio útil es: ficha propia solo si puedes escribir contexto,
+decisión y resultado; si solo da para tres frases, va como sección dentro de la
+experiencia que corresponda.
+
 ## Cosas que verificar
 
 - «Más de 10 años» en tu perfil, pero las fechas suman desde febrero de 2009:

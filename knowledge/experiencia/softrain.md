@@ -1,6 +1,6 @@
 ---
 title: Desarrollador web en Softrain
-summary: "Primer empleo en desarrollo: sistema de carga de exámenes médicos para el Instituto Nacional de Higiene de Venezuela, y docencia de PHP."
+summary: "Primer empleo en desarrollo: el sistema de resultados de virología, serología y micología del Instituto Nacional de Higiene de Venezuela, y docencia de PHP."
 organizacion: Softrain C.A.
 rol: Desarrollador web
 inicio: 2009-02
@@ -17,10 +17,14 @@ entró aquí y no ha salido desde entonces.
 
 ## Instituto Nacional de Higiene «Rafael Rangel»
 
-Desarrollo del sistema de carga de exámenes médicos y resultados para el
-Instituto Nacional de Higiene «Rafael Rangel», en PHP. Un sistema del sector
-público sanitario, con los requisitos de fiabilidad que eso implica, siendo yo
-un desarrollador que empezaba.
+El proyecto principal de la etapa: el sistema de gestión de resultados de las
+pruebas de virología, serología y micología del laboratorio de referencia de la
+salud pública venezolana, sobre una base de datos de gran volumen. Tiene ficha
+propia.
+
+Empezar en un sistema del sector público sanitario, con esa responsabilidad
+sobre el dato y ese tamaño, siendo un desarrollador que empezaba, fue una
+manera exigente de aprender.
 
 ## Docencia
 
