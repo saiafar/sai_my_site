@@ -5,7 +5,7 @@ rol: Modelado, renderizado y diseño
 inicio: 2010-07
 fin: 2024-12
 tecnologias: [sketchup, cinema-4d, lumion, unreal-engine, photoshop, illustrator, after-effects]
-relacionado: [experiencia/freelance, experiencia/estudio-creativo-saltamontes, experiencia/oruga-films]
+relacionado: [experiencia/freelance-2023-2024, experiencia/estudio-creativo-saltamontes, experiencia/oruga-films]
 visibilidad: public
 ---
 

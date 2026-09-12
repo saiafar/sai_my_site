@@ -1,6 +1,6 @@
 ---
 title: API de documentos tributarios electrónicos contra el SII de Chile
-summary: Integración con el Servicio de Impuestos Internos chileno que mejoró un 70 % el proceso de creación de documentos tributarios electrónicos.
+summary: "Integración propia con el Servicio de Impuestos Internos chileno que desbloqueó la emisión de boletas electrónicas cuando el módulo del proveedor dejó de poder actualizarse."
 organizacion: Portalweb
 rol: Desarrollo
 inicio: 2018-10
@@ -30,8 +30,13 @@ fiscales.
 
 ## Resultado
 
-Mejora del 70 % en el proceso de creación de documentos tributarios
-electrónicos.
+La emisión de boletas electrónicas volvió a funcionar, y dejó de depender de un
+módulo cerrado que no se podía actualizar: a partir de ahí, cada cambio de
+especificación del SII se resolvía en código propio.
+
+Con la API ya en marcha, desarrollé además un plugin de WordPress para que los
+clientes que vendían por Internet emitieran también sus boletas a través de
+ella, algo que antes no era posible.
 
 ## Relación con otros trabajos
 

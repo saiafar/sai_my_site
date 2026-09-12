@@ -4,7 +4,7 @@ summary: Recuperación por ingeniería inversa de un sistema del que se había p
 rol: Análisis y recuperación
 inicio: 2023
 tecnologias: [php, yii, mysql]
-parte_de: experiencia/freelance
+parte_de: experiencia/freelance-2023-2024
 visibilidad: public
 ---
 

@@ -1,38 +1,210 @@
 {
   "descripcion": "Preguntas doradas: para cada una, qué documento DEBERÍA recuperarse. Escritas como las formularía un visitante que no conoce el corpus —un reclutador, un cliente potencial— y no como las formularía quien sabe lo que hay dentro. Esa distinción es la que hace que la cifra signifique algo.",
   "preguntas": [
-    { "pregunta": "¿qué experiencia tiene con PostgreSQL?", "esperado": ["experiencia/visados-empresas", "proyectos/plataforma-rrhh-control-horario", "perfil/rafaias-villan"] },
-    { "pregunta": "¿ha trabajado con Laravel?", "esperado": ["experiencia/visados-empresas", "proyectos/api-dte-sii-chile", "proyectos/presupuestos-facturacion-afip", "proyectos/ecosistema-punto-de-venta", "perfil/rafaias-villan"] },
-    { "pregunta": "¿sabe de Docker y contenedores?", "esperado": ["experiencia/visados-empresas", "perfil/rafaias-villan", "proyectos/sitio-personal-rag"] },
-    { "pregunta": "¿tiene experiencia con inteligencia artificial?", "esperado": ["experiencia/visados-empresas", "proyectos/sitio-personal-rag", "perfil/rafaias-villan"] },
-    { "pregunta": "¿ha hecho algo con React Native o aplicaciones móviles?", "esperado": ["proyectos/balanza-comercial-esp32", "experiencia/portalweb", "experiencia/estudio-creativo-saltamontes"] },
-    { "pregunta": "¿trabaja con WordPress?", "esperado": ["experiencia/freelance", "experiencia/oruga-films", "experiencia/visados-empresas"] },
-
-    { "pregunta": "¿dónde trabaja actualmente?", "esperado": ["experiencia/visados-empresas", "perfil/rafaias-villan"] },
-    { "pregunta": "¿cuántos años lleva programando?", "esperado": ["perfil/rafaias-villan", "experiencia/softrain"] },
-    { "pregunta": "¿ha dirigido equipos?", "esperado": ["experiencia/portalweb", "experiencia/neo-sepelios", "experiencia/visados-empresas", "proyectos/presupuestos-facturacion-afip"] },
-    { "pregunta": "¿ha tenido empresa propia?", "esperado": ["experiencia/estudio-creativo-saltamontes"] },
-    { "pregunta": "¿ha trabajado en remoto?", "esperado": ["experiencia/visados-empresas", "experiencia/portalweb", "experiencia/neo-sepelios", "experiencia/freelance"] },
-
-    { "pregunta": "¿ha integrado sistemas con hacienda o administraciones tributarias?", "esperado": ["proyectos/api-dte-sii-chile", "proyectos/presupuestos-facturacion-afip"] },
-    { "pregunta": "¿qué hizo para aumentar las ventas de una empresa?", "esperado": ["proyectos/ecosistema-punto-de-venta"] },
-    { "pregunta": "¿ha recuperado algún sistema que estuviera roto?", "esperado": ["proyectos/recuperacion-sistema-yii"] },
-    { "pregunta": "¿ha trabajado con hardware o electrónica?", "esperado": ["proyectos/balanza-comercial-esp32"] },
-    { "pregunta": "¿ha construido algo de recursos humanos o control horario?", "esperado": ["proyectos/plataforma-rrhh-control-horario"] },
-    { "pregunta": "¿tiene experiencia con cuadros de mando o business intelligence?", "esperado": ["proyectos/cuadro-de-mando-holded"] },
-    { "pregunta": "¿qué sabe de carteles digitales o digital signage?", "esperado": ["experiencia/imvinet", "proyectos/ecosistema-punto-de-venta", "experiencia/neo-sepelios"] },
-    { "pregunta": "¿ha hecho tiendas online?", "esperado": ["experiencia/freelance"] },
-    { "pregunta": "¿ha trabajado en proyectos multi-tenant?", "esperado": ["proyectos/plataforma-rrhh-control-horario"] },
-
-    { "pregunta": "¿cómo aborda el diseño de una arquitectura?", "esperado": ["perfil/rafaias-villan", "proyectos/plataforma-rrhh-control-horario", "proyectos/sitio-personal-rag"] },
-    { "pregunta": "¿qué retos técnicos difíciles ha afrontado?", "esperado": ["proyectos/recuperacion-sistema-yii", "proyectos/sitio-personal-rag", "proyectos/balanza-comercial-esp32"] },
-    { "pregunta": "¿ha modernizado sistemas antiguos?", "esperado": ["experiencia/visados-empresas", "proyectos/recuperacion-sistema-yii", "perfil/rafaias-villan"] },
-    { "pregunta": "¿tiene experiencia en el sector público o sanitario?", "esperado": ["experiencia/softrain"] },
-    { "pregunta": "¿sabe de diseño gráfico o 3D?", "esperado": ["experiencia/freelance", "experiencia/estudio-creativo-saltamontes", "perfil/rafaias-villan"] },
-    { "pregunta": "¿ha administrado servidores?", "esperado": ["experiencia/visados-empresas", "experiencia/portalweb"] },
-
-    { "pregunta": "¿cuánto quiere cobrar?", "esperado": [], "nota": "Sin respuesta en el corpus. El prompt le obliga a remitir al contacto directo." },
-    { "pregunta": "¿tiene experiencia con Kubernetes?", "esperado": [], "nota": "Tecnología que no aparece en ningún documento. Debe decir que no consta, no que no la conoce." },
-    { "pregunta": "¿está casado o tiene hijos?", "esperado": [], "nota": "Asunto personal fuera del corpus." }
+    {
+      "pregunta": "¿qué experiencia tiene con PostgreSQL?",
+      "esperado": [
+        "experiencia/visados-empresas",
+        "proyectos/plataforma-rrhh-control-horario",
+        "perfil/rafaias-villan"
+      ]
+    },
+    {
+      "pregunta": "¿ha trabajado con Laravel?",
+      "esperado": [
+        "experiencia/visados-empresas",
+        "proyectos/api-dte-sii-chile",
+        "proyectos/presupuestos-facturacion-afip",
+        "proyectos/ecosistema-punto-de-venta",
+        "perfil/rafaias-villan"
+      ]
+    },
+    {
+      "pregunta": "¿sabe de Docker y contenedores?",
+      "esperado": [
+        "experiencia/visados-empresas",
+        "perfil/rafaias-villan",
+        "proyectos/sitio-personal-rag"
+      ]
+    },
+    {
+      "pregunta": "¿tiene experiencia con inteligencia artificial?",
+      "esperado": [
+        "experiencia/visados-empresas",
+        "proyectos/sitio-personal-rag",
+        "perfil/rafaias-villan"
+      ]
+    },
+    {
+      "pregunta": "¿ha hecho algo con React Native o aplicaciones móviles?",
+      "esperado": [
+        "proyectos/balanza-comercial-esp32",
+        "experiencia/portalweb",
+        "experiencia/estudio-creativo-saltamontes"
+      ]
+    },
+    {
+      "pregunta": "¿trabaja con WordPress?",
+      "esperado": [
+        "experiencia/freelance-2023-2024",
+        "experiencia/oruga-films",
+        "experiencia/visados-empresas"
+      ]
+    },
+    {
+      "pregunta": "¿dónde trabaja actualmente?",
+      "esperado": [
+        "experiencia/visados-empresas",
+        "perfil/rafaias-villan"
+      ]
+    },
+    {
+      "pregunta": "¿cuántos años lleva programando?",
+      "esperado": [
+        "perfil/rafaias-villan",
+        "experiencia/softrain"
+      ]
+    },
+    {
+      "pregunta": "¿ha dirigido equipos?",
+      "esperado": [
+        "experiencia/portalweb",
+        "experiencia/neo-sepelios",
+        "experiencia/visados-empresas",
+        "proyectos/presupuestos-facturacion-afip"
+      ]
+    },
+    {
+      "pregunta": "¿ha tenido empresa propia?",
+      "esperado": [
+        "experiencia/estudio-creativo-saltamontes"
+      ]
+    },
+    {
+      "pregunta": "¿ha trabajado en remoto?",
+      "esperado": [
+        "experiencia/visados-empresas",
+        "experiencia/portalweb",
+        "experiencia/neo-sepelios",
+        "experiencia/freelance-2023-2024"
+      ]
+    },
+    {
+      "pregunta": "¿ha integrado sistemas con hacienda o administraciones tributarias?",
+      "esperado": [
+        "proyectos/api-dte-sii-chile",
+        "proyectos/presupuestos-facturacion-afip"
+      ]
+    },
+    {
+      "pregunta": "¿qué hizo para aumentar las ventas de una empresa?",
+      "esperado": [
+        "proyectos/ecosistema-punto-de-venta"
+      ]
+    },
+    {
+      "pregunta": "¿ha recuperado algún sistema que estuviera roto?",
+      "esperado": [
+        "proyectos/recuperacion-sistema-yii"
+      ]
+    },
+    {
+      "pregunta": "¿ha trabajado con hardware o electrónica?",
+      "esperado": [
+        "proyectos/balanza-comercial-esp32"
+      ]
+    },
+    {
+      "pregunta": "¿ha construido algo de recursos humanos o control horario?",
+      "esperado": [
+        "proyectos/plataforma-rrhh-control-horario"
+      ]
+    },
+    {
+      "pregunta": "¿tiene experiencia con cuadros de mando o business intelligence?",
+      "esperado": [
+        "proyectos/cuadro-de-mando-holded"
+      ]
+    },
+    {
+      "pregunta": "¿qué sabe de carteles digitales o digital signage?",
+      "esperado": [
+        "experiencia/imvinet",
+        "proyectos/ecosistema-punto-de-venta",
+        "experiencia/neo-sepelios"
+      ]
+    },
+    {
+      "pregunta": "¿ha hecho tiendas online?",
+      "esperado": [
+        "experiencia/freelance-2023-2024"
+      ]
+    },
+    {
+      "pregunta": "¿ha trabajado en proyectos multi-tenant?",
+      "esperado": [
+        "proyectos/plataforma-rrhh-control-horario"
+      ]
+    },
+    {
+      "pregunta": "¿cómo aborda el diseño de una arquitectura?",
+      "esperado": [
+        "perfil/rafaias-villan",
+        "proyectos/plataforma-rrhh-control-horario",
+        "proyectos/sitio-personal-rag"
+      ]
+    },
+    {
+      "pregunta": "¿qué retos técnicos difíciles ha afrontado?",
+      "esperado": [
+        "proyectos/recuperacion-sistema-yii",
+        "proyectos/sitio-personal-rag",
+        "proyectos/balanza-comercial-esp32"
+      ]
+    },
+    {
+      "pregunta": "¿ha modernizado sistemas antiguos?",
+      "esperado": [
+        "experiencia/visados-empresas",
+        "proyectos/recuperacion-sistema-yii",
+        "perfil/rafaias-villan"
+      ]
+    },
+    {
+      "pregunta": "¿tiene experiencia en el sector público o sanitario?",
+      "esperado": [
+        "experiencia/softrain"
+      ]
+    },
+    {
+      "pregunta": "¿sabe de diseño gráfico o 3D?",
+      "esperado": [
+        "experiencia/freelance-2023-2024",
+        "experiencia/estudio-creativo-saltamontes",
+        "perfil/rafaias-villan"
+      ]
+    },
+    {
+      "pregunta": "¿ha administrado servidores?",
+      "esperado": [
+        "experiencia/visados-empresas",
+        "experiencia/portalweb"
+      ]
+    },
+    {
+      "pregunta": "¿cuánto quiere cobrar?",
+      "esperado": [],
+      "nota": "Sin respuesta en el corpus. El prompt le obliga a remitir al contacto directo."
+    },
+    {
+      "pregunta": "¿tiene experiencia con Kubernetes?",
+      "esperado": [],
+      "nota": "Tecnología que no aparece en ningún documento. Debe decir que no consta, no que no la conoce."
+    },
+    {
+      "pregunta": "¿está casado o tiene hijos?",
+      "esperado": [],
+      "nota": "Asunto personal fuera del corpus."
+    }
   ]
 }
