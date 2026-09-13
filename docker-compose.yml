@@ -60,6 +60,15 @@ services:
       EMBEDDING_MODEL: ${EMBEDDING_MODEL:-Xenova/multilingual-e5-small}
       EMBEDDING_DIM: ${EMBEDDING_DIM:-384}
 
+      # Contraseña del panel, ya derivada con scrypt (npm run admin:clave).
+      # Sin valor por defecto a propósito: si falta, el panel no deja entrar a
+      # nadie en lugar de quedarse abierto.
+      ADMIN_PASSWORD_HASH: ${ADMIN_PASSWORD_HASH}
+
+      # Google Analytics 4. Vacío significa que no hay etiqueta ni aviso de
+      # cookies; las visitas se cuentan igual con la telemetría propia.
+      GA_MEASUREMENT_ID: ${GA_MEASUREMENT_ID:-}
+
     networks:
       - dokploy-network   # entrada: Traefik
       - database          # salida: PostgreSQL + pgvector
