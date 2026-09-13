@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Instrument_Serif, Inter, Poppins } from 'next/font/google';
+import { Consentimiento } from '@/components/consentimiento';
 import { env } from '@/lib/env';
 import './globals.css';
 
@@ -42,7 +43,15 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="es" className={`${display.variable} ${sans.variable} ${marca.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        {/*
+          El identificador se lee en el servidor y baja como propiedad. Si no
+          está configurado, el componente no pinta nada y el sitio no hace
+          ninguna petición a Google: es lo que ocurre en desarrollo.
+        */}
+        <Consentimiento gaId={env.gaMeasurementId} />
+      </body>
     </html>
   );
 }

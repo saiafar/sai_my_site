@@ -7,6 +7,7 @@ import { Etiqueta } from '@/components/etiqueta';
 import { Pie } from '@/components/pie';
 import { EscenaHero } from '@/components/escena-hero';
 import { FormularioContacto } from '@/components/formulario-contacto';
+import { Telemetria } from '@/components/telemetria';
 import { getByKind, getStats, getTechnologies } from '@/lib/site/queries';
 import { ENLACES } from '@/lib/site/enlaces';
 import { env } from '@/lib/env';
@@ -243,6 +244,8 @@ export default async function Home() {
 
         <Pie github={ENLACES.github} linkedin={ENLACES.linkedin} ano={new Date().getFullYear()} />
       </main>
+
+      <Telemetria />
     </>
   );
 }

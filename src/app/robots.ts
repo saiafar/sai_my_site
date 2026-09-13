@@ -23,8 +23,9 @@ export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
       // El endpoint del asistente cuesta dinero por llamada: ningún rastreador
-      // tiene motivo para tocarlo.
-      { userAgent: '*', allow: '/', disallow: '/api/' },
+      // tiene motivo para tocarlo. El panel, además, ni siquiera respondería:
+      // se excluye para que no aparezca listado como URL bloqueada.
+      { userAgent: '*', allow: '/', disallow: ['/api/', '/admin'] },
     ],
     sitemap: `https://${process.env['SITE_DOMAIN'] ?? 'rafaiasvillan.com'}/sitemap.xml`,
   };

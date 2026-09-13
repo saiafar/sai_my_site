@@ -67,6 +67,24 @@ export const env = {
   // el corpus esté a medias conviene que no lo mire: el sitio se sirve con
   // noindex hasta que se ponga esta variable a "true" de forma explícita.
   siteIndexable: optional('SITE_INDEXABLE', 'false') === 'true',
+
+  // ADMIN_PASSWORD_HASH no se expone aquí: la lee hashAdmin() en
+  // src/lib/admin/sesion.ts. Ese módulo lo importa el proxy, que corre en
+  // el runtime edge y no puede cargar dotenv, así que no puede pasar por este
+  // objeto. El formato lo genera `npm run admin:clave`.
+
+  // Identificador de medición de Google Analytics 4 (G-XXXXXXXXXX).
+  //
+  // No se llama NEXT_PUBLIC_ a propósito, aunque acabe en el navegador. Una
+  // variable NEXT_PUBLIC_ se incrusta en el paquete de cliente durante `next
+  // build`, y aquí la imagen se construye sin entorno: las variables las pone
+  // Dokploy al arrancar el contenedor. Una NEXT_PUBLIC_ llegaría vacía a
+  // producción. Se lee en el servidor y se pasa como propiedad al componente,
+  // que es lo que la hace configurable sin reconstruir la imagen.
+  //
+  // Vacío significa que no hay analítica de Google: ni etiqueta, ni aviso de
+  // cookies. En desarrollo el sitio sigue sin hacer una sola petición a Google.
+  gaMeasurementId: optional('GA_MEASUREMENT_ID', ''),
 } as const;
 
 // La dimensión del vector está fijada en el esquema SQL como vector(384) y no

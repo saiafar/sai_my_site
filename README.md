@@ -65,6 +65,23 @@ iterar sobre la estrategia de troceado tantas veces como haga falta.
 **El modelo viaja dentro de la imagen.** Un contenedor no debería poder fallar
 al arrancar porque Hugging Face tenga un mal día.
 
+**La analítica se cuenta en casa, y Google es opcional.** Las cifras del panel
+salen de la tabla `page_views`, que se alimenta de dos avisos por visita —uno al
+abrir y otro, por `sendBeacon`, al salir— y se agrupa por el mismo hash de IP que
+usan el asistente y el formulario. No hay cookie ni identificador persistente, y
+por eso no hace falta pedir permiso. Google Analytics se añade encima si se
+configura `GA_MEASUREMENT_ID`, y entonces sí aparece un aviso: su etiqueta no se
+carga hasta que alguien acepta. Se cuenta en casa porque un bloqueador se come
+una parte grande de los eventos de GA —y quien lee un sitio técnico los usa más
+que la media—, así que el total de Google no es el total.
+
+**El formulario de contacto guarda primero y avisa después.** El mensaje se
+escribe en la base de datos y solo entonces se reenvía al webhook de N8N, firmado
+con HMAC. Si N8N está caído, el visitante recibe su acuse de recibo igual y el
+mensaje queda marcado como pendiente para reintentarlo desde el panel. Un
+formulario que depende de que un servicio externo esté vivo pierde clientes sin
+enterarse.
+
 ## Comandos
 
 ```bash
@@ -74,6 +91,7 @@ npm run ingest -- --dry          # muestra el plan sin escribir
 npm run ingest -- --force        # revectoriza todo (tras cambiar el troceado)
 npm run ask -- "pregunta"        # interroga el corpus sin LLM ni frontend
 npm run eval -- --verbose        # recall@k y MRR sobre las preguntas doradas
+npm run admin:clave              # genera ADMIN_PASSWORD_HASH para el panel
 npm run typecheck
 ```
 
@@ -89,6 +107,27 @@ npm install
 npm run migrate
 npm run ingest
 ```
+
+## Panel de administración
+
+En `/admin`, protegido por contraseña. Tres pantallas: **Resumen** (visitas,
+visitantes, tiempo medio, fichas más vistas, de dónde llegan y gasto del mes del
+asistente), **Consultas** (los mensajes del formulario y las preguntas al
+asistente, cada uno con lo que esa persona había mirado antes) y **Ajustes** (la
+URL del webhook de N8N y su secreto de firma, con un botón para probarlos).
+
+```bash
+npm run admin:clave              # y pegar ADMIN_PASSWORD_HASH en el entorno
+```
+
+Sin esa variable el panel está cerrado: no existe un modo sin contraseña. La
+sesión es una cookie firmada cuya clave se deriva del propio hash, así que
+cambiar la contraseña cierra las sesiones abiertas y no hace falta una segunda
+variable de entorno.
+
+La URL del webhook vive en la tabla `site_settings` y no en el entorno porque es
+lo único de la configuración que cambia sin cambiar el código: reorganizar un
+flujo en N8N no debería obligar a redesplegar el sitio.
 
 ## Despliegue
 
@@ -116,6 +155,7 @@ Ver `.env.deploy.example`.
 | Búsqueda híbrida | Hecho |
 | Arnés de evaluación | Hecho |
 | Imagen y despliegue | Hecho, validado contra la base de datos real |
+| Panel de administración | Hecho |
 | Base de conocimiento | En redacción |
 | Integración con Gemini | Pendiente |
 | `/api/chat` | Pendiente |

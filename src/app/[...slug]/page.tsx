@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { marked } from 'marked';
 import { BarraSuperior } from '@/components/barra-superior';
 import { Etiqueta } from '@/components/etiqueta';
+import { Telemetria } from '@/components/telemetria';
 import { formatPeriod, getBySlug } from '@/lib/site/queries';
 import { ENLACES } from '@/lib/site/enlaces';
 
@@ -100,6 +101,12 @@ export default async function Ficha({ params }: Props) {
           dangerouslySetInnerHTML={{ __html: html }}
         />
       </main>
+
+      {/* El slug se pasa ya resuelto: es la clave con la que el panel agrupa
+          «quién ha entrado a este proyecto», y es la misma que usan el corpus y
+          las citas del asistente. Deducirlo de la ruta registraría también las
+          URL inventadas que acaban en 404. */}
+      <Telemetria documentSlug={documento.slug} />
     </>
   );
 }

@@ -15,6 +15,7 @@
  */
 import { query } from '../db/index.ts';
 import { checkRateLimit } from '../rag/limits.ts';
+import { entregarMensaje } from './webhook.ts';
 
 export const MAX_NOMBRE = 80;
 export const MAX_MENSAJE = 2_000;
@@ -83,11 +84,27 @@ export async function recibirMensaje(
     return { ok: false, motivo: limite.reason ?? 'Demasiados envíos.', estado: 429 };
   }
 
-  await query(
+  const filas = await query<{ id: string }>(
     `insert into contact_messages (name, email, message, client_key, user_agent)
-     values ($1, $2, $3, $4, $5)`,
+     values ($1, $2, $3, $4, $5)
+     returning id`,
     [nombre, email, mensaje, contexto.clientKey, contexto.userAgent ?? null],
   );
+
+  // El mensaje ya está a salvo. El reenvío a N8N viene después y a propósito: es
+  // una notificación, no la vía de entrega. Se espera a que termine —con su
+  // propio tope de cinco segundos— para poder anotar si llegó, pero cualquier
+  // fallo se traga aquí: el visitante no tiene nada que hacer con «tu mensaje se
+  // guardó pero mi automatización está caída», y el panel ya lo muestra como
+  // pendiente con un botón para reintentarlo.
+  const id = filas[0]?.id;
+  if (id) {
+    try {
+      await entregarMensaje(Number(id));
+    } catch (error) {
+      console.error('[contacto] fallo al reenviar al webhook', error);
+    }
+  }
 
   return { ok: true };
 }
