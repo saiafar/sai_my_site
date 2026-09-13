@@ -8,6 +8,7 @@ fin: 2023-01
 tecnologias: [php, laravel, react, react-native, nodejs, electronjs, socket-io, sqlite, javascript, linux, google-cloud]
 parte_de: experiencia/portalweb
 visibilidad: public
+destacado: true
 ---
 
 ## Contexto

@@ -86,12 +86,39 @@ export function EntradaExperiencia({ documento }: { documento: SiteDocument }) {
       ? documento.metadata['organizacion']
       : null;
 
+  /*
+   * La fila entera es el enlace, no solo el título: el destino es el mismo y un
+   * área de pulsación grande se acierta mejor con el pulgar. Se puede envolver
+   * sin más porque las etiquetas de tecnología son <span> y no enlaces; anidar
+   * un enlace dentro de otro sería HTML inválido.
+   *
+   * Hasta ahora estas entradas no enlazaban a ninguna parte, así que las doce
+   * fichas de experiencia existían, estaban en el sitemap y el asistente las
+   * citaba, pero desde la portada no había forma de llegar a ellas.
+   */
   return (
-    <article className="grid gap-x-6 gap-y-1 border-b border-line pb-6 last:border-0 sm:grid-cols-[9rem_1fr]">
+    <Link
+      href={`/${documento.slug}`}
+      className="group grid gap-x-6 gap-y-1 border-b border-line pb-6 last:border-0 sm:grid-cols-[9rem_1fr]"
+    >
       <p className="pt-0.5 text-[11px] text-ink-faint">{periodo ?? '—'}</p>
 
       <div>
-        <h3 className="text-[15px] font-medium text-ink">{documento.title}</h3>
+        <div className="flex items-start justify-between gap-3">
+          <h3 className="text-[15px] font-medium text-ink transition-colors group-hover:text-accent">
+            {documento.title}
+          </h3>
+          <svg
+            aria-hidden
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.6"
+            className="mt-1 h-3 w-3 shrink-0 text-ink-faint transition-colors group-hover:text-accent"
+          >
+            <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        </div>
         {organizacion ? (
           <p className="mt-0.5 text-[12px] text-ink-muted">{organizacion}</p>
         ) : null}
@@ -100,6 +127,6 @@ export function EntradaExperiencia({ documento }: { documento: SiteDocument }) {
         ) : null}
         <Etiquetas tecnologias={documento.technologies} />
       </div>
-    </article>
+    </Link>
   );
 }

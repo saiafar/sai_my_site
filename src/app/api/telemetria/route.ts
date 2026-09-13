@@ -17,6 +17,7 @@
  * colar filas.
  */
 import { NextResponse } from 'next/server';
+import { haySesion } from '@/lib/admin/guardia';
 import { query } from '@/lib/db/index';
 import { checkRateLimit } from '@/lib/rag/limits';
 import { clientKeyOf } from '@/lib/site/visitante';
@@ -49,6 +50,17 @@ const sinContenido = (): NextResponse => new NextResponse(null, { status: 204 })
 export async function POST(request: Request): Promise<NextResponse> {
   const userAgent = request.headers.get('user-agent') ?? '';
   if (ROBOTS.test(userAgent)) return sinContenido();
+
+  // Las visitas propias no se cuentan. Se reconocen por la cookie de sesión del
+  // panel y no por la dirección IP, que sería lo intuitivo pero no se puede: la
+  // IP no se almacena en ninguna parte, solo su hash con sal, así que no hay
+  // nada contra lo que comparar al consultar.
+  //
+  // La sesión es además mejor señal. No hay que mantenerla cuando cambia la IP
+  // del router, y solo la tiene quien conoce la contraseña. Su límite es que
+  // cubre el navegador donde se ha entrado al panel: en uno distinto, o de
+  // incógnito, la visita se cuenta como la de cualquiera.
+  if (await haySesion()) return sinContenido();
 
   let cuerpo: Record<string, unknown>;
   try {

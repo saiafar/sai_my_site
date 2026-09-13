@@ -1,6 +1,16 @@
 ---
 title: Rafaías Villán Salazar
 summary: "Responsable de sistemas de información con diecinueve años en tecnología: desarrollo full stack, arquitectura, infraestructura, soporte y automatización con IA."
+titular: "Convierto la visión de un negocio en un sistema que funciona."
+subtitulo: "Del concepto y el análisis hasta la última pieza, con la tecnología que pida el problema."
+# Cifras del hero. Son afirmaciones de carrera, no recuentos del corpus: los
+# proyectos documentados aquí son una selección, y el total real incluye webs a
+# medida y encargos pequeños que no tienen ficha propia.
+cifras:
+  - "19 años"
+  - "+20 proyectos"
+  - "10 sectores"
+  - "+30 tecnologías"
 inicio: 2007-01
 tecnologias: [php, laravel, javascript, typescript, react, nodejs, postgresql, mysql, linux, docker, api-rest, n8n, llm, agentes-ia]
 visibilidad: public

@@ -8,6 +8,7 @@ fin: 2026-08
 tecnologias: [laravel, php, react, postgresql, redis, docker, dokploy, api-rest, github-actions]
 parte_de: experiencia/visados-empresas
 visibilidad: public
+destacado: true
 ---
 
 ## Contexto

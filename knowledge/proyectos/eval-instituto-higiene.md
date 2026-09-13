@@ -8,6 +8,7 @@ fin: 2010-07
 tecnologias: [php, postgresql, html, css, javascript, jquery, linux]
 parte_de: experiencia/softrain
 visibilidad: public
+destacado: true
 ---
 
 ## Contexto

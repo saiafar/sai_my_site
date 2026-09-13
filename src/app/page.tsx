@@ -8,6 +8,7 @@ import { Pie } from '@/components/pie';
 import { EscenaHero } from '@/components/escena-hero';
 import { FormularioContacto } from '@/components/formulario-contacto';
 import { Telemetria } from '@/components/telemetria';
+import { VerMas } from '@/components/ver-mas';
 import { DatosEstructurados } from '@/components/datos-estructurados';
 import * as jsonLd from '@/lib/site/datos-estructurados';
 import { getByKind, getStats, getTechnologies } from '@/lib/site/queries';
@@ -40,6 +41,64 @@ export default async function Home() {
   ]);
 
   const presentacion = perfil[0];
+
+  /**
+   * El titular vive en el frontmatter del perfil y no incrustado aquí: es
+   * contenido, y el contenido de este sitio sale siempre de knowledge/. Se usan
+   * dos campos propios en lugar del `summary` porque hacen trabajos distintos —
+   * el summary describe el documento para el corpus y los datos estructurados;
+   * el titular es lo primero que lee una persona.
+   */
+  const delPerfil = (clave: string): string | null => {
+    const valor = presentacion?.metadata[clave];
+    return typeof valor === 'string' && valor.trim() !== '' ? valor.trim() : null;
+  };
+  const titular = delPerfil('titular');
+  const subtitulo = delPerfil('subtitulo') ?? presentacion?.summary ?? null;
+
+  /**
+   * Cifras del hero.
+   *
+   * Se escriben a mano en el perfil en lugar de contarse del corpus, y es un
+   * cambio deliberado respecto a cómo estaba antes. Los recuentos automáticos
+   * medían el corpus, no la carrera: «131 fragmentos indexados» es un dato del
+   * índice del buscador, y ocupaba el hueco más visible de la página. Las
+   * fichas publicadas son además una selección, así que contarlas subestimaba
+   * el trabajo real.
+   *
+   * Si el perfil no las trae, se recurre a los recuentos como antes: el hero
+   * nunca se queda vacío.
+   */
+  /**
+   * Proyectos destacados.
+   *
+   * La portada muestra una selección y no el catálogo entero. Dieciséis fichas
+   * con el mismo peso visual significan que ninguna recibe más de la dieciseisava
+   * parte de la atención, y elegir seis es en sí mismo una afirmación: dice cuál
+   * considero mi mejor trabajo.
+   *
+   * La marca vive en el frontmatter de cada ficha —`destacado: true`— y no en una
+   * lista dentro de este fichero, para que cambiar la selección sea editar un
+   * Markdown y reingestar, como el resto del contenido. Sin ninguna marcada se
+   * muestran todos, que es el comportamiento anterior.
+   */
+  const destacados = proyectos.filter((p) => p.metadata['destacado'] === true);
+  const proyectosVisibles = destacados.length > 0 ? destacados : proyectos;
+  const proyectosOcultos = proyectos.filter((p) => !proyectosVisibles.includes(p));
+
+  /** Las tres últimas etapas a la vista; las anteriores, plegadas. */
+  const ETAPAS_VISIBLES = 3;
+  const experienciasVisibles = experiencias.slice(0, ETAPAS_VISIBLES);
+  const experienciasOcultas = experiencias.slice(ETAPAS_VISIBLES);
+
+  const cifrasPerfil = presentacion?.metadata['cifras'];
+  const cifras = Array.isArray(cifrasPerfil)
+    ? cifrasPerfil.filter((c): c is string => typeof c === 'string' && c.trim() !== '')
+    : [
+        `${stats.proyectos} ${stats.proyectos === 1 ? 'proyecto' : 'proyectos'}`,
+        `${stats.tecnologias} ${stats.tecnologias === 1 ? 'tecnología' : 'tecnologías'}`,
+        ...(stats.primerAno ? [`desde ${stats.primerAno}`] : []),
+      ];
 
   return (
     <>
@@ -105,35 +164,36 @@ export default async function Home() {
         </div>
 
         <section className="mx-auto max-w-lectura px-6 pb-16 pt-6 text-center">
+          {/* El titular va antes que nada y en la tipografía de display: dice
+              para qué sirve el trabajo, no qué cargo tiene quien lo hace. Un
+              cargo seguido de una enumeración de áreas se lee como un
+              currículum; esto se lee como una posición. */}
+          {titular ? (
+            <p
+              className="escena-sube mx-auto max-w-2xl text-[24px] font-medium leading-snug tracking-tight text-ink sm:text-[28px]"
+              style={{ '--desde': 0.3 } as React.CSSProperties}
+            >
+              {titular}
+            </p>
+          ) : null}
+
           <p
-            className="escena-sube mx-auto max-w-md text-[14px] leading-relaxed text-ink-muted"
-            style={{ '--desde': 0.35 } as React.CSSProperties}
+            className={`escena-sube mx-auto max-w-md text-[14px] leading-relaxed text-ink-muted${
+              titular ? ' mt-4' : ''
+            }`}
+            style={{ '--desde': 0.38 } as React.CSSProperties}
           >
-            {presentacion?.summary ??
+            {subtitulo ??
               'Desarrollo backend, bases de datos e inteligencia artificial. Pregunta en lenguaje natural: el asistente responde con documentación real y cita de dónde sale cada dato.'}
           </p>
 
           <ul
-            className="escena-sube mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-ink-faint"
+            className="escena-sube mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-ink-muted"
             style={{ '--desde': 0.45 } as React.CSSProperties}
           >
-            <li>
-              <span className="text-ink-muted">{stats.proyectos}</span>{' '}
-              {stats.proyectos === 1 ? 'proyecto' : 'proyectos'}
-            </li>
-            <li>
-              <span className="text-ink-muted">{stats.tecnologias}</span>{' '}
-              {stats.tecnologias === 1 ? 'tecnología' : 'tecnologías'}
-            </li>
-            <li>
-              <span className="text-ink-muted">{stats.fragmentos}</span>{' '}
-              {stats.fragmentos === 1 ? 'fragmento indexado' : 'fragmentos indexados'}
-            </li>
-            {stats.primerAno ? (
-              <li>
-                desde <span className="text-ink-muted">{stats.primerAno}</span>
-              </li>
-            ) : null}
+            {cifras.map((cifra) => (
+              <li key={cifra}>{cifra}</li>
+            ))}
           </ul>
 
           <div
@@ -153,11 +213,27 @@ export default async function Home() {
           recuento={plural(experiencias.length, 'etapa', 'etapas')}
         >
           {experiencias.length > 0 ? (
-            <div className="space-y-6">
-              {experiencias.map((documento) => (
-                <EntradaExperiencia key={documento.slug} documento={documento} />
-              ))}
-            </div>
+            <>
+              {/* Vienen ordenadas de más reciente a más antigua, así que las
+                  tres primeras son las tres últimas etapas. Doce entradas
+                  seguidas convierten la portada en un currículum; tres dicen
+                  dónde está ahora y el resto queda a un clic. */}
+              <div className="space-y-6">
+                {experienciasVisibles.map((documento) => (
+                  <EntradaExperiencia key={documento.slug} documento={documento} />
+                ))}
+              </div>
+
+              {experienciasOcultas.length > 0 ? (
+                <VerMas texto={`Ver las ${experienciasOcultas.length} etapas anteriores`}>
+                  <div className="space-y-6">
+                    {experienciasOcultas.map((documento) => (
+                      <EntradaExperiencia key={documento.slug} documento={documento} />
+                    ))}
+                  </div>
+                </VerMas>
+              ) : null}
+            </>
           ) : (
             <SeccionVacia mensaje="Todavía no hay experiencias en la base de conocimiento. Añade documentos en knowledge/experiencia/ y ejecuta npm run ingest." />
           )}
@@ -165,16 +241,27 @@ export default async function Home() {
 
         <Seccion
           id="proyectos"
-          titulo="Proyectos"
+          titulo="Algunos proyectos"
           descripcion="Cada ficha recoge el contexto, las decisiones técnicas y lo que salió mal."
-          recuento={plural(proyectos.length, 'proyecto', 'proyectos')}
         >
-          {proyectos.length > 0 ? (
-            <div className="grid gap-3 sm:grid-cols-2">
-              {proyectos.map((documento) => (
-                <TarjetaProyecto key={documento.slug} documento={documento} />
-              ))}
-            </div>
+          {proyectosVisibles.length > 0 ? (
+            <>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {proyectosVisibles.map((documento) => (
+                  <TarjetaProyecto key={documento.slug} documento={documento} />
+                ))}
+              </div>
+
+              {proyectosOcultos.length > 0 ? (
+                <VerMas texto={`Ver los otros ${proyectosOcultos.length} proyectos`}>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {proyectosOcultos.map((documento) => (
+                      <TarjetaProyecto key={documento.slug} documento={documento} />
+                    ))}
+                  </div>
+                </VerMas>
+              ) : null}
+            </>
           ) : (
             <SeccionVacia mensaje="Todavía no hay proyectos. Añade documentos en knowledge/proyectos/ y ejecuta npm run ingest." />
           )}
@@ -234,15 +321,36 @@ export default async function Home() {
             llega hasta aquí ya ha visto la trayectoria y los proyectos, así que
             es el punto donde el mensaje cuesta menos de escribir. El botón de
             la barra superior cubre a quien lo decide antes. */}
-        <Seccion
+        {/*
+          El cierre no usa <Seccion> como el resto, y es deliberado. Ese
+          componente es un patrón de índice —titular pequeño y uniforme— que
+          ayuda a recorrer la página; aquí hace falta lo contrario: peso, porque
+          es lo último que se lee y lo único que pide algo.
+
+          El titular va en la tipografía del resto del sitio, a un cuerpo mayor:
+          el peso lo da el tamaño, no un cambio de letra.
+
+          Desaparece la coletilla sobre el asistente que había aquí. Un cierre
+          que ofrece dos cosas a la vez no pide ninguna, y el asistente ya ocupa
+          la mitad del hero.
+        */}
+        <section
           id="contacto"
-          titulo="Hablemos"
-          descripcion="Escríbeme y te respondo. Si prefieres verlo antes por tu cuenta, el asistente responde a cualquier pregunta sobre mi trayectoria."
+          data-aparecer
+          className="scroll-mt-20 border-t border-line pt-10"
         >
-          <div data-aparecer>
+          <h2 className="text-[22px] font-medium leading-snug tracking-tight text-ink sm:text-[26px]">
+            Cuéntame qué quieres construir.
+          </h2>
+          <p className="mt-2 max-w-xl text-[14px] leading-relaxed text-ink-muted">
+            Da igual si es un puesto, un encargo o una idea que todavía no tiene forma. Respondo
+            siempre.
+          </p>
+
+          <div className="mt-7">
             <FormularioContacto />
           </div>
-        </Seccion>
+        </section>
 
         <Pie github={ENLACES.github} linkedin={ENLACES.linkedin} ano={new Date().getFullYear()} />
       </main>

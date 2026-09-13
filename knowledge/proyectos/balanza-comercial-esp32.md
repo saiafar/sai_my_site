@@ -8,6 +8,7 @@ fin: 2023-01
 tecnologias: [arduino, esp32, react-native, javascript]
 parte_de: experiencia/portalweb
 visibilidad: public
+destacado: true
 ---
 
 ## Contexto
