@@ -8,6 +8,8 @@ import { Pie } from '@/components/pie';
 import { EscenaHero } from '@/components/escena-hero';
 import { FormularioContacto } from '@/components/formulario-contacto';
 import { Telemetria } from '@/components/telemetria';
+import { DatosEstructurados } from '@/components/datos-estructurados';
+import * as jsonLd from '@/lib/site/datos-estructurados';
 import { getByKind, getStats, getTechnologies } from '@/lib/site/queries';
 import { ENLACES } from '@/lib/site/enlaces';
 import { env } from '@/lib/env';
@@ -246,6 +248,13 @@ export default async function Home() {
       </main>
 
       <Telemetria />
+
+      {/* Para los buscadores con IA: quién es el sujeto de esta página y qué
+          sabe hacer, dicho sin que haya que deducirlo de la prosa. */}
+      <DatosEstructurados
+        datos={jsonLd.persona({ perfil: presentacion, tecnologias, experiencias })}
+      />
+      <DatosEstructurados datos={jsonLd.sitioWeb()} />
     </>
   );
 }

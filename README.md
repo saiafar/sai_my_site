@@ -75,6 +75,17 @@ carga hasta que alguien acepta. Se cuenta en casa porque un bloqueador se come
 una parte grande de los eventos de GA —y quien lee un sitio técnico los usa más
 que la media—, así que el total de Google no es el total.
 
+**El sitio se escribe para que lo lea una máquina, no solo una persona.** Todo
+el contenido se sirve renderizado desde el servidor —los rastreadores de IA no
+ejecutan JavaScript—, cada página declara su JSON-LD, y `/preguntas` pone en
+HTML lo que el asistente solo responde por `POST /api/chat`, que ningún
+rastreador va a llamar nunca. Esas respuestas se generan con `npm run faq` a
+partir del corpus, con cada afirmación enlazada al documento que la respalda, y
+**se revisan a mano antes de commitearse**: es la página que un motor de
+respuestas va a citar como la voz de Rafaías, así que no puede contener texto
+que él no haya leído. Viven en `contenido/preguntas.md` y no en `knowledge/`
+para que el asistente no acabe citando respuestas derivadas de su propio corpus.
+
 **El formulario de contacto guarda primero y avisa después.** El mensaje se
 escribe en la base de datos y solo entonces se reenvía al webhook de N8N, firmado
 con HMAC. Si N8N está caído, el visitante recibe su acuse de recibo igual y el
@@ -92,6 +103,8 @@ npm run ingest -- --force        # revectoriza todo (tras cambiar el troceado)
 npm run ask -- "pregunta"        # interroga el corpus sin LLM ni frontend
 npm run eval -- --verbose        # recall@k y MRR sobre las preguntas doradas
 npm run admin:clave              # genera ADMIN_PASSWORD_HASH para el panel
+npm run faq                      # borradores de /preguntas (solo rellena huecos)
+npm run og                       # public/og.jpg, la tarjeta al compartir
 npm run typecheck
 ```
 
@@ -156,6 +169,7 @@ Ver `.env.deploy.example`.
 | Arnés de evaluación | Hecho |
 | Imagen y despliegue | Hecho, validado contra la base de datos real |
 | Panel de administración | Hecho |
+| Datos estructurados y tarjetas sociales | Hecho |
 | Base de conocimiento | En redacción |
 | Integración con Gemini | Pendiente |
 | `/api/chat` | Pendiente |

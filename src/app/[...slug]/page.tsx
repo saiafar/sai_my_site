@@ -5,6 +5,8 @@ import { marked } from 'marked';
 import { BarraSuperior } from '@/components/barra-superior';
 import { Etiqueta } from '@/components/etiqueta';
 import { Telemetria } from '@/components/telemetria';
+import { DatosEstructurados } from '@/components/datos-estructurados';
+import * as jsonLd from '@/lib/site/datos-estructurados';
 import { formatPeriod, getBySlug } from '@/lib/site/queries';
 import { ENLACES } from '@/lib/site/enlaces';
 
@@ -29,9 +31,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const documento = await getBySlug(slug.join('/'));
   if (!documento) return { title: 'No encontrado' };
 
+  const titulo = `${documento.title} — Rafaías Villán`;
+
   return {
-    title: `${documento.title} — Rafaías Villán`,
+    title: titulo,
     ...(documento.summary ? { description: documento.summary } : {}),
+    // La imagen se hereda del layout a propósito: es una sola tarjeta para todo
+    // el sitio. Lo que sí cambia por ficha es el título y la descripción, que
+    // es lo que se lee al compartir el enlace de un proyecto concreto.
+    openGraph: {
+      type: 'article',
+      url: `/${documento.slug}`,
+      title: titulo,
+      ...(documento.summary ? { description: documento.summary } : {}),
+    },
   };
 }
 
@@ -107,6 +120,9 @@ export default async function Ficha({ params }: Props) {
           las citas del asistente. Deducirlo de la ruta registraría también las
           URL inventadas que acaban en 404. */}
       <Telemetria documentSlug={documento.slug} />
+
+      <DatosEstructurados datos={jsonLd.ficha(documento)} />
+      <DatosEstructurados datos={jsonLd.migas(documento)} />
     </>
   );
 }

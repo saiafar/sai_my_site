@@ -14,11 +14,13 @@
     "ingest": "tsx scripts/ingest.ts",
     "ask": "tsx scripts/ask.ts",
     "eval": "tsx scripts/eval.ts",
+    "faq": "tsx scripts/faq.ts",
     "migrate": "tsx scripts/migrate.ts",
     "chat": "tsx scripts/chat.ts",
     "assets": "tsx scripts/optimize-assets.ts",
     "admin:clave": "tsx scripts/admin-clave.ts",
     "icons": "tsx scripts/build-icons.ts",
+    "og": "tsx scripts/build-og.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

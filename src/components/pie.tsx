@@ -36,7 +36,11 @@ export function Pie({
 }) {
   return (
     <footer className="mt-20 border-t border-line pt-10">
-      <h2 className="text-[15px] font-medium text-ink">Preguntas frecuentes</h2>
+      {/* «Sobre este sitio» y no «Preguntas frecuentes»: estas preguntas van de
+          cómo funciona el sitio, mientras que /preguntas responde sobre la
+          trayectoria. Dos secciones con el mismo nombre y contenidos distintos
+          confunden al visitante y reparten la misma señal entre dos páginas. */}
+      <h2 className="text-[15px] font-medium text-ink">Sobre este sitio</h2>
 
       <div className="mt-4 divide-y divide-line border-y border-line">
         {PREGUNTAS.map((entrada) => (
@@ -55,6 +59,9 @@ export function Pie({
       <div className="mt-8 flex flex-wrap items-center justify-between gap-3 pb-12 text-[11px] text-ink-faint">
         <p>© {ano} Rafaías Villán</p>
         <div className="flex gap-4">
+          <Link href="/preguntas" className="transition-colors hover:text-ink-muted">
+            Preguntas frecuentes
+          </Link>
           <Link href="/#asistente" className="transition-colors hover:text-ink-muted">
             Preguntar al asistente
           </Link>

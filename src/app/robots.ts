@@ -27,6 +27,6 @@ export default function robots(): MetadataRoute.Robots {
       // se excluye para que no aparezca listado como URL bloqueada.
       { userAgent: '*', allow: '/', disallow: ['/api/', '/admin'] },
     ],
-    sitemap: `https://${process.env['SITE_DOMAIN'] ?? 'rafaiasvillan.com'}/sitemap.xml`,
+    sitemap: `${env.siteUrl}/sitemap.xml`,
   };
 }

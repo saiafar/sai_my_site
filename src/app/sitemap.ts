@@ -14,14 +14,10 @@ import { env } from '@/lib/env';
  */
 export const dynamic = 'force-dynamic';
 
-function baseUrl(): string {
-  return `https://${process.env['SITE_DOMAIN'] ?? 'rafaiasvillan.com'}`;
-}
-
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!env.siteIndexable) return [];
 
-  const base = baseUrl();
+  const base = env.siteUrl;
   const documentos = await query<{ slug: string; updated_at: Date }>(
     `select slug, updated_at from documents
       where visibility = 'public' and kind <> 'perfil'
@@ -30,6 +26,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   return [
     { url: base, lastModified: documentos[0]?.updated_at ?? new Date(), priority: 1 },
+    // Las preguntas frecuentes no son un documento del corpus —viven en
+    // contenido/preguntas.md— así que hay que declararlas a mano.
+    { url: `${base}/preguntas`, lastModified: new Date(), priority: 0.8 },
     ...documentos.map((documento) => ({
       url: `${base}/${documento.slug}`,
       lastModified: documento.updated_at,

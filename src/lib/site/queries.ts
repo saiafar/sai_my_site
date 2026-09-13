@@ -28,6 +28,8 @@ export interface SiteDocument {
   metadata: Record<string, unknown>;
   startsOn: string | null;
   endsOn: string | null;
+  /** Última ingestión del documento. Alimenta dateModified del JSON-LD. */
+  updatedAt: Date | null;
   technologies: Technology[];
 }
 
@@ -41,6 +43,7 @@ interface DocumentRow {
   metadata: Record<string, unknown>;
   starts_on: string | null;
   ends_on: string | null;
+  updated_at: Date | null;
   technologies: Technology[] | null;
 }
 
@@ -52,7 +55,7 @@ interface DocumentRow {
  */
 const DOCUMENT_FIELDS = `
   d.id, d.slug, d.kind, d.title, d.summary, d.body, d.metadata,
-  d.starts_on, d.ends_on,
+  d.starts_on, d.ends_on, d.updated_at,
   coalesce(
     (select json_agg(json_build_object('slug', t.slug, 'name', t.name, 'category', t.category)
                      order by t.name)
@@ -74,6 +77,7 @@ function toDocument(row: DocumentRow): SiteDocument {
     metadata: row.metadata ?? {},
     startsOn: row.starts_on,
     endsOn: row.ends_on,
+    updatedAt: row.updated_at,
     technologies: row.technologies ?? [],
   };
 }

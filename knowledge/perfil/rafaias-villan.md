@@ -10,16 +10,18 @@ visibilidad: public
 
 Rafaías Villán Salazar. Vivo en La Coruña, Galicia, y trabajo en remoto.
 
+Entre enero de 2025 y agosto de 2026 fui responsable corporativo de sistemas de
+información de un grupo de cuatro empresas de movilidad internacional en España,
+con toda su tecnología a mi cargo.
+
+## Diecinueve años de experiencia, desde 2007
+
 **Diecinueve años de experiencia continua en tecnología, desde enero de 2007**,
 sin interrupciones entre una etapa y la siguiente.
 
 Empecé en el departamento de informática de un organismo público de salud en
 Venezuela, desarrollando y, al mismo tiempo, sosteniendo los sistemas que ya
 estaban en pie. Diecinueve años después sigo haciendo las dos cosas.
-
-Entre enero de 2025 y agosto de 2026 fui responsable corporativo de sistemas de
-información de un grupo de cuatro empresas de movilidad internacional en España,
-con toda su tecnología a mi cargo.
 
 ## Cómo trabajo
 

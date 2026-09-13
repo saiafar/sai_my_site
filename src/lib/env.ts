@@ -49,6 +49,11 @@ export const env = {
 
   siteOwner: optional('SITE_OWNER', 'Rafaías Villán'),
 
+  // Dominio público. Lo necesitan el sitemap, el robots.txt, los metadatos de
+  // Open Graph y los datos estructurados: cuatro sitios que componían la misma
+  // cadena por su cuenta hasta que se centralizó aquí.
+  siteUrl: `https://${optional('SITE_DOMAIN', 'rafaiasvillan.com')}`,
+
   // Sal para el hash que identifica a un visitante sin guardar su IP. En
   // producción debe fijarse: si cambia en cada arranque, los límites por
   // visitante se reinician con cada despliegue.

@@ -102,6 +102,9 @@ COPY --chown=node:node src       ./src
 COPY --chown=node:node scripts   ./scripts
 COPY --chown=node:node db        ./db
 COPY --chown=node:node eval      ./eval
+# El texto de /preguntas se lee en ejecución, así que tiene que viajar en la
+# imagen: no es un documento del corpus ni un módulo que el build pueda trazar.
+COPY --chown=node:node contenido ./contenido
 # El corpus. No es un volumen: es contenido versionado, y forma parte de la
 # identidad de esta imagen igual que el código.
 COPY --chown=node:node knowledge ./knowledge
