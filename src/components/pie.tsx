@@ -25,7 +25,15 @@ const PREGUNTAS = [
   },
 ];
 
-export function Pie({ github, ano }: { github?: string; ano: number }) {
+export function Pie({
+  github,
+  linkedin,
+  ano,
+}: {
+  github?: string;
+  linkedin?: string;
+  ano: number;
+}) {
   return (
     <footer className="mt-20 border-t border-line pt-10">
       <h2 className="text-[15px] font-medium text-ink">Preguntas frecuentes</h2>
@@ -50,6 +58,17 @@ export function Pie({ github, ano }: { github?: string; ano: number }) {
           <Link href="/#asistente" className="transition-colors hover:text-ink-muted">
             Preguntar al asistente
           </Link>
+          {linkedin ? (
+            <a
+              href={linkedin}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="transition-colors hover:text-ink-muted"
+            >
+              LinkedIn
+            </a>
+          ) : null}
+
           {github ? (
             <a
               href={github}

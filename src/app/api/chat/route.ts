@@ -9,7 +9,7 @@
  */
 import { NextResponse } from 'next/server';
 import { answerQuestion } from '@/lib/rag/answer';
-import { clientKeyFrom } from '@/lib/rag/limits';
+import { clientKeyOf } from '@/lib/site/visitante';
 
 // El modelo de embeddings carga binarios nativos de ONNX: necesita Node, no el
 // runtime Edge.
@@ -19,21 +19,6 @@ export const dynamic = 'force-dynamic';
 interface ChatBody {
   question?: unknown;
   conversationId?: unknown;
-}
-
-/**
- * Identifica al visitante detrás de Traefik.
- *
- * x-forwarded-for puede traer una cadena de proxies; el primer elemento es el
- * cliente original. Se toma solo ese y nunca se almacena: clientKeyFrom lo
- * convierte en un hash con sal, de modo que se puede contar cuántas preguntas
- * lleva alguien sin guardar quién es.
- */
-function clientKeyOf(request: Request): string {
-  const forwarded = request.headers.get('x-forwarded-for') ?? '';
-  const real = request.headers.get('x-real-ip') ?? '';
-  const ip = (forwarded.split(',')[0] ?? '').trim() || real.trim() || 'desconocido';
-  return clientKeyFrom(ip, request.headers.get('user-agent') ?? '');
 }
 
 export async function POST(request: Request): Promise<NextResponse> {

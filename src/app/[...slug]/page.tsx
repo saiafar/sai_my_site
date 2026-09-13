@@ -5,6 +5,7 @@ import { marked } from 'marked';
 import { BarraSuperior } from '@/components/barra-superior';
 import { Etiqueta } from '@/components/etiqueta';
 import { formatPeriod, getBySlug } from '@/lib/site/queries';
+import { ENLACES } from '@/lib/site/enlaces';
 
 /**
  * Ficha de detalle, común a proyectos, experiencias, tecnologías y notas.
@@ -17,7 +18,6 @@ import { formatPeriod, getBySlug } from '@/lib/site/queries';
  */
 export const dynamic = 'force-dynamic';
 
-const GITHUB = 'https://github.com/saiafar/sai_my_site';
 
 interface Props {
   params: Promise<{ slug: string[] }>;
@@ -53,7 +53,7 @@ export default async function Ficha({ params }: Props) {
 
   return (
     <>
-      <BarraSuperior github={GITHUB} />
+      <BarraSuperior github={ENLACES.github} linkedin={ENLACES.linkedin} />
 
       <main className="mx-auto max-w-lectura px-6 pb-24 pt-12">
         <Link

@@ -38,7 +38,10 @@ export interface LimitVerdict {
  * doble del límite en el instante del cambio de hora— es irrelevante cuando el
  * objetivo es frenar el abuso, no repartir cuota con precisión.
  */
-export async function checkRateLimit(clientKey: string): Promise<LimitVerdict> {
+export async function checkRateLimit(
+  clientKey: string,
+  limite = env.rateLimitPerHour,
+): Promise<LimitVerdict> {
   const rows = await query<{ hits: number }>(
     `insert into rate_limit_buckets (bucket_key, window_start, hits)
      values ($1, date_trunc('hour', now()), 1)
@@ -49,10 +52,10 @@ export async function checkRateLimit(clientKey: string): Promise<LimitVerdict> {
   );
 
   const hits = rows[0]?.hits ?? 0;
-  if (hits > env.rateLimitPerHour) {
+  if (hits > limite) {
     return {
       allowed: false,
-      reason: `Has alcanzado el límite de ${env.rateLimitPerHour} preguntas por hora. Inténtalo más tarde.`,
+      reason: `Has alcanzado el límite de ${limite} envíos por hora. Inténtalo más tarde.`,
     };
   }
   return { allowed: true };

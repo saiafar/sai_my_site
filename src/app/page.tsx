@@ -6,7 +6,9 @@ import { TarjetaProyecto, EntradaExperiencia } from '@/components/tarjetas';
 import { Etiqueta } from '@/components/etiqueta';
 import { Pie } from '@/components/pie';
 import { EscenaHero } from '@/components/escena-hero';
+import { FormularioContacto } from '@/components/formulario-contacto';
 import { getByKind, getStats, getTechnologies } from '@/lib/site/queries';
+import { ENLACES } from '@/lib/site/enlaces';
 import { env } from '@/lib/env';
 
 /**
@@ -19,7 +21,6 @@ import { env } from '@/lib/env';
  */
 export const dynamic = 'force-dynamic';
 
-const GITHUB = 'https://github.com/saiafar/sai_my_site';
 
 function plural(n: number, singular: string, plural: string): string {
   return `${n} ${n === 1 ? singular : plural}`;
@@ -39,7 +40,7 @@ export default async function Home() {
 
   return (
     <>
-      <BarraSuperior github={GITHUB} sobreImagen />
+      <BarraSuperior github={ENLACES.github} linkedin={ENLACES.linkedin} sobreImagen />
       <EscenaHero />
 
       {/* Sin JavaScript no hay nadie que actualice --p: la escena se queda en
@@ -226,7 +227,21 @@ export default async function Home() {
           </Seccion>
         ) : null}
 
-        <Pie github={GITHUB} ano={new Date().getFullYear()} />
+        {/* Llamada a la acción. Va al final del contenido y no antes: quien
+            llega hasta aquí ya ha visto la trayectoria y los proyectos, así que
+            es el punto donde el mensaje cuesta menos de escribir. El botón de
+            la barra superior cubre a quien lo decide antes. */}
+        <Seccion
+          id="contacto"
+          titulo="Hablemos"
+          descripcion="Escríbeme y te respondo. Si prefieres verlo antes por tu cuenta, el asistente responde a cualquier pregunta sobre mi trayectoria."
+        >
+          <div data-aparecer>
+            <FormularioContacto />
+          </div>
+        </Seccion>
+
+        <Pie github={ENLACES.github} linkedin={ENLACES.linkedin} ano={new Date().getFullYear()} />
       </main>
     </>
   );

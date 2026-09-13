@@ -4,6 +4,7 @@ const ENLACES = [
   { texto: 'Proyectos', href: '/#proyectos' },
   { texto: 'Experiencia', href: '/#experiencia' },
   { texto: 'Stack', href: '/#stack' },
+  { texto: 'Preguntar', href: '/#asistente' },
 ];
 
 /**
@@ -15,9 +16,11 @@ const ENLACES = [
  */
 export function BarraSuperior({
   github,
+  linkedin,
   sobreImagen = false,
 }: {
   github?: string;
+  linkedin?: string;
   /**
    * La barra empieza transparente, sobre la imagen del hero, y recupera su fondo
    * al hacer scroll. Solo en la portada: escena-hero.tsx es quien actualiza --p.
@@ -54,22 +57,42 @@ export function BarraSuperior({
             </Link>
           ))}
 
+          {/* LinkedIn se mantiene visible también en móvil, donde el resto de
+              enlaces se ocultan: de las dos salidas del sitio, es la que busca
+              quien viene a valorar un perfil. GitHub queda para pantallas
+              grandes. */}
+          {linkedin ? (
+            <a
+              href={linkedin}
+              target="_blank"
+              rel="noreferrer noopener"
+              className="transition-colors hover:text-ink"
+            >
+              LinkedIn
+            </a>
+          ) : null}
+
           {github ? (
             <a
               href={github}
               target="_blank"
               rel="noreferrer noopener"
-              className="transition-colors hover:text-ink"
+              className="hidden transition-colors hover:text-ink sm:inline"
             >
               GitHub
             </a>
           ) : null}
 
+          {/* El único elemento con contorno de la barra es la acción que
+              interesa que se pulse. Hasta ahora era preguntar al asistente,
+              que ocupa el hero entero y no necesita un atajo permanente; a
+              partir de aquí, contactar, que es lo que el sitio no ofrecía por
+              ninguna vía. */}
           <Link
-            href="/#asistente"
+            href="/#contacto"
             className="rounded-md border border-line-strong px-3 py-1.5 text-ink transition-colors hover:border-accent hover:text-accent"
           >
-            Preguntar
+            Contactar
           </Link>
         </div>
       </nav>
