@@ -5,7 +5,7 @@
       "pregunta": "¿qué experiencia tiene con PostgreSQL?",
       "esperado": [
         "experiencia/visados-empresas",
-        "proyectos/plataforma-rrhh-control-horario",
+        "proyectos/kronaly",
         "perfil/rafaias-villan"
       ]
     },
@@ -15,7 +15,7 @@
         "experiencia/visados-empresas",
         "proyectos/api-dte-sii-chile",
         "proyectos/presupuestos-facturacion-afip",
-        "proyectos/ecosistema-punto-de-venta",
+        "proyectos/local-conectado",
         "perfil/rafaias-villan"
       ]
     },
@@ -99,7 +99,7 @@
     {
       "pregunta": "¿qué hizo para aumentar las ventas de una empresa?",
       "esperado": [
-        "proyectos/ecosistema-punto-de-venta"
+        "proyectos/local-conectado"
       ]
     },
     {
@@ -117,7 +117,7 @@
     {
       "pregunta": "¿ha construido algo de recursos humanos o control horario?",
       "esperado": [
-        "proyectos/plataforma-rrhh-control-horario"
+        "proyectos/kronaly"
       ]
     },
     {
@@ -130,7 +130,7 @@
       "pregunta": "¿qué sabe de carteles digitales o digital signage?",
       "esperado": [
         "experiencia/imvinet",
-        "proyectos/ecosistema-punto-de-venta",
+        "proyectos/local-conectado",
         "experiencia/neo-sepelios"
       ]
     },
@@ -143,14 +143,14 @@
     {
       "pregunta": "¿ha trabajado en proyectos multi-tenant?",
       "esperado": [
-        "proyectos/plataforma-rrhh-control-horario"
+        "proyectos/kronaly"
       ]
     },
     {
       "pregunta": "¿cómo aborda el diseño de una arquitectura?",
       "esperado": [
         "perfil/rafaias-villan",
-        "proyectos/plataforma-rrhh-control-horario",
+        "proyectos/kronaly",
         "proyectos/sitio-personal-rag"
       ]
     },

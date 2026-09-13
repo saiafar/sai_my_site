@@ -30,11 +30,15 @@ despliegue, documentación y coordinación del equipo. No he trabajado nunca en 
 a mirar primero el proceso de negocio que hay detrás y solo después la pieza
 técnica que toca.
 
-Buena parte de mi trabajo ha consistido en entrar donde algo está roto y dejarlo
-funcionando: una emisión de facturas bloqueada por un módulo sin código fuente,
-un sistema nacional cuyo código se había perdido, unas webs atascadas en
-versiones antiguas por un tema abandonado, un ERP que no se podía tocar porque
-lo mantenía otro. Es un tipo de encargo que se resuelve más con criterio que con
+Buena parte de mi trabajo ha consistido en **modernizar sistemas heredados,
+automatizar procesos manuales y conectar herramientas que antes no se hablaban
+entre sí**. Dicho de otro modo: entrar donde algo está roto o anticuado y
+dejarlo funcionando.
+
+Una emisión de facturas bloqueada por un módulo sin código fuente, un sistema
+nacional cuyo código se había perdido, unas webs atascadas en versiones antiguas
+por un tema abandonado, un ERP que no se podía tocar porque lo mantenía otro
+proveedor. Es un tipo de encargo que se resuelve más con criterio que con
 tecnología.
 
 Cuando no sé algo lo digo, y al día siguiente probablemente ya lo sepa. He

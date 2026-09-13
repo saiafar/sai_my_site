@@ -3,112 +3,86 @@
 Este fichero empieza por `_`, así que la ingestión lo ignora: no llega a la base
 de datos y el asistente no puede citarlo. Es una lista de trabajo, no contenido.
 
-## Lo que hice y lo que no
+Actualizado el 12 de septiembre de 2026, después de incorporar tu relato
+completo de la trayectoria.
 
-Todo lo que hay en los documentos sale de tu perfil de LinkedIn. **No he
-inventado ni un dato**: ni una cifra, ni una tecnología, ni una decisión
-técnica. Lo que sí he hecho es sacarlo del registro de currículum y pasarlo a
-prosa llana, y agrupar por densidad de contenido —los proyectos de una sola
-línea están como secciones dentro de su experiencia, porque una ficha de tres
-frases se recupera mal y se lee peor.
+## Dónde estamos
 
-Donde LinkedIn dice «lideré», «logré» o «desarrollé» sin más, el documento dice
-eso y nada más. No he rellenado los huecos.
+El corpus ya no sale de LinkedIn. Son **12 etapas desde enero de 2007**, sin
+huecos, con tu formación y **16 fichas de proyecto**, escritas a partir de los
+documentos que redactaste. Lo que faltaba en la versión anterior —el porqué de
+cada decisión, lo que salió mal, el contexto real— está ahora en los
+documentos.
 
-## El problema de fondo
+Lo que queda es de otro tipo: cifras con denominador, algunas confirmaciones y
+mantenimiento del sistema.
 
-Un CV cuenta **qué** hiciste. Lo que distingue a un candidato en una
-conversación técnica es **por qué lo hiciste así**, y eso no está en LinkedIn
-porque LinkedIn no lo pide.
+## 1. Cifras que siguen sin denominador
 
-Ahora mismo, si alguien pregunta al asistente «¿cómo aborda el diseño de una
-arquitectura?», tiene poco que responder: hay hechos, pero casi ningún
-razonamiento. Las secciones que faltan son justo las que convierten el sitio en
-algo que no se puede replicar copiando tu perfil.
+Es lo que más rinde por palabra escrita. Una cifra sin base es peor que ninguna.
 
-## Lo que solo tú puedes escribir
+- **PortalWeb, el 70 % de mejora en la emisión de DTE.** Lo retiré de la ficha
+  porque en tus notas queda como «confirmar a qué se refería». Si recuerdas qué
+  medía —tiempo por documento, documentos rechazados, horas de soporte—, vuelve
+  con su base y es una cifra fuerte.
+- **NeoSepelios, el 50 % de aumento de ventas.** Está en la ficha descrito como
+  aproximado y de memoria. Si puedes acotar el periodo, gana mucho.
+- **El 60 % de PortalWeb** sí está y lo consideras sólido. Le falta el periodo:
+  ¿en cuánto tiempo?
+- **Volúmenes que tú mismo dejaste abiertos:** cuántas muestras al año movía
+  EVAL y cuántos centros enviaban, cuántas funerarias o pantallas usaban la
+  plataforma de NeoSepelios, cuántos comercios y balanzas llegó a haber en
+  PortalWeb, cuántas personas usaban Lucía, y si hay alguna cifra real del
+  embudo comercial (contactos al mes, citas generadas).
 
-Para cada proyecto con ficha propia, tres cosas:
+## 2. Confirmaciones menores
 
-1. **Qué alternativa descartaste y por qué.** Es lo más valioso que puedes
-   escribir. «Elegí Laravel» no dice nada; «elegí Laravel sobre X porque el
-   equipo ya lo conocía y el plazo era de seis semanas» dice cómo decides.
-2. **Qué salió mal.** Lo que costó más de lo previsto, lo que hubo que rehacer,
-   lo que aprendiste a la fuerza. Un CV miente por omisión aquí, y es
-   exactamente donde este formato te diferencia.
-3. **Números concretos.** Volúmenes, tiempos, usuarios, coste. Ya tienes tres
-   cifras buenas (60 %, 70 %, 50 %); les falta el denominador. ¿60 % sobre qué
-   base y en cuánto tiempo?
+Están en las «preguntas pendientes» de tus propias fichas. Ninguna bloquea nada,
+pero cada una que resuelvas hace el corpus más difícil de rebatir:
 
-## Preguntas por documento
+- Cómo implementaste los exámenes configurables de EVAL (¿tablas de definición
+  por examen, fórmulas guardadas como expresiones?) y cuándo entró en
+  producción.
+- Cada cuánto consultaba la API el agente Java de ACO, y si los reproductores
+  eran Windows o Linux.
+- Con qué se comunicaban la aplicación de caja y la pantalla en el gestor de
+  colas de Farmatodo.
+- Qué base de datos usaba Local Conectado en el servidor, y para qué la SQLite
+  de la balanza.
+- Cuántas personas tenía el grupo Cucalón Estévez en total.
 
-**plataforma-rrhh-control-horario** — ¿Cuántos empleados y cuántas entidades
-gestiona? ¿Por qué multi-tenant y no instalaciones separadas, más allá del
-coste? ¿Qué te dio más problemas: el cálculo de jornada, las ausencias o la
-auditoría? ¿Qué hacía la empresa antes de tenerla?
+## 3. Material gráfico
 
-**cuadro-de-mando-holded** — ¿Qué preguntas de dirección no se podían responder
-antes? ¿Cuánto se tardaba en cuadrar los datos a mano? ¿Qué no encajaba entre
-Holded y el ERP y cómo lo resolviste?
+Las fichas no tienen una sola imagen. Tienes capturas y renders que valen mucho:
+los modelos 3D de la Balanza PW y el MultiPOS, los fotogramas de los vídeos
+promocionales, las pantallas de Chispa Sport y las de Kronaly.
 
-**recuperacion-sistema-yii** — Esta es tu mejor historia y está a medias.
-¿Cuánto código faltaba? ¿Cómo dedujiste lo que hacía? ¿Cuánto tardaste? ¿Qué
-pasaba mientras tanto con el inventario nacional? ¿Qué habrías hecho distinto?
+⚠️ **Las capturas de Kronaly muestran nombres y datos de otros empleados.** Hay
+que rehacerlas con datos de demostración antes de publicar ninguna.
 
-**ecosistema-punto-de-venta** — ¿60 % sobre qué cifra y en cuánto tiempo?
-¿Cuántos establecimientos lo usan? ¿Por qué Electron para la cartelera? ¿Qué
-falló al conectar con el POS?
+## 4. Mantenimiento del sistema
 
-**api-dte-sii-chile** — ¿70 % en qué unidad: minutos por documento, documentos
-por hora, tasa de error? ¿Cuál fue la parte difícil del SII? ¿Qué volumen de
-documentos maneja?
+- **Repasar las respuestas esperadas de `eval/questions.json`.** Se escribieron
+  con 8 documentos y ahora hay 29. Dos de los tres fallos actuales no son
+  fallos: a «¿qué experiencia tiene con PostgreSQL?» el sistema responde con
+  Softrain, Chispa Sport y este mismo sitio, que son fuentes correctas y no
+  estaban en la lista. Mientras no se repase, el recall mide de menos.
+- **Límite conocido:** «¿ha trabajado con hardware o electrónica?» no recupera
+  la ficha de la Balanza PW. La ficha es la primera del ranking léxico, pero el
+  modelo de embeddings —`multilingual-e5-small`, 384 dimensiones— no la
+  considera cercana, y la fusión premia a los fragmentos que aparecen en los dos
+  rankings. Se arreglaría con un modelo de embeddings mayor, no con más texto.
+- **Escribe pensando en cómo se busca.** Un nombre propio que no aparece escrito
+  no se puede encontrar: la búsqueda semántica no sabe qué es «Kronaly» y solo
+  el índice léxico puede encontrarlo. Hasta hoy, seis productos —EVAL, Kronaly,
+  Local Conectado, portalDS, Balanza PW y MultiPOS PW— no aparecían nombrados en
+  su propia ficha, y preguntar por ellos no los encontraba.
 
-**balanza-comercial-esp32** — ¿Llegó a venderse y cuántas unidades? ¿Qué
-problemas dio el hardware? ¿Por qué ESP32?
+## 5. Contenido que no existe todavía
 
-**presupuestos-facturacion-afip** — ¿Qué tamaño tenía el equipo que lideraste?
-¿Qué aprendiste liderando por primera vez?
-
-## Lo que falta por completo
-
-- **Visados Empresas**: la modernización de aplicaciones legacy, la
-  automatización con n8n y la integración de IA no tienen ficha porque no hay
-  material suficiente. Son tres de tus proyectos más actuales y más vendibles.
-- **`knowledge/tecnologias/`**: vacío. Un documento por tecnología sobre la que
-  tengas algo real que contar —PostgreSQL, Laravel, Docker, n8n— con cómo la
-  usas y qué opinas de ella tras años de uso.
-- **`knowledge/notas/`**: vacío. Decisiones técnicas y aprendizajes escritos al
-  detalle, sin proyecto asociado.
-
-## Nuevo, pendiente de aclarar
-
-**Estadísticas deportivas.** LinkedIn dice «béisbol y softbol» para el sistema
-de Estudio Creativo Saltamontes, pero después has mencionado **fútbol**. ¿Fue el
-mismo sistema ampliado, o un proyecto distinto? Si es distinto: ¿para quién,
-cuándo y con qué? De momento el documento de Saltamontes mantiene lo que decía
-el origen y no he añadido el fútbol a ningún sitio.
-
-**Instituto Nacional de Higiene.** Ya tiene ficha propia con lo que me contaste.
-Para completarla: ¿qué tamaño tenía «gigantesca» —filas, gigas, años de
-histórico—? ¿Qué base de datos era? ¿Qué se rompía por el volumen: las
-consultas, los informes, la carga? ¿Cómo lo resolviste? ¿Qué había antes,
-papel u otro sistema?
-
-**Señalización digital.** Aparece en tres etapas —IMVINET, Neo Sepelios y
-Portalweb— repartida entre documentos, sin una ficha que cuente la línea
-completa. Son quince años sobre el mismo problema y ahora mismo no se lee como
-tal.
-
-**Los proyectos que faltan.** Has dicho que son muchos más de ocho. Cuando los
-redactes, el criterio útil es: ficha propia solo si puedes escribir contexto,
-decisión y resultado; si solo da para tres frases, va como sección dentro de la
-experiencia que corresponda.
-
-## Cosas que verificar
-
-- «Más de 10 años» en tu perfil, pero las fechas suman desde febrero de 2009:
-  son más de quince. He usado las fechas, no la frase.
-- «openclaw» aparece como aptitud y no sé qué es, así que no lo he incluido en
-  ningún documento.
-- No he tocado formación ni certificaciones. Si quieres que aparezcan en el
-  sitio, dímelo y añado un documento.
+- **Notas técnicas.** La sección está vacía. Cualquier decisión que hayas tomado
+  y puedas explicar —por qué DDD en Kronaly, por qué embeddings en local, por
+  qué Dokploy y no otra cosa— es material que ningún otro candidato tiene.
+- **La etapa actual.** El sitio dice que la etapa en Cucalón Estévez terminó en
+  agosto de 2026 y no dice nada más. Cuando decidas cómo quieres presentar tu
+  situación, se añade en una línea del perfil.
