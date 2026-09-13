@@ -170,8 +170,42 @@ Ver `.env.deploy.example`.
 | Imagen y despliegue | Hecho, validado contra la base de datos real |
 | Panel de administración | Hecho |
 | Datos estructurados y tarjetas sociales | Hecho |
+| Integración con Gemini | Hecho, en capa de pago desde el 13/09/2026 |
+| `/api/chat` | Hecho |
+| Frontend Next.js | Hecho |
 | Base de conocimiento | En redacción |
-| Integración con Gemini | Pendiente |
-| `/api/chat` | Pendiente |
-| Frontend Next.js | Pendiente |
-| Automatización con n8n | Fase posterior |
+| Automatización con n8n | Reenvío del formulario hecho; el resto, fase posterior |
+
+## Siguientes pasos
+
+Por orden de impacto sobre el esfuerzo que cuestan.
+
+**CV descargable.** Hoy, quien quiera pasar el perfil a un compañero tiene que
+copiar la web. Es la fricción más barata de quitar.
+
+**Sección «cómo trabajo».** Cuatro o cinco principios, una línea cada uno. Es el
+hueco más grande de la portada y el material ya está escrito: el apartado «Cómo
+trabajo» del perfil y los comentarios de este repositorio son decisiones
+razonadas una detrás de otra. Es además donde encaja el trabajo diario con
+agentes de codificación, que en una lista de tecnologías es ruido y como forma de
+trabajar distingue.
+
+**Imágenes de los proyectos.** Lo que más nota se lleva y lo más costoso. Tiene
+una restricción propia: las capturas de Kronaly llevan datos de otros empleados y
+no pueden publicarse, así que hay que mirar ficha por ficha qué es publicable, o
+tirar de diagramas de arquitectura en lugar de capturas.
+
+### Dos hallazgos anotados, sin resolver
+
+**El arnés de evaluación puntúa por documento, no por fragmento.** `scripts/eval.ts`
+comprueba si el slug esperado está entre los recuperados, pero el modelo responde
+con el texto del fragmento: recuperar el documento correcto con el fragmento
+equivocado cuenta como acierto y produce un «no consta». El recall@5 mide, por
+tanto, algo más optimista de lo que el asistente puede responder.
+
+**Las secciones del perfil pierden contra los fragmentos de proyecto.** Observado
+tres veces al generar `/preguntas`: las del perfil son cortas y generales, y las
+de proyecto largas y densas en términos coincidentes. El arreglo que funcionó fue
+darle a cada hecho su propia sección con un encabezado que lo nombre — así pasó
+«diecinueve años de experiencia» de no estar entre los doce primeros a ser el
+primero en los dos rankings.
