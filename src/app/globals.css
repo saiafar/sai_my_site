@@ -254,32 +254,44 @@
 
 /* Telón del hero: la pila de capas y su desfase.
 
-   La caja de cada capa sobresale --holgura-parallax por arriba y por abajo del
-   telón, que recorta lo que sobra. Esa holgura es a la vez el margen para mover
-   una capa sin descubrir el borde de la imagen y el desplazamiento máximo de la
-   capa más lejana, así que por construcción ninguna puede dejar un hueco. Y
-   como todas comparten exactamente la misma caja, el recorte de object-fit:
-   cover es idéntico en todas y las capas siguen encajando entre sí.
+   --desfase-parallax es cuánto se separan entre sí, a lo largo del recorrido,
+   la capa más lejana y la más cercana. El movimiento se reparte alrededor del
+   punto medio: el fondo baja la mitad del desfase y el primer plano sube la
+   otra mitad, en lugar de bajar el fondo entero y dejar quieto el frente.
 
-   En móvil la holgura es menor: en vertical es el alto de la imagen el que
-   manda para cubrir la ventana, y cada svh de holgura es un poco más de aumento
-   sobre una imagen que ya se está recortando mucho por los lados. */
-.escena-telon { --holgura-parallax: 0px; }
-.escena-telon-parallax { --holgura-parallax: 6svh; }
+   Ese reparto no es un detalle de estilo, es lo que mantiene la imagen nítida.
+   La caja de cada capa tiene que sobresalir del telón lo que la capa vaya a
+   moverse, o al desplazarse descubriría su borde; y esa caja la rellena
+   object-fit: cover, así que cuanto más alta, más hay que ampliar una
+   ilustración que solo tiene 1672×941 px. Repartiendo el movimiento, la caja
+   crece la mitad para exactamente la misma separación entre capas.
+
+   Como todas las capas comparten la misma caja, el recorte de cover es idéntico
+   en todas y siguen encajando entre sí.
+
+   En móvil el desfase es menor: en vertical manda el alto de la imagen para
+   cubrir la ventana, y ahí cada svh se paga en aumento sobre una imagen que ya
+   se está recortando mucho por los lados. */
+.escena-telon { --desfase-parallax: 0px; }
+.escena-telon-parallax { --desfase-parallax: 6svh; }
 
 @media (min-width: 40rem) {
-  .escena-telon-parallax { --holgura-parallax: 10svh; }
+  .escena-telon-parallax { --desfase-parallax: 10svh; }
 }
 
 /* --profundidad va de 1 (el fondo) a 0 (el primer plano) y la escribe el
-   componente a partir del orden de las capas. El telón entero sube con la
-   página; bajar una capa mientras tanto es rezagarla, y cuanto más se rezaga,
-   más lejos parece estar. El primer plano no se desplaza nada: es la referencia
-   contra la que se miden las demás. */
+   componente a partir del orden de las capas. Restarle 0.5 es lo que centra el
+   reparto: el fondo se rezaga respecto a la página, el primer plano se adelanta
+   y la capa intermedia va con ella. Cuanto más se rezaga una capa, más lejos
+   parece estar. */
 .escena-capa {
   position: absolute;
-  inset: calc(-1 * var(--holgura-parallax)) 0;
-  transform: translate3d(0, calc(var(--holgura-parallax) * var(--profundidad, 0) * var(--p, 0)), 0);
+  inset: calc(-0.5 * var(--desfase-parallax)) 0;
+  transform: translate3d(
+    0,
+    calc(var(--desfase-parallax) * (var(--profundidad, 0.5) - 0.5) * var(--p, 0)),
+    0
+  );
 }
 
 @media (prefers-reduced-motion: reduce) {

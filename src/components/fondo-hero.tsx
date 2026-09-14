@@ -9,13 +9,13 @@ interface Capa {
 const capas = manifiesto as Capa[];
 
 /**
- * Holgura del parallax, en svh, y a la vez desplazamiento máximo de la capa
- * más lejana. Su valor real está en globals.css, con una media query; aquí se
- * repite la cota superior porque el cálculo de `sizes` necesita saber cuánto
- * más alta que la ventana se pinta la imagen, y pasarse por arriba solo hace
- * que un móvil descargue la variante siguiente.
+ * Cuánto se separan entre sí, en svh, la capa más lejana y la más cercana a lo
+ * largo del recorrido. Su valor real está en globals.css, con una media query;
+ * aquí se repite la cota superior porque el cálculo de `sizes` necesita saber
+ * cuánto más alta que la ventana se pinta la imagen, y pasarse por arriba solo
+ * hace que un móvil descargue la variante siguiente.
  */
-const HOLGURA_VH = 10;
+const DESFASE_VH = 10;
 
 function srcSet(capa: Capa, formato: string): string {
   return capa.variantes
@@ -61,7 +61,9 @@ export function FondoHero({ escena = 'atardecer' }: { escena?: string }) {
   // proporción de la imagen. Declarar "100vw" haría que un móvil en vertical
   // descargase la versión de 828 px y la estirase más de tres veces.
   const proporcion = `${fondo.ancho}/${fondo.alto}`;
-  const alturaCaja = 104 + (parallax ? 2 * HOLGURA_VH : 0);
+  // El movimiento se reparte alrededor del punto medio, así que la caja crece
+  // el desfase una sola vez y no dos (ver .escena-capa en globals.css).
+  const alturaCaja = 104 + (parallax ? DESFASE_VH : 0);
   const alturaPintada = Math.ceil((fondo.ancho / fondo.alto) * alturaCaja);
   const sizes = `(max-aspect-ratio: ${proporcion}) ${alturaPintada}vh, 100vw`;
 
