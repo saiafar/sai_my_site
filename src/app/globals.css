@@ -252,8 +252,43 @@
   transform: translateY(calc((1 - var(--o-mov)) * 2rem));
 }
 
-/* Capas del fondo. --p no está definida fuera de la portada, de ahí los
-   valores por defecto. */
+/* Telón del hero: la pila de capas y su desfase.
+
+   La caja de cada capa sobresale --holgura-parallax por arriba y por abajo del
+   telón, que recorta lo que sobra. Esa holgura es a la vez el margen para mover
+   una capa sin descubrir el borde de la imagen y el desplazamiento máximo de la
+   capa más lejana, así que por construcción ninguna puede dejar un hueco. Y
+   como todas comparten exactamente la misma caja, el recorte de object-fit:
+   cover es idéntico en todas y las capas siguen encajando entre sí.
+
+   En móvil la holgura es menor: en vertical es el alto de la imagen el que
+   manda para cubrir la ventana, y cada svh de holgura es un poco más de aumento
+   sobre una imagen que ya se está recortando mucho por los lados. */
+.escena-telon { --holgura-parallax: 0px; }
+.escena-telon-parallax { --holgura-parallax: 6svh; }
+
+@media (min-width: 40rem) {
+  .escena-telon-parallax { --holgura-parallax: 10svh; }
+}
+
+/* --profundidad va de 1 (el fondo) a 0 (el primer plano) y la escribe el
+   componente a partir del orden de las capas. El telón entero sube con la
+   página; bajar una capa mientras tanto es rezagarla, y cuanto más se rezaga,
+   más lejos parece estar. El primer plano no se desplaza nada: es la referencia
+   contra la que se miden las demás. */
+.escena-capa {
+  position: absolute;
+  inset: calc(-1 * var(--holgura-parallax)) 0;
+  transform: translate3d(0, calc(var(--holgura-parallax) * var(--profundidad, 0) * var(--p, 0)), 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .escena-capa { transform: none; }
+}
+
+/* Velos que oscurecen el telón. Van por encima de todas las capas de imagen,
+   apilados por orden de documento. --p no está definida fuera de la portada, de
+   ahí los valores por defecto. */
 .escena-velo     { opacity: calc(0.15 + 0.45 * var(--p, 1)); }
 .escena-cierre   { opacity: var(--p, 1); }
 .escena-vineta   { opacity: calc(0.45 + 0.55 * var(--p, 1)); }

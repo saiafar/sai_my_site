@@ -93,6 +93,14 @@ mensaje queda marcado como pendiente para reintentarlo desde el panel. Un
 formulario que depende de que un servicio externo esté vivo pierde clientes sin
 enterarse.
 
+**El fondo del hero es una pila de capas, no una imagen.** Cada fichero de
+`assets/fondos/<escena>/` lleva su profundidad en el nombre —`fondo-hero-0.png`
+es el telón y los siguientes van recortados encima—, y al hacer scroll cada capa se rezaga un
+poco más que la que tiene delante: esa diferencia de velocidad es todo lo que
+hay detrás de la sensación de relieve. El orden y el desfase se deducen del
+nombre del fichero, así que meter una capa intermedia es copiar un PNG y
+ejecutar `npm run assets`; no hay ninguna lista que mantener en el código.
+
 ## Comandos
 
 ```bash

@@ -1,7 +1,8 @@
 [
   {
     "escena": "atardecer",
-    "capa": "base",
+    "capa": "fondo-hero-0",
+    "orden": 0,
     "ancho": 1672,
     "alto": 941,
     "transparente": false,
@@ -9,40 +10,134 @@
       {
         "formato": "avif",
         "ancho": 1672,
-        "ruta": "/fondos/atardecer/base-1672.avif",
-        "bytes": 165135
+        "ruta": "/fondos/atardecer/fondo-hero-0-1672.avif",
+        "bytes": 120583
       },
       {
         "formato": "webp",
         "ancho": 1672,
-        "ruta": "/fondos/atardecer/base-1672.webp",
-        "bytes": 156314
+        "ruta": "/fondos/atardecer/fondo-hero-0-1672.webp",
+        "bytes": 119530
       },
       {
         "formato": "avif",
         "ancho": 1280,
-        "ruta": "/fondos/atardecer/base-1280.avif",
-        "bytes": 121384
+        "ruta": "/fondos/atardecer/fondo-hero-0-1280.avif",
+        "bytes": 90543
       },
       {
         "formato": "webp",
         "ancho": 1280,
-        "ruta": "/fondos/atardecer/base-1280.webp",
-        "bytes": 107120
+        "ruta": "/fondos/atardecer/fondo-hero-0-1280.webp",
+        "bytes": 82612
       },
       {
         "formato": "avif",
         "ancho": 828,
-        "ruta": "/fondos/atardecer/base-828.avif",
-        "bytes": 66934
+        "ruta": "/fondos/atardecer/fondo-hero-0-828.avif",
+        "bytes": 51696
       },
       {
         "formato": "webp",
         "ancho": 828,
-        "ruta": "/fondos/atardecer/base-828.webp",
-        "bytes": 53910
+        "ruta": "/fondos/atardecer/fondo-hero-0-828.webp",
+        "bytes": 43276
       }
     ],
-    "lqip": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAAAwBACdASoYAA4APu1iqk2ppaQiMAgBMB2JbACdACPq2proCoZ+5WUt8gAA/ulalYPss4JOy/LLgs8fLEqFZYe9vj/exkqtKHKOQR+3wfayXdBh860MY/WAVaP4G8cPAu/mKsqAAAA="
+    "lqip": "data:image/webp;base64,UklGRnIAAABXRUJQVlA4IGYAAACQBACdASoYAA4APu1iqk4ppaQiMAgBMB2JbACdMoMlyX/AIAHHqBwNJryTHgAA/qGj+YTstxV7GPL7tHllKoH+AzIWxJ9oK51krZ3mK3XJ4odjmIEaTVD2AmZI7CX1RheFS/ylxAA="
+  },
+  {
+    "escena": "atardecer",
+    "capa": "fondo-hero-1",
+    "orden": 1,
+    "ancho": 1672,
+    "alto": 941,
+    "transparente": true,
+    "variantes": [
+      {
+        "formato": "avif",
+        "ancho": 1672,
+        "ruta": "/fondos/atardecer/fondo-hero-1-1672.avif",
+        "bytes": 79800
+      },
+      {
+        "formato": "webp",
+        "ancho": 1672,
+        "ruta": "/fondos/atardecer/fondo-hero-1-1672.webp",
+        "bytes": 91022
+      },
+      {
+        "formato": "avif",
+        "ancho": 1280,
+        "ruta": "/fondos/atardecer/fondo-hero-1-1280.avif",
+        "bytes": 57841
+      },
+      {
+        "formato": "webp",
+        "ancho": 1280,
+        "ruta": "/fondos/atardecer/fondo-hero-1-1280.webp",
+        "bytes": 64340
+      },
+      {
+        "formato": "avif",
+        "ancho": 828,
+        "ruta": "/fondos/atardecer/fondo-hero-1-828.avif",
+        "bytes": 32216
+      },
+      {
+        "formato": "webp",
+        "ancho": 828,
+        "ruta": "/fondos/atardecer/fondo-hero-1-828.webp",
+        "bytes": 33012
+      }
+    ],
+    "lqip": "data:image/webp;base64,UklGRg4BAABXRUJQVlA4WAoAAAAQAAAAFwAADQAAQUxQSJUAAAANgCPbtmlrrftsG5Ha5J77vcz813d9/+jnETEB+I8J8S/8QoNBQEK/oEBFSnnzrBhAfUcYsVQ6nSynXCsUHr6upg8QUKrZKiTjhmlGciF3/tgs74IQr3ZbucCy396cRE4ahc3N4oZ0uVFPvz39QF8BdHPNzGGvZidlnV1JAggAjNQHNSniXl1JxM9EpNJrGSc3kIjfAgBWUDggUgAAADADAJ0BKhgADgA+7WSqTamlpCIwCAEwHYllAMiYMGGDCQAA/vB1ddcG4yqTg0Dlh+OdPnDrxwscwNSTYn90R8SYimyDGivIwMcJI02IRkmgAAA="
+  },
+  {
+    "escena": "atardecer",
+    "capa": "fondo-hero-2",
+    "orden": 2,
+    "ancho": 1672,
+    "alto": 941,
+    "transparente": true,
+    "variantes": [
+      {
+        "formato": "avif",
+        "ancho": 1672,
+        "ruta": "/fondos/atardecer/fondo-hero-2-1672.avif",
+        "bytes": 79925
+      },
+      {
+        "formato": "webp",
+        "ancho": 1672,
+        "ruta": "/fondos/atardecer/fondo-hero-2-1672.webp",
+        "bytes": 95916
+      },
+      {
+        "formato": "avif",
+        "ancho": 1280,
+        "ruta": "/fondos/atardecer/fondo-hero-2-1280.avif",
+        "bytes": 62273
+      },
+      {
+        "formato": "webp",
+        "ancho": 1280,
+        "ruta": "/fondos/atardecer/fondo-hero-2-1280.webp",
+        "bytes": 70272
+      },
+      {
+        "formato": "avif",
+        "ancho": 828,
+        "ruta": "/fondos/atardecer/fondo-hero-2-828.avif",
+        "bytes": 34491
+      },
+      {
+        "formato": "webp",
+        "ancho": 828,
+        "ruta": "/fondos/atardecer/fondo-hero-2-828.webp",
+        "bytes": 35622
+      }
+    ],
+    "lqip": "data:image/webp;base64,UklGRhIBAABXRUJQVlA4WAoAAAAQAAAAFwAADQAAQUxQSJwAAAANgF7btvFq79i2+SsNpIA0kd5tJ8/6sJ9dQERMAP5zfhcFgN9AVyJgIOwQ9DlGq1XfkzMUu3+kPiAAT7UTfXLwsbs/3FrQGwpw5erBJ8Nj233zPF7dEwCdTvqTecel5JR6Kf95ML+2yVg1bntixlJ4m43kMs7F6CaUKWQCtnF7eMT7DFTb2jMXxenOcWdI7xHwZSLBVOzh3hYl8T1WUDggUAAAAPADAJ0BKhgADgA+7WStTamlpKIwCAEwHYllAMssId+x9jx6oZ3GVYAA/vQZ8iOyjcDOtrQzpOlAU7sdxnA+/tiIh33dyM7yx0cjzFBpAAAA"
   }
 ]
