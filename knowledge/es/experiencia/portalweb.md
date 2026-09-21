@@ -11,7 +11,7 @@ visibilidad: public
 
 ## El puesto
 
-Cuatro años y tres meses, de octubre de 2018 a enero de 2023, en una empresa
+Cuatro años y tres meses, de octubre de 2018 a enero de 2023 (abarcando los años 2019, 2020, 2021 y 2022 completos), en una empresa
 chilena que ofrece a los comercios soluciones completas de punto de venta:
 software para cajas, balanzas con pantalla táctil, facturación y boleta
 electrónica, y soporte de software y hardware. En cada cliente se instalaba un

@@ -11,7 +11,7 @@ visibilidad: public
 
 ## The Role
 
-Two years and three months, from July 2016 to October 2018, with an Argentine digital signage software company specializing in funeral homes—a specialized niche that subsequently expanded into tablet-based sales and service management software for the same vertical.
+Two years and three months, from July 2016 to October 2018 (spanning the entire year of 2017), with an Argentine digital signage software company specializing in funeral homes—a specialized niche that subsequently expanded into tablet-based sales and service management software for the same vertical.
 
 I operated 100% remotely from Venezuela, reporting directly to the CEO and founder, who brought me on specifically due to my deep prior background in networked digital signage platforms.
 

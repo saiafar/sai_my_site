@@ -11,7 +11,7 @@ visibilidad: public
 
 ## El puesto
 
-Dos años y tres meses, de julio de 2016 a octubre de 2018, en una empresa
+Dos años y tres meses, de julio de 2016 a octubre de 2018 (abarcando todo el año 2017), en una empresa
 argentina de señalización digital especializada en funerarias, un nicho muy
 concreto que después amplió su oferta con software de ventas y gestión para ese
 mismo sector.

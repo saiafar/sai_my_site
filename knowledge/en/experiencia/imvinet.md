@@ -11,7 +11,7 @@ visibilidad: public
 
 ## The Role
 
-Two and a half years, from September 2010 to March 2013, with a Venezuelan digital signage company deploying remotely managed informative and commercial media displays across major enterprise clients, including food and beverage conglomerate Empresas Polar, nation-wide pharmacy chain Farmatodo (retail stores and logistics centers), and liquor store franchises across the country.
+Two and a half years, from September 2010 to March 2013 (spanning the years 2011 and 2012), with a Venezuelan digital signage company deploying remotely managed informative and commercial media displays across major enterprise clients, including food and beverage conglomerate Empresas Polar, nation-wide pharmacy chain Farmatodo (retail stores and logistics centers), and liquor store franchises across the country.
 
 My official title was Head of Technology Operations, functioning as Technical Lead: leading development sprints while actively writing code. The team began with two engineers and grew to three midway through my tenure. I reported directly to the company president and owner.
 

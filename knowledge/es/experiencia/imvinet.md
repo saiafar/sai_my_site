@@ -11,7 +11,7 @@ visibilidad: public
 
 ## El puesto
 
-Dos años y medio, de septiembre de 2010 a marzo de 2013, en una empresa
+Dos años y medio, de septiembre de 2010 a marzo de 2013 (abarcando los años 2011 y 2012 completos), en una empresa
 venezolana de señalización digital: pantallas con contenido informativo y
 publicitario gestionado a distancia, en clientes como Empresas Polar, las
 tiendas y el centro de distribución de Farmatodo y cadenas de licorerías de todo

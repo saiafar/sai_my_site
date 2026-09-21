@@ -11,7 +11,7 @@ visibilidad: public
 
 ## La etapa
 
-Tras cerrar el estudio seguí como freelance, entre 2014 y julio de 2016. El
+Tras cerrar el estudio seguí como freelance, entre 2014 y julio de 2016 (abarcando todo el año 2015). El
 proyecto principal fue Chispa Sport, que venía de ser cliente del estudio y que
 aquí evolucioné como arquitecto y desarrollador principal. Ese trabajo me abrió
 la puerta de los Leones del Caracas, y en la recta final trabajé también para

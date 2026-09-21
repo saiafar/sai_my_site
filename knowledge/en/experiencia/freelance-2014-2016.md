@@ -11,7 +11,7 @@ visibilidad: public
 
 ## The Period
 
-Following the closing of my creative studio, I continued independently as a freelance engineer from 2014 to July 2016. The central project was Chispa Sport, which had originated as a studio client and which I advanced as chief architect and lead engineer. That platform opened doors to collaborating with the professional baseball team Leones del Caracas, followed by custom theme engineering for a Colombian digital agency.
+Following the closing of my creative studio, I continued independently as a freelance engineer from 2014 to July 2016 (spanning the entire year of 2015). The central project was Chispa Sport, which had originated as a studio client and which I advanced as chief architect and lead engineer. That platform opened doors to collaborating with the professional baseball team Leones del Caracas, followed by custom theme engineering for a Colombian digital agency.
 
 This period also marked the beginning of a decade-long consistency: since 2014, with few brief exceptions, all of my professional engagements have been conducted remotely.
 

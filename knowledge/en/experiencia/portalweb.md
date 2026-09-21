@@ -11,7 +11,7 @@ visibilidad: public
 
 ## The Role
 
-Four years and three months, from October 2018 to January 2023, with a Chilean company delivering complete point-of-sale (POS) solutions to retailers: POS software, touchscreen computing scales, fiscal electronic invoicing, and full software and hardware maintenance. In every merchant location, a dedicated local PC server was deployed running the local database, to which cash registers and scale terminals connected.
+Four years and three months, from October 2018 to January 2023 (spanning the years 2019, 2020, 2021, and 2022), with a Chilean company delivering complete point-of-sale (POS) solutions to retailers: POS software, touchscreen computing scales, fiscal electronic invoicing, and full software and hardware maintenance. In every merchant location, a dedicated local PC server was deployed running the local database, to which cash registers and scale terminals connected.
 
 I worked 100% remotely from Venezuela, reporting directly to the owner. When I joined, the company comprised four people; one year prior to my departure, it had grown to twelve.
 

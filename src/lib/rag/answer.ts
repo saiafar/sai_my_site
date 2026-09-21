@@ -227,10 +227,16 @@ export async function answerQuestion(
   const turn = await nextTurn(conversationId);
   await persist(conversationId, turn, question, result);
 
-  // Solo se cachea si hubo contexto real. Cachear un «no consta» significaría
-  // que la respuesta seguiría siendo «no consta» después de escribir el
-  // documento que la resolvía.
-  if (context.used.length > 0) {
+  // Solo se cachea si hubo contexto real y la respuesta no es un «no consta».
+  // Cachear un «no consta» significaría que la respuesta seguiría siendo «no consta»
+  // después de escribir o mejorar el documento que la resolvía.
+  const isNoConsta =
+    result.answer.includes('no está recogido en la documentación') ||
+    result.answer.includes('not covered in the documentation') ||
+    result.answer.includes('no consta en la documentación') ||
+    result.answer.includes('not documented');
+
+  if (context.used.length > 0 && !isNoConsta && !result.refusalReason) {
     await query(
       `insert into response_cache (question_hash, question, answer, retrieval, model)
        values ($1,$2,$3,$4::jsonb,$5)

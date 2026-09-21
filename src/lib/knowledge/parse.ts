@@ -99,13 +99,32 @@ function toStringArray(value: unknown): string[] {
   return [];
 }
 
+function yearsBetween(startsOn: string | null, endsOn: string | null): number[] {
+  if (!startsOn) return [];
+  const startYear = parseInt(startsOn.slice(0, 4), 10);
+  if (Number.isNaN(startYear)) return [];
+  const endYear = endsOn ? parseInt(endsOn.slice(0, 4), 10) : startYear;
+  if (Number.isNaN(endYear) || endYear < startYear) return [startYear];
+  const maxYear = Math.min(endYear, startYear + 30);
+  const years: number[] = [];
+  for (let y = startYear; y <= maxYear; y++) {
+    years.push(y);
+  }
+  return years;
+}
+
 /**
  * Divide el cuerpo en secciones y devuelve los fragmentos.
  * Se trabaja con los desplazamientos del AST y se rebana el Markdown original,
  * en lugar de reserializar el árbol: así el texto citado al usuario es
  * exactamente el que él escribió, con su formato intacto.
  */
-function chunkBody(body: string, title: string, lang: 'es' | 'en'): ParsedChunk[] {
+function chunkBody(
+  body: string,
+  title: string,
+  lang: 'es' | 'en',
+  years: number[] = [],
+): ParsedChunk[] {
   const tree = unified().use(remarkParse).parse(body) as Root;
   const nodes = tree.children;
 
@@ -177,8 +196,9 @@ function chunkBody(body: string, title: string, lang: 'es' | 'en'): ParsedChunk[
     merged.push({ ...piece });
   }
 
+  const yearsTag = years.length > 0 ? ` (${years.join(', ')})` : '';
   return merged.map((piece, index) => {
-    const breadcrumb = [title, ...piece.headingPath].join(' > ');
+    const breadcrumb = [title + yearsTag, ...piece.headingPath].join(' > ');
     const embedInput = `${breadcrumb}\n\n${piece.content}`;
     return {
       ordinal: index,
@@ -256,6 +276,9 @@ export function parseDocument(sourcePath: string, raw: string): ParsedDocument {
   const canonicalSlug = [canonicalFolder, ...pathSegments.slice(1)].join('/');
   const finalSlug = typeof meta['slug'] === 'string' ? (meta['slug'] as string).trim() : canonicalSlug;
 
+  const startsOn = toDate(meta['inicio'] ?? meta['start']);
+  const endsOn = toDate(meta['fin'] ?? meta['end']);
+
   return {
     slug: finalSlug,
     sourcePath,
@@ -266,11 +289,11 @@ export function parseDocument(sourcePath: string, raw: string): ParsedDocument {
     body,
     metadata: meta,
     visibility,
-    startsOn: toDate(meta['inicio'] ?? meta['start']),
-    endsOn: toDate(meta['fin'] ?? meta['end']),
+    startsOn,
+    endsOn,
     technologies: toStringArray(meta['tecnologias'] ?? meta['technologies']),
     links,
     contentHash: sha256(raw),
-    chunks: chunkBody(body, title, lang),
+    chunks: chunkBody(body, title, lang, yearsBetween(startsOn, endsOn)),
   };
 }
