@@ -1,6 +1,6 @@
 ---
 title: Rafaías Villán Salazar
-summary: "Responsable de sistemas de información con diecinueve años en tecnología: desarrollo full stack, arquitectura, infraestructura, soporte y automatización con IA."
+summary: "Ingeniero de software, desarrollador full stack y responsable de sistemas de información con diecinueve años en tecnología: arquitectura, desarrollo web, infraestructura, soporte y automatización con IA."
 titular: "Convierto la visión de un negocio en un sistema que funciona."
 subtitulo: "Del concepto y el análisis hasta la última pieza, con la tecnología que pida el problema."
 # Cifras del hero. Son afirmaciones de carrera, no recuentos del corpus: los
@@ -19,7 +19,7 @@ visibilidad: public
 
 ## Quién soy
 
-Rafaías Villán Salazar. Vivo en La Coruña, Galicia, y trabajo en remoto desde hace 13 años.
+Rafaías Villán Salazar. Desarrollador full stack e ingeniero de software. Vivo en La Coruña, Galicia, y trabajo en remoto desde hace 13 años.
 
 Entre enero de 2025 y agosto de 2026 fui responsable corporativo de sistemas de
 información de un grupo de cuatro empresas de movilidad internacional en España,
@@ -57,9 +57,9 @@ tecnología.
 Cuando no sé algo lo digo, y al día siguiente probablemente ya lo sepa. He
 aprendido C#, Yii y Angular sobre la marcha, con el proyecto en curso.
 
-## Con qué trabajo habitualmente
+## Tecnologías y stack habitual
 
-PHP y Laravel es donde tengo más recorrido: aparece en prácticamente todas mis
+Las tecnologías con las que trabajo habitualmente y donde tengo más recorrido son PHP y Laravel: aparece en prácticamente todas mis
 etapas desde 2007. En el lado del cliente, JavaScript y TypeScript con React, y
 Node.js en servidor. Bases de datos relacionales —PostgreSQL, MySQL y MariaDB—,
 Linux y Docker para infraestructura, y APIs REST para integrar.

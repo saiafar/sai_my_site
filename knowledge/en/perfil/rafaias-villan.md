@@ -1,6 +1,6 @@
 ---
 title: Rafaías Villán Salazar
-summary: "Head of information systems with nineteen years in technology: full stack development, architecture, infrastructure, support, and AI automation."
+summary: "Software engineer, full stack developer, and head of information systems with nineteen years in technology: architecture, web development, infrastructure, support, and AI automation."
 titular: "Turning business vision into working systems."
 subtitulo: "From concept and analysis to the final component, using the technology required by the problem."
 # Hero stats. Career statements, not corpus counts.
@@ -16,7 +16,7 @@ visibilidad: public
 
 ## Who I am
 
-Rafaías Villán Salazar. I live in A Coruña, Galicia (Spain), and work remotely.
+Rafaías Villán Salazar. Full stack developer and software engineer. I live in A Coruña, Galicia (Spain), and work remotely.
 
 Between January 2025 and August 2026, I served as Corporate Head of Information Systems for a group of four international mobility companies in Spain, overseeing all technology operations.
 
@@ -36,9 +36,9 @@ Invoice generation blocked by a module lacking source code, a national system wh
 
 When I do not know something, I say so directly, and the next day I usually understand it. I learned C#, Yii, and Angular on the fly during active projects.
 
-## What I work with regularly
+## Technologies and Core Stack
 
-PHP and Laravel represent my deepest background, present in almost every stage of my career since 2007. On the client side, JavaScript and TypeScript with React, and Node.js on the server. Relational databases—PostgreSQL, MySQL, and MariaDB—along with Linux and Docker for infrastructure, and REST APIs for integrations.
+The core technologies and tools I work with regularly and have the deepest background in are PHP and Laravel, present in almost every stage of my career since 2007. On the client side, JavaScript and TypeScript with React, and Node.js on the server. Relational databases—PostgreSQL, MySQL, and MariaDB—along with Linux and Docker for infrastructure, and REST APIs for integrations.
 
 In recent years, I have incorporated automation with n8n, generative models, and AI agents connected to real corporate systems, utilizing semantic search and locally generated embeddings.
 
