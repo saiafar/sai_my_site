@@ -70,9 +70,9 @@ async function upsertDocument(client: PoolClient, doc: ParsedDocument): Promise<
   const { rows } = await client.query<{ id: string }>(
     `insert into documents
        (slug, source_path, kind, title, summary, body, metadata, visibility,
-        starts_on, ends_on, content_hash)
-     values ($1,$2,$3,$4,$5,$6,$7::jsonb,$8,$9,$10,$11)
-     on conflict (slug) do update set
+        starts_on, ends_on, content_hash, lang)
+     values ($1,$2,$3,$4,$5,$6,$7::jsonb,$8,$9,$10,$11,$12)
+     on conflict (slug, lang) do update set
        source_path  = excluded.source_path,
        kind         = excluded.kind,
        title        = excluded.title,
@@ -89,6 +89,7 @@ async function upsertDocument(client: PoolClient, doc: ParsedDocument): Promise<
     [
       doc.slug, doc.sourcePath, doc.kind, doc.title, doc.summary, doc.body,
       JSON.stringify(doc.metadata), doc.visibility, doc.startsOn, doc.endsOn, doc.contentHash,
+      doc.lang,
     ],
   );
   return Number(rows[0]!.id);
@@ -152,11 +153,11 @@ async function syncChunks(
     await client.query(
       `insert into chunks
          (document_id, ordinal, heading_path, content, embed_input, char_count,
-          content_hash, embedding, embedded_with, embedded_at)
-       values ($1,$2,$3,$4,$5,$6,$7,$8::vector,$9, now())`,
+          content_hash, embedding, embedded_with, embedded_at, lang)
+       values ($1,$2,$3,$4,$5,$6,$7,$8::vector,$9, now(), $10)`,
       [
         documentId, chunk.ordinal, chunk.headingPath, chunk.content, chunk.embedInput,
-        chunk.content.length, chunk.contentHash, literal, modelId,
+        chunk.content.length, chunk.contentHash, literal, modelId, doc.lang,
       ],
     );
   }
@@ -168,21 +169,21 @@ async function syncLinks(documents: ParsedDocument[]): Promise<number> {
   // Segunda pasada: los enlaces solo pueden resolverse cuando todos los
   // documentos existen, porque un documento puede apuntar a otro posterior.
   const ids = new Map(
-    (await query<{ id: string; slug: string }>('select id, slug from documents'))
-      .map((row) => [row.slug, Number(row.id)]),
+    (await query<{ id: string; slug: string; lang: string }>('select id, slug, lang from documents'))
+      .map((row) => [`${row.lang}:${row.slug}`, Number(row.id)]),
   );
 
   return transaction(async (client) => {
     await client.query('delete from document_links');
     let created = 0;
     for (const doc of documents) {
-      const sourceId = ids.get(doc.slug);
+      const sourceId = ids.get(`${doc.lang}:${doc.slug}`);
       if (sourceId === undefined) continue;
       for (const link of doc.links) {
-        const targetId = ids.get(link.targetSlug);
+        const targetId = ids.get(`${doc.lang}:${link.targetSlug}`);
         if (targetId === undefined) {
           console.warn(
-            `  !  ${doc.slug}: el enlace "${link.targetSlug}" no corresponde a ningún documento.`,
+            `  !  [${doc.lang}] ${doc.slug}: el enlace "${link.targetSlug}" no corresponde a ningún documento.`,
           );
           continue;
         }
@@ -220,21 +221,28 @@ async function main(): Promise<void> {
   }
 
   const existing = new Map(
-    (await query<{ slug: string; content_hash: string }>(
-      'select slug, content_hash from documents',
-    )).map((row) => [row.slug, row.content_hash]),
+    (await query<{ slug: string; lang: string; content_hash: string }>(
+      'select slug, lang, content_hash from documents',
+    )).map((row) => [`${row.lang}:${row.slug}`, row.content_hash]),
   );
 
-  const changed = parsed.filter((doc) => force || existing.get(doc.slug) !== doc.contentHash);
-  const orphans = [...existing.keys()].filter((slug) => !parsed.some((d) => d.slug === slug));
+  const changed = parsed.filter(
+    (doc) => force || existing.get(`${doc.lang}:${doc.slug}`) !== doc.contentHash,
+  );
+  const orphans = [...existing.keys()].filter(
+    (key) => !parsed.some((d) => `${d.lang}:${d.slug}` === key),
+  );
 
   if (dryRun) {
     console.log('Plan (--dry, no se escribe nada):');
     for (const doc of parsed) {
-      const state = changed.includes(doc) ? (existing.has(doc.slug) ? 'MODIFICADO' : 'NUEVO') : 'sin cambios';
-      console.log(`  ${state.padEnd(11)} ${doc.slug}  (${doc.chunks.length} fragmentos)`);
+      const key = `${doc.lang}:${doc.slug}`;
+      const state = changed.includes(doc)
+        ? (existing.has(key) ? 'MODIFICADO' : 'NUEVO')
+        : 'sin cambios';
+      console.log(`  ${state.padEnd(11)} [${doc.lang}] ${doc.slug}  (${doc.chunks.length} fragmentos)`);
     }
-    for (const slug of orphans) console.log(`  ELIMINADO   ${slug}`);
+    for (const key of orphans) console.log(`  ELIMINADO   ${key}`);
     return;
   }
 
@@ -251,7 +259,7 @@ async function main(): Promise<void> {
   try {
     for (const doc of parsed) {
       if (!changed.includes(doc)) {
-        console.log(`  ·  ${doc.slug}`);
+        console.log(`  ·  [${doc.lang}] ${doc.slug}`);
         continue;
       }
       const result = await transaction(async (client) => {
@@ -262,7 +270,7 @@ async function main(): Promise<void> {
       chunksWritten += result.written;
       embeddingsMade += result.embedded;
       console.log(
-        `  ✓  ${doc.slug}  ${result.written} fragmentos, ` +
+        `  ✓  [${doc.lang}] ${doc.slug}  ${result.written} fragmentos, ` +
           `${result.embedded} vectorizados${result.embedded < result.written ? ' (resto reutilizado)' : ''}`,
       );
     }
@@ -282,14 +290,16 @@ async function main(): Promise<void> {
             `  al arrancar un contenedor cuya imagen lleva un corpus anterior.\n\n` +
             `  Si de verdad quieres borrarlos, repite con --allow-prune.\n\n` +
             `  Documentos afectados:\n` +
-            orphans.map((slug) => `    · ${slug}`).join('\n'),
+            orphans.map((key) => `    · ${key}`).join('\n'),
         );
         throw new Error('Borrado masivo detenido por seguridad.');
       }
 
-      for (const slug of orphans) {
-        await query('delete from documents where slug = $1', [slug]);
-        console.log(`  ✗  ${slug} (eliminado: ya no existe el fichero)`);
+      for (const key of orphans) {
+        const [lang, ...slugParts] = key.split(':');
+        const slug = slugParts.join(':');
+        await query('delete from documents where slug = $1 and lang = $2', [slug, lang]);
+        console.log(`  ✗  [${lang}] ${slug} (eliminado: ya no existe el fichero)`);
       }
     }
 

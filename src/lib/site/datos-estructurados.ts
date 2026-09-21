@@ -77,29 +77,26 @@ export function persona({ perfil, tecnologias, experiencias }: EntradaPersona): 
 }
 
 /** El sitio, con la Persona como autora. */
-export function sitioWeb(): Nodo {
+export function sitioWeb(lang: 'es' | 'en' = 'es'): Nodo {
   return {
     '@context': CONTEXTO,
     '@type': 'WebSite',
     '@id': ID_SITIO,
-    url: env.siteUrl,
-    name: `${env.siteOwner} — trayectoria profesional`,
-    inLanguage: 'es',
+    url: `${env.siteUrl}/${lang}`,
+    name:
+      lang === 'en'
+        ? `${env.siteOwner} — professional track record`
+        : `${env.siteOwner} — trayectoria profesional`,
+    inLanguage: lang,
     author: { '@id': ID_PERSONA },
   };
 }
 
 /**
  * Una ficha.
- *
- * Se emite `TechArticle` y no `SoftwareApplication` ni `CreativeWork` porque lo
- * que hay en la URL es, literalmente, un artículo técnico sobre un proyecto o
- * una etapa: tiene encabezados, cuerpo y autor. Declararlo como el software en
- * sí obligaría a inventar campos que no existen —versión, sistema operativo,
- * precio— y la mayoría de esas fichas no son software.
  */
-export function ficha(documento: SiteDocument): Nodo {
-  const url = `${env.siteUrl}/${documento.slug}`;
+export function ficha(documento: SiteDocument, lang: 'es' | 'en' = 'es'): Nodo {
+  const url = `${env.siteUrl}/${lang}/${documento.slug}`;
 
   return limpio({
     '@context': CONTEXTO,
@@ -109,11 +106,8 @@ export function ficha(documento: SiteDocument): Nodo {
     description: documento.summary ?? undefined,
     url,
     mainEntityOfPage: url,
-    inLanguage: 'es',
+    inLanguage: lang,
     author: { '@id': ID_PERSONA },
-    // datePublished es cuándo ocurrió lo que se cuenta; dateModified, cuándo se
-    // reingestó el texto. Son cosas distintas y conviene no confundirlas: la
-    // primera puede ser de 2013.
     datePublished: documento.startsOn ?? undefined,
     dateModified: iso(documento.updatedAt),
     keywords: documento.technologies.map((t) => t.name),
@@ -122,15 +116,16 @@ export function ficha(documento: SiteDocument): Nodo {
 }
 
 /** Migas de pan: Inicio → tipo → título. */
-export function migas(documento: SiteDocument): Nodo {
+export function migas(documento: SiteDocument, lang: 'es' | 'en' = 'es'): Nodo {
   const seccion = documento.slug.split('/')[0] ?? documento.kind;
+  const rootName = lang === 'en' ? 'Home' : 'Inicio';
 
   return {
     '@context': CONTEXTO,
     '@type': 'BreadcrumbList',
     itemListElement: [
-      { '@type': 'ListItem', position: 1, name: 'Inicio', item: env.siteUrl },
-      { '@type': 'ListItem', position: 2, name: seccion, item: `${env.siteUrl}/#${seccion}` },
+      { '@type': 'ListItem', position: 1, name: rootName, item: `${env.siteUrl}/${lang}` },
+      { '@type': 'ListItem', position: 2, name: seccion, item: `${env.siteUrl}/${lang}#${seccion}` },
       { '@type': 'ListItem', position: 3, name: documento.title },
     ],
   };
@@ -139,20 +134,27 @@ export function migas(documento: SiteDocument): Nodo {
 export interface PreguntaPublicada {
   pregunta: string;
   /** Respuesta en HTML, ya renderizada desde el Markdown. */
-  respuestaHtml: string;
+  respuestaHtml?: string;
+  respuesta?: string;
 }
 
-export function preguntasFrecuentes(entradas: readonly PreguntaPublicada[]): Nodo {
+export function preguntasFrecuentes(
+  entradas: readonly PreguntaPublicada[],
+  lang: 'es' | 'en' = 'es',
+): Nodo {
   return {
     '@context': CONTEXTO,
     '@type': 'FAQPage',
-    '@id': `${env.siteUrl}/preguntas#faq`,
-    inLanguage: 'es',
+    '@id': `${env.siteUrl}/${lang}/preguntas#faq`,
+    inLanguage: lang,
     isPartOf: { '@id': ID_SITIO },
     mainEntity: entradas.map((entrada) => ({
       '@type': 'Question',
       name: entrada.pregunta,
-      acceptedAnswer: { '@type': 'Answer', text: entrada.respuestaHtml },
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: entrada.respuestaHtml ?? entrada.respuesta ?? '',
+      },
     })),
   };
 }

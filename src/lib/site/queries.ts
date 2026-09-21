@@ -82,33 +82,42 @@ function toDocument(row: DocumentRow): SiteDocument {
   };
 }
 
-export async function getByKind(kind: SiteDocument['kind']): Promise<SiteDocument[]> {
+export async function getByKind(
+  kind: SiteDocument['kind'],
+  lang: 'es' | 'en' = 'es',
+): Promise<SiteDocument[]> {
   const rows = await query<DocumentRow>(
     `select ${DOCUMENT_FIELDS}
        from documents d
-      where d.visibility = 'public' and d.kind = $1
+      where d.visibility = 'public' and d.kind = $1 and d.lang = $2
       order by d.starts_on desc nulls last, d.title`,
-    [kind],
+    [kind, lang],
   );
   return rows.map(toDocument);
 }
 
-export async function getBySlug(slug: string): Promise<SiteDocument | null> {
+export async function getBySlug(
+  slug: string,
+  lang: 'es' | 'en' = 'es',
+): Promise<SiteDocument | null> {
   const rows = await query<DocumentRow>(
     `select ${DOCUMENT_FIELDS}
        from documents d
-      where d.visibility = 'public' and d.slug = $1`,
-    [slug],
+      where d.visibility = 'public' and d.slug = $1 and d.lang = $2`,
+    [slug, lang],
   );
   const row = rows[0];
   return row ? toDocument(row) : null;
 }
 
 /** Slugs publicados de un tipo, para generar las rutas estáticas. */
-export async function getSlugs(kind: SiteDocument['kind']): Promise<string[]> {
+export async function getSlugs(
+  kind: SiteDocument['kind'],
+  lang: 'es' | 'en' = 'es',
+): Promise<string[]> {
   const rows = await query<{ slug: string }>(
-    `select slug from documents where visibility = 'public' and kind = $1`,
-    [kind],
+    `select slug from documents where visibility = 'public' and kind = $1 and lang = $2`,
+    [kind, lang],
   );
   return rows.map((row) => row.slug);
 }
@@ -122,14 +131,15 @@ export interface TechnologyUsage extends Technology {
  * una lista alfabética trata igual a la herramienta sobre la que hay cinco
  * proyectos escritos y a la que se nombró una vez de pasada.
  */
-export async function getTechnologies(): Promise<TechnologyUsage[]> {
+export async function getTechnologies(lang: 'es' | 'en' = 'es'): Promise<TechnologyUsage[]> {
   const rows = await query<{ slug: string; name: string; category: string; n: string }>(
     `select t.slug, t.name, t.category, count(*)::text as n
        from technologies t
        join document_technologies dt on dt.technology_id = t.id
-       join documents d on d.id = dt.document_id and d.visibility = 'public'
+       join documents d on d.id = dt.document_id and d.visibility = 'public' and d.lang = $1
       group by t.slug, t.name, t.category
       order by count(*) desc, t.name`,
+    [lang],
   );
   return rows.map((row) => ({
     slug: row.slug,
@@ -149,23 +159,24 @@ export interface SiteStats {
   primerAno: number | null;
 }
 
-export async function getStats(): Promise<SiteStats> {
+export async function getStats(lang: 'es' | 'en' = 'es'): Promise<SiteStats> {
   const rows = await query<{
     proyectos: string; experiencias: string; tecnologias: string;
     notas: string; fragmentos: string; primer_ano: string | null;
   }>(
     `select
-       (select count(*) from documents where visibility='public' and kind='proyecto')::text     as proyectos,
-       (select count(*) from documents where visibility='public' and kind='experiencia')::text  as experiencias,
+       (select count(*) from documents where visibility='public' and kind='proyecto' and lang=$1)::text     as proyectos,
+       (select count(*) from documents where visibility='public' and kind='experiencia' and lang=$1)::text  as experiencias,
        (select count(distinct dt.technology_id)
           from document_technologies dt
-          join documents d on d.id = dt.document_id and d.visibility='public')::text            as tecnologias,
-       (select count(*) from documents where visibility='public' and kind='nota')::text         as notas,
+          join documents d on d.id = dt.document_id and d.visibility='public' and d.lang=$1)::text         as tecnologias,
+       (select count(*) from documents where visibility='public' and kind='nota' and lang=$1)::text        as notas,
        (select count(*) from chunks c
-          join documents d on d.id = c.document_id and d.visibility='public'
-         where c.embedding is not null)::text                                                   as fragmentos,
+          join documents d on d.id = c.document_id and d.visibility='public' and d.lang=$1
+         where c.embedding is not null)::text                                                              as fragmentos,
        (select extract(year from min(starts_on))::int
-          from documents where visibility='public' and starts_on is not null)::text             as primer_ano`,
+          from documents where visibility='public' and starts_on is not null and lang=$1)::text            as primer_ano`,
+    [lang],
   );
   const row = rows[0];
   return {
@@ -178,12 +189,18 @@ export async function getStats(): Promise<SiteStats> {
   };
 }
 
-/** Formatea el periodo de un documento: «abr 2023 — nov 2024», «desde 2023». */
-export function formatPeriod(startsOn: string | null, endsOn: string | null): string | null {
+/** Formatea el periodo de un documento: «abr 2023 — nov 2024», «desde 2023» o en inglés. */
+export function formatPeriod(
+  startsOn: string | null,
+  endsOn: string | null,
+  lang: 'es' | 'en' = 'es',
+): string | null {
   if (!startsOn) return null;
+  const locale = lang === 'en' ? 'en-US' : 'es-ES';
   const fmt = (iso: string) =>
-    new Intl.DateTimeFormat('es-ES', { month: 'short', year: 'numeric', timeZone: 'UTC' })
+    new Intl.DateTimeFormat(locale, { month: 'short', year: 'numeric', timeZone: 'UTC' })
       .format(new Date(iso))
       .replace('.', '');
-  return endsOn ? `${fmt(startsOn)} — ${fmt(endsOn)}` : `desde ${fmt(startsOn)}`;
+  if (endsOn) return `${fmt(startsOn)} — ${fmt(endsOn)}`;
+  return lang === 'en' ? `since ${fmt(startsOn)}` : `desde ${fmt(startsOn)}`;
 }

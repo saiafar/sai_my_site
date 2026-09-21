@@ -18,19 +18,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   if (!env.siteIndexable) return [];
 
   const base = env.siteUrl;
-  const documentos = await query<{ slug: string; updated_at: Date }>(
-    `select slug, updated_at from documents
+  const documentos = await query<{ slug: string; lang: string; updated_at: Date }>(
+    `select slug, lang, updated_at from documents
       where visibility = 'public' and kind <> 'perfil'
       order by updated_at desc`,
   );
 
   return [
-    { url: base, lastModified: documentos[0]?.updated_at ?? new Date(), priority: 1 },
-    // Las preguntas frecuentes no son un documento del corpus —viven en
-    // contenido/preguntas.md— así que hay que declararlas a mano.
-    { url: `${base}/preguntas`, lastModified: new Date(), priority: 0.8 },
+    { url: `${base}/es`, lastModified: documentos[0]?.updated_at ?? new Date(), priority: 1 },
+    { url: `${base}/en`, lastModified: documentos[0]?.updated_at ?? new Date(), priority: 1 },
+    { url: `${base}/es/preguntas`, lastModified: new Date(), priority: 0.8 },
+    { url: `${base}/en/preguntas`, lastModified: new Date(), priority: 0.8 },
     ...documentos.map((documento) => ({
-      url: `${base}/${documento.slug}`,
+      url: `${base}/${documento.lang}/${documento.slug}`,
       lastModified: documento.updated_at,
       priority: 0.7,
     })),

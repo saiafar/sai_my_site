@@ -1,23 +1,15 @@
 import Link from 'next/link';
-
-const ENLACES = [
-  { texto: 'Proyectos', href: '/#proyectos' },
-  { texto: 'Experiencia', href: '/#experiencia' },
-  { texto: 'Stack', href: '/#stack' },
-  { texto: 'Preguntar', href: '/#asistente' },
-];
+import { getDictionary, type Lang } from '@/lib/i18n';
 
 /**
- * Barra de navegación mínima.
- *
- * Deliberadamente discreta: en la referencia la navegación es texto pequeño y
- * apagado que no compite con el titular. El único elemento con contorno es la
- * acción que interesa que se pulse.
+ * Barra de navegación mínima con soporte multilingüe.
  */
 export function BarraSuperior({
   github,
   linkedin,
   sobreImagen = false,
+  lang = 'es',
+  currentSlug,
 }: {
   github?: string;
   linkedin?: string;
@@ -26,28 +18,37 @@ export function BarraSuperior({
    * al hacer scroll. Solo en la portada: escena-hero.tsx es quien actualiza --p.
    */
   sobreImagen?: boolean;
+  lang?: Lang;
+  currentSlug?: string;
 }) {
+  const dict = getDictionary(lang);
+  const otherLang = dict.otherLang;
+  const targetHref = currentSlug ? `/${otherLang}/${currentSlug}` : `/${otherLang}`;
+
+  const enlaces = [
+    { texto: dict.nav.projects, href: `/${lang}#proyectos` },
+    { texto: dict.nav.experience, href: `/${lang}#experiencia` },
+    { texto: dict.nav.stack, href: `/${lang}#stack` },
+    { texto: dict.nav.ask, href: `/${lang}#asistente` },
+  ];
+
   return (
     <header
       data-escena-barra={sobreImagen ? '' : undefined}
-      // Estado inicial en el propio HTML, para que el primer pintado ya salga
-      // transparente y no parpadee antes de que cargue el JavaScript.
       style={sobreImagen ? ({ '--p': 0 } as React.CSSProperties) : undefined}
       className="sticky top-0 z-50 h-[var(--altura-barra)]"
     >
-      {/* El fondo va en una capa propia para poder fundirlo con opacidad sin
-          apagar también los enlaces. */}
       <div
         aria-hidden
         className="barra-fondo absolute inset-0 border-b border-line/60 bg-ground/70 backdrop-blur-md"
       />
       <nav className="relative mx-auto flex h-full max-w-lectura items-center justify-between px-6">
-        <Link href="/" aria-label="Inicio" className="transition-opacity hover:opacity-80">
+        <Link href={`/${lang}`} aria-label={dict.nav.ask} className="transition-opacity hover:opacity-80">
           <img src="/logo.svg" alt="" width={24} height={24} className="size-6" />
         </Link>
 
-        <div className="flex items-center gap-5 text-xs text-ink-muted">
-          {ENLACES.map((enlace) => (
+        <div className="flex items-center gap-4 text-xs text-ink-muted sm:gap-5">
+          {enlaces.map((enlace) => (
             <Link
               key={enlace.href}
               href={enlace.href}
@@ -57,10 +58,6 @@ export function BarraSuperior({
             </Link>
           ))}
 
-          {/* LinkedIn se mantiene visible también en móvil, donde el resto de
-              enlaces se ocultan: de las dos salidas del sitio, es la que busca
-              quien viene a valorar un perfil. GitHub queda para pantallas
-              grandes. */}
           {linkedin ? (
             <a
               href={linkedin}
@@ -83,16 +80,20 @@ export function BarraSuperior({
             </a>
           ) : null}
 
-          {/* El único elemento con contorno de la barra es la acción que
-              interesa que se pulse. Hasta ahora era preguntar al asistente,
-              que ocupa el hero entero y no necesita un atajo permanente; a
-              partir de aquí, contactar, que es lo que el sitio no ofrecía por
-              ninguna vía. */}
           <Link
-            href="/#contacto"
+            href={`/${lang}#contacto`}
             className="rounded-md border border-line-strong px-3 py-1.5 text-ink transition-colors hover:border-accent hover:text-accent"
           >
-            Contactar
+            {dict.nav.contact}
+          </Link>
+
+          {/* Selector de idioma */}
+          <Link
+            href={targetHref}
+            aria-label={`Cambiar idioma a ${dict.otherLangLabel}`}
+            className="rounded border border-line px-2 py-1 text-[11px] font-semibold uppercase tracking-wider text-ink-muted transition-colors hover:border-accent hover:text-accent"
+          >
+            {dict.otherLangLabel}
           </Link>
         </div>
       </nav>

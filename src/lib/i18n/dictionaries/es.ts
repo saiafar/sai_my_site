@@ -1,0 +1,105 @@
+import type { Dictionary } from '../types.ts';
+
+export const es: Dictionary = {
+  lang: 'es',
+  langLabel: 'ES',
+  otherLang: 'en',
+  otherLangLabel: 'EN',
+  meta: {
+    title: 'Rafaías Villán — Desarrollo backend, datos e IA',
+    description:
+      'Trayectoria profesional consultable: pregunta en lenguaje natural sobre proyectos, tecnologías y decisiones técnicas.',
+  },
+  nav: {
+    projects: 'Proyectos',
+    experience: 'Experiencia',
+    stack: 'Stack',
+    ask: 'Preguntar',
+    contact: 'Contactar',
+    faq: 'Preguntas',
+  },
+  hero: {
+    fallbackSubtitle:
+      'Desarrollo backend, bases de datos e inteligencia artificial. Pregunta en lenguaje natural: el asistente responde con documentación real y cita de dónde sale cada dato.',
+  },
+  chat: {
+    prompt: 'Pregunta sobre proyectos, tecnologías o decisiones técnicas…',
+    placeholder: 'Escribe tu pregunta…',
+    submit: 'Preguntar',
+    disclaimer: 'Pregunta sobre la trayectoria profesional',
+    sourcesTitle: 'Fuentes citadas',
+    clear: 'preguntar otra cosa',
+    suggestions: [
+      '¿Qué experiencia tiene con PostgreSQL?',
+      '¿Qué retos técnicos ha afrontado?',
+      '¿Cómo aborda el diseño de una arquitectura?',
+      '¿En qué proyectos ha trabajado?',
+    ],
+    loading: 'Buscando en la documentación…',
+    empty: 'Sin resultados en la documentación.',
+    networkError: 'No se ha podido contactar con el asistente. Inténtalo de nuevo.',
+  },
+  sections: {
+    experience: {
+      title: 'Experiencia',
+      desc: 'Etapas profesionales, con lo que hice en cada una y con qué.',
+      singular: 'etapa',
+      plural: 'etapas',
+      empty: 'Todavía no hay experiencias en la base de conocimiento.',
+      seeMore: 'Ver las {n} etapas anteriores',
+    },
+    projects: {
+      title: 'Algunos proyectos',
+      desc: 'Cada ficha recoge el contexto, las decisiones técnicas y lo que salió mal.',
+      empty: 'Todavía no hay proyectos.',
+      seeMore: 'Ver los otros {n} proyectos',
+    },
+    stack: {
+      title: 'Stack',
+      desc: 'Ordenado por cuánto hay escrito sobre cada tecnología, no alfabéticamente: la lista dice sobre qué se puede preguntar de verdad.',
+      singular: 'tecnología',
+      plural: 'tecnologías',
+      empty: 'Las tecnologías se extraen del frontmatter de los documentos.',
+      seeMore: 'Ver las otras {n} tecnologías',
+    },
+    notes: {
+      title: 'Notas',
+      desc: 'Decisiones técnicas y aprendizajes escritos al detalle.',
+      singular: 'nota',
+      plural: 'notas',
+    },
+    contact: {
+      title: 'Cuéntame qué quieres construir.',
+      desc: 'Da igual si es un puesto, un encargo o una idea que todavía no tiene forma. Respondo siempre.',
+    },
+  },
+  contactForm: {
+    name: 'Nombre',
+    namePlaceholder: 'Cómo te llamas',
+    email: 'Correo electrónico',
+    emailPlaceholder: 'para poder responderte',
+    message: 'Mensaje',
+    messagePlaceholder: 'Qué necesitas, qué problema tienes o de qué va el puesto…',
+    submit: 'Enviar mensaje',
+    sending: 'Enviando…',
+    successTitle: 'Mensaje recibido.',
+    successDesc: 'Te responderé a la dirección indicada tan pronto como lo lea.',
+    errorRequired: 'Por favor, rellena todos los campos.',
+    errorEmail: 'Introduce un correo válido.',
+    errorGeneric: 'No se pudo enviar el mensaje. Inténtalo de nuevo en unos minutos.',
+    sendAnother: 'Enviar otro mensaje',
+  },
+  detail: {
+    back: 'Volver al inicio',
+    technologies: 'Tecnologías utilizadas',
+    role: 'Rol',
+    organization: 'Organización',
+    links: 'Documentos relacionados',
+    notFound: 'Documento no encontrado',
+    notFoundDesc: 'La ficha que buscas no existe o ha cambiado de dirección.',
+  },
+  footer: {
+    copy: 'Todos los derechos reservados.',
+    privacy: 'Sin cookies de rastreo invasivas.',
+  },
+};

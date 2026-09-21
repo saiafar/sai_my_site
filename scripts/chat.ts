@@ -39,7 +39,11 @@ function render(result: AnswerResult): void {
 }
 
 async function main(): Promise<void> {
-  const question = process.argv.slice(2).join(' ').trim();
+  const langIndex = process.argv.indexOf('--lang');
+  const lang: 'es' | 'en' =
+    langIndex !== -1 && process.argv[langIndex + 1] === 'en' ? 'en' : 'es';
+  const args = process.argv.slice(2).filter((arg, i, arr) => arg !== '--lang' && arr[i - 1] !== '--lang');
+  const question = args.join(' ').trim();
 
   if (!providerIsReal()) {
     console.log(
@@ -49,13 +53,13 @@ async function main(): Promise<void> {
   } else {
     const spent = await monthlySpendUsd();
     console.log(
-      `\n  Modelo ${env.geminiModel}  ·  gasto del mes: ` +
+      `\n  Modelo ${env.geminiModel} [${lang}]  ·  gasto del mes: ` +
         `${spent.toFixed(4)} $ de ${env.monthlyBudgetUsd} $\n`,
     );
   }
 
   if (question) {
-    render(await answerQuestion(question, { clientKey: CLIENT_KEY }));
+    render(await answerQuestion(question, { clientKey: CLIENT_KEY, lang }));
     return;
   }
 
@@ -64,12 +68,13 @@ async function main(): Promise<void> {
   const rl = createInterface({ input: process.stdin, output: process.stdout });
   let conversationId: string | undefined;
 
-  console.log('  Escribe tu pregunta. Línea vacía o Ctrl-C para salir.\n');
+  console.log(`  [${lang}] Escribe tu pregunta. Línea vacía o Ctrl-C para salir.\n`);
   for (;;) {
     const input = (await rl.question('  > ')).trim();
     if (!input) break;
     const result = await answerQuestion(input, {
       clientKey: CLIENT_KEY,
+      lang,
       ...(conversationId ? { conversationId } : {}),
     });
     render(result);

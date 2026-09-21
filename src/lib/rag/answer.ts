@@ -17,7 +17,7 @@ import { getLLMProvider } from '../llm/index.ts';
 import type { LLMUsage } from '../llm/types.ts';
 import { ZERO_USAGE } from '../llm/types.ts';
 import { retrieve, type RetrievedChunk } from './retrieve.ts';
-import { buildContext, buildUserMessage, SYSTEM_PROMPT } from './prompt.ts';
+import { buildContext, buildUserMessage, getSystemPrompt } from './prompt.ts';
 import { checkBudget, checkRateLimit, validateQuestion } from './limits.ts';
 
 export interface AnswerSource {
@@ -45,19 +45,18 @@ export interface AnswerOptions {
   conversationId?: string;
   userAgent?: string;
   matchCount?: number;
+  lang?: 'es' | 'en';
 }
 
-const PROMPT_FINGERPRINT = createHash('sha256').update(SYSTEM_PROMPT).digest('hex').slice(0, 16);
+function promptFingerprint(prompt: string): string {
+  return createHash('sha256').update(prompt).digest('hex').slice(0, 16);
+}
 
 /**
  * Clave de caché. Normaliza la pregunta para que las variantes triviales
- * («¿Qué experiencia tiene?» / «que experiencia tiene») compartan entrada, e
- * incluye el modelo y una huella del prompt del sistema: cambiar de modelo o de
- * instrucciones no debe servir respuestas generadas con los anteriores. Sin la
- * huella del prompt, un despliegue que corrige las instrucciones seguiría
- * sirviendo las respuestas viejas hasta el siguiente cambio del corpus.
+ * compartan entrada, e incluye el modelo, idioma y una huella del prompt del sistema.
  */
-function cacheKey(question: string, model: string): string {
+function cacheKey(question: string, model: string, systemPrompt: string, lang: string): string {
   const normalized = question
     .toLowerCase()
     .normalize('NFD')
@@ -65,7 +64,9 @@ function cacheKey(question: string, model: string): string {
     .replace(/[^\p{L}\p{N}\s]/gu, '')
     .replace(/\s+/g, ' ')
     .trim();
-  return createHash('sha256').update(`${model}|${PROMPT_FINGERPRINT}|${normalized}`).digest('hex');
+  return createHash('sha256')
+    .update(`${model}|${lang}|${promptFingerprint(systemPrompt)}|${normalized}`)
+    .digest('hex');
 }
 
 function sourcesFrom(chunks: readonly RetrievedChunk[]): AnswerSource[] {
@@ -160,20 +161,22 @@ export async function answerQuestion(
 ): Promise<AnswerResult> {
   const startedAt = Date.now();
   const provider = getLLMProvider();
+  const lang = options.lang ?? 'es';
+  const systemPrompt = getSystemPrompt(lang);
 
   // --- 1. Validación. Sin tocar la base de datos. -------------------------
   const valid = validateQuestion(question);
-  if (!valid.allowed) return refusal(valid.reason ?? 'Pregunta no válida.', startedAt);
+  if (!valid.allowed) return refusal(valid.reason ?? (lang === 'en' ? 'Invalid question.' : 'Pregunta no válida.'), startedAt);
 
   // --- 2. Límite por visitante. -------------------------------------------
   // Antes de la caché, no después: una respuesta cacheada no cuesta tokens,
   // pero sí una consulta a la base de datos, y un bucle contra la caché sigue
   // siendo una forma de tumbar el servicio.
   const rate = await checkRateLimit(options.clientKey);
-  if (!rate.allowed) return refusal(rate.reason ?? 'Demasiadas peticiones.', startedAt);
+  if (!rate.allowed) return refusal(rate.reason ?? (lang === 'en' ? 'Too many requests.' : 'Demasiadas peticiones.'), startedAt);
 
   // --- 3. Caché de respuestas. --------------------------------------------
-  const key = cacheKey(question, provider.id);
+  const key = cacheKey(question, provider.id, systemPrompt, lang);
   const cached = await query<{ answer: string; retrieval: AnswerSource[] | null }>(
     `update response_cache
        set hits = hits + 1, last_hit_at = now()
@@ -195,16 +198,16 @@ export async function answerQuestion(
 
   // --- 4. Presupuesto mensual. --------------------------------------------
   const budget = await checkBudget();
-  if (!budget.allowed) return refusal(budget.reason ?? 'Presupuesto agotado.', startedAt);
+  if (!budget.allowed) return refusal(budget.reason ?? (lang === 'en' ? 'Monthly budget exhausted.' : 'Presupuesto agotado.'), startedAt);
 
   // --- 5. Recuperación. ---------------------------------------------------
-  const chunks = await retrieve(question, { matchCount: options.matchCount ?? 6 });
+  const chunks = await retrieve(question, { matchCount: options.matchCount ?? 6, lang });
   const context = buildContext(chunks);
 
   // --- 6. Generación. Lo único que cuesta dinero. -------------------------
   const generated = await provider.generate({
-    system: SYSTEM_PROMPT,
-    user: buildUserMessage(question, context),
+    system: systemPrompt,
+    user: buildUserMessage(question, context, lang),
     maxOutputTokens: 1024,
   });
 

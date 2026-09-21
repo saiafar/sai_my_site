@@ -37,16 +37,16 @@ import { readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { env } from '../src/lib/env.ts';
 import { getLLMProvider, providerIsReal } from '../src/lib/llm/index.ts';
-import { buildContext, buildUserMessage, SYSTEM_PROMPT } from '../src/lib/rag/prompt.ts';
+import { buildContext, buildUserMessage, getSystemPrompt } from '../src/lib/rag/prompt.ts';
 import { retrieve, type RetrievedChunk } from '../src/lib/rag/retrieve.ts';
 import { closePool } from '../src/lib/db/index.ts';
 import {
   parsearPreguntas,
   serializarPreguntas,
-  RUTA_PREGUNTAS,
+  rutaPreguntas,
   type EntradaPregunta,
 } from '../src/lib/site/preguntas.ts';
-
+import type { Lang } from '../src/lib/i18n/types.ts';
 
 /**
  * Pausa entre llamadas.
@@ -62,22 +62,8 @@ const esperar = (ms: number): Promise<void> => new Promise((r) => setTimeout(r, 
 
 /**
  * Ajuste de voz para esta página, añadido al prompt del asistente.
- *
- * El prompt del asistente manda hablar de Rafaías en tercera persona, y para el
- * asistente es lo correcto: es un sistema hablando de alguien. Pero estas
- * respuestas se publican en su propia web, bajo su nombre, y ahí la tercera
- * persona suena a currículum escrito por otro.
- *
- * También se desactivan las coletillas sobre disponibilidad y expectativas
- * salariales. En una conversación tienen sentido —quien pregunta puede estar
- * tanteando una contratación—, pero apareciendo al final de una respuesta sobre
- * sectores, sin que nadie haya preguntado, suenan a la defensiva.
- *
- * Va como añadido y no como prompt aparte para que las reglas que de verdad
- * importan —no inventar, citar cada afirmación, admitir los huecos— sigan
- * siendo exactamente las mismas y en un único sitio.
  */
-const VOZ_DE_LA_PAGINA = `
+const VOZ_DE_LA_PAGINA_ES = `
 
 AJUSTE PARA ESTA PÁGINA
 Estas respuestas NO las lee un visitante en un chat: se publican en la página de preguntas frecuentes del propio sitio de ${env.siteOwner}, bajo su nombre y escritas por él.
@@ -88,70 +74,73 @@ No añadas avisos sobre disponibilidad, expectativas salariales ni datos de cont
 
 El resto de reglas siguen vigentes sin excepción, en especial no afirmar nada que no esté en los fragmentos y citar cada afirmación con su marcador.`;
 
-const PREAMBULO = `# Preguntas frecuentes
+const VOZ_DE_LA_PAGINA_EN = `
+
+PAGE ADJUSTMENT
+These answers are NOT read by a visitor in a chat: they are published on the FAQ page of ${env.siteOwner}'s own website, under his name and written by him.
+
+Therefore, overriding the third-person rule: write in FIRST PERSON singular —"I worked", "I designed", "I have nineteen years of experience". Do not write his name to refer to yourself or begin answers by naming him.
+
+Do not add notes about availability, salary expectations, or contact details unless the question is specifically about that: the page already has its own contact form.
+
+All other rules remain strictly in effect, especially making no claims not supported by the excerpts and citing every statement with its marker.`;
+
+const PREAMBULO_ES = `# Preguntas frecuentes
 
 Las respuestas salen de la misma base de conocimiento que consulta el asistente
 del sitio, y cada afirmación enlaza al documento que la respalda. Si lo que
 buscas no está aquí, pregúntaselo directamente al asistente en la portada.
 `;
 
+const PREAMBULO_EN = `# Frequently Asked Questions
+
+Answers are drawn from the same knowledge base consulted by the site's assistant,
+and each statement links to the supporting document. If what you're looking for
+isn't here, ask the assistant directly on the home page.
+`;
+
 /**
  * Genera una respuesta componiendo la recuperación y la generación del
  * asistente, sin pasar por answerQuestion().
- *
- * Esa función hace además tres cosas que aquí estorban: consume el límite por
- * visitante, escribe en response_cache y crea filas en conversations/messages.
- * Un generador de contenido no debe aparecer en el historial de consultas del
- * panel como si fuera una visita, ni gastar la cuota de alguien real.
  */
-async function generar(pregunta: string): Promise<string | null> {
-  // Diez preguntas amplias en lugar de veintiséis estrechas: cada una abarca
-  // ahora varios proyectos y etapas, así que se recuperan más fragmentos. El
-  // tope de contexto de buildContext sigue decidiendo cuántos caben.
-  const chunks = await retrieve(pregunta, { matchCount: 12 });
+async function generar(pregunta: string, lang: Lang): Promise<string | null> {
+  const chunks = await retrieve(pregunta, { matchCount: 12, lang });
   const contexto = buildContext(chunks);
 
   if (contexto.used.length === 0) return null;
 
+  const basePrompt = getSystemPrompt(lang);
+  const voiceAdjustment = lang === 'en' ? VOZ_DE_LA_PAGINA_EN : VOZ_DE_LA_PAGINA_ES;
+
   const { text } = await getLLMProvider().generate({
-    system: SYSTEM_PROMPT + VOZ_DE_LA_PAGINA,
+    system: basePrompt + voiceAdjustment,
     user: buildUserMessage(pregunta, contexto),
     maxOutputTokens: 1024,
   });
 
-  return enlazarCitas(text.trim(), contexto.used);
+  return enlazarCitas(text.trim(), contexto.used, lang);
 }
 
 /**
  * Convierte los marcadores de cita en enlaces a la ficha que respalda la frase.
- *
- * Es lo que hace la página útil para quien la lee y para quien la rastrea:
- * enlaces internos y una forma de comprobar cada afirmación, en lugar de un
- * número suelto sin destino.
- *
- * Se procesa el corchete entero y no cada número por separado porque el prompt
- * pide citar todas las fuentes de una frase, y el modelo las agrupa: escribe
- * «[1, 4]», no «[1][4]». Una sustitución de «[1]» por su enlace deja intactos
- * los agrupados, que era el veinte por ciento de las citas.
  */
-function enlazarCitas(texto: string, usados: readonly RetrievedChunk[]): string {
-  // El lookahead evita tocar algo que ya sea un enlace Markdown: sin él, un
-  // segundo pase convertiría «[1](/a)» en «[1](/a)(/a)».
+function enlazarCitas(texto: string, usados: readonly RetrievedChunk[], lang: Lang): string {
   return texto.replace(/\[([\d\s,;yY]+)\](?!\()/g, (completo, dentro: string) => {
     const numeros = (dentro.match(/\d+/g) ?? [])
       .map(Number)
       .filter((n) => n >= 1 && n <= usados.length);
 
-    // Un marcador fuera de rango es una alucinación del modelo sobre sus
-    // propias fuentes: se deja tal cual para que salte a la vista al revisar,
-    // en lugar de enlazar a un documento que no dice eso.
     if (numeros.length === 0) return completo;
 
-    return numeros.map((n) => `[${n}](/${usados[n - 1]!.slug})`).join(' ');
+    return numeros.map((n) => `[${n}](/${lang}/${usados[n - 1]!.slug})`).join(' ');
   });
 }
 
 async function main(): Promise<void> {
+  const langIndex = process.argv.indexOf('--lang');
+  const targetLang: Lang =
+    langIndex !== -1 && process.argv[langIndex + 1] === 'en' ? 'en' : 'es';
+
   if (!providerIsReal()) {
     throw new Error(
       'No hay GEMINI_API_KEY: el proveedor simulado devuelve texto de muestra.\n' +
@@ -159,21 +148,23 @@ async function main(): Promise<void> {
     );
   }
 
-  const existente = await readFile(RUTA_PREGUNTAS, 'utf8').catch(() => '');
+  const targetRuta = rutaPreguntas(targetLang);
+  const existente = await readFile(targetRuta, 'utf8').catch(() => '');
+  const preambuloPorDefecto = targetLang === 'en' ? PREAMBULO_EN : PREAMBULO_ES;
   const { preambulo, entradas } = existente
     ? parsearPreguntas(existente)
-    : { preambulo: PREAMBULO.trimEnd(), entradas: [] as EntradaPregunta[] };
+    : { preambulo: preambuloPorDefecto.trimEnd(), entradas: [] as EntradaPregunta[] };
 
   if (entradas.length === 0) {
     throw new Error(
-      `No hay preguntas en ${RUTA_PREGUNTAS}.\n` +
-        'Escríbelas como encabezados de nivel dos («## ¿…?») y vuelve a ejecutar:\n' +
+      `No hay preguntas en ${targetRuta}.\n` +
+        'Escríbelas como encabezados de nivel dos («## ...») y vuelve a ejecutar:\n' +
         'este script redacta respuestas, no decide qué se pregunta.',
     );
   }
 
   const guardar = (): Promise<void> =>
-    writeFile(RUTA_PREGUNTAS, serializarPreguntas({ preambulo, entradas }));
+    writeFile(targetRuta, serializarPreguntas({ preambulo, entradas }));
 
   let generadas = 0;
   let sinFuente = 0;
@@ -187,12 +178,8 @@ async function main(): Promise<void> {
 
     let respuesta: string | null;
     try {
-      respuesta = await generar(entrada.pregunta);
+      respuesta = await generar(entrada.pregunta, targetLang);
     } catch (error) {
-      // Se corta el recorrido pero se conserva lo generado hasta aquí: cada
-      // respuesta ha costado una llamada de pago, y perderlas por un fallo en
-      // la siguiente sería tirar ese trabajo. Volver a ejecutar el script
-      // retoma donde se quedó, porque solo rellena las que están vacías.
       interrumpido = error instanceof Error ? error.message : String(error);
       break;
     }
@@ -207,9 +194,6 @@ async function main(): Promise<void> {
     generadas += 1;
     console.log(`  ✓  [${indice + 1}/${entradas.length}] ${entrada.pregunta}`);
 
-    // Se guarda en cada vuelta, no al final. El fichero son unos kilobytes y
-    // esto convierte cualquier interrupción —un límite de cuota, un Ctrl-C— en
-    // una pausa en lugar de en una pérdida.
     await guardar();
   }
 
@@ -217,18 +201,18 @@ async function main(): Promise<void> {
 
   const yaEscritas = entradas.length - generadas - sinFuente;
   console.log(
-    `\n${entradas.length} preguntas: ${generadas} generadas, ` +
+    `\n[${targetLang}] ${entradas.length} preguntas: ${generadas} generadas, ` +
       `${yaEscritas} ya escritas (intactas), ${sinFuente} sin fuente.`,
   );
   if (interrumpido !== null) {
     console.log(
       `\nInterrumpido, pero lo generado está guardado:\n  ${interrumpido}\n` +
-        'Vuelve a ejecutar `npm run faq` para continuar donde se quedó.',
+        `Vuelve a ejecutar \`npm run faq -- --lang ${targetLang}\` para continuar donde se quedó.`,
     );
   }
   if (generadas > 0) {
     console.log(
-      '\nLEE contenido/preguntas.md antes de commitear. Son borradores: el texto\n' +
+      `\nLEE ${path.basename(targetRuta)} antes de commitear. Son borradores: el texto\n` +
         'es público y habla de tu trayectoria.',
     );
   }

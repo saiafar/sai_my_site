@@ -7,18 +7,19 @@ subtitulo: "Del concepto y el análisis hasta la última pieza, con la tecnolog�
 # proyectos documentados aquí son una selección, y el total real incluye webs a
 # medida y encargos pequeños que no tienen ficha propia.
 cifras:
-  - "19 años"
   - "+20 proyectos"
-  - "10 sectores"
+  - "+10 sectores"
   - "+30 tecnologías"
 inicio: 2007-01
+# Tecnologías destacadas en la vista inicial del Stack (el resto queda bajo «Ver más»).
+# También se puede definir una clave 'destacadas: [...]' si se desea una lista independiente.
 tecnologias: [php, laravel, javascript, typescript, react, nodejs, postgresql, mysql, linux, docker, api-rest, n8n, llm, agentes-ia]
 visibilidad: public
 ---
 
 ## Quién soy
 
-Rafaías Villán Salazar. Vivo en La Coruña, Galicia, y trabajo en remoto.
+Rafaías Villán Salazar. Vivo en La Coruña, Galicia, y trabajo en remoto desde hace 13 años.
 
 Entre enero de 2025 y agosto de 2026 fui responsable corporativo de sistemas de
 información de un grupo de cuatro empresas de movilidad internacional en España,

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { Etiqueta } from './etiqueta';
 import { formatPeriod, type SiteDocument } from '@/lib/site/queries';
+import type { Lang } from '@/lib/i18n';
 
 /** Cuántas etiquetas caben antes de que la fila deje de leerse. */
 const MAX_ETIQUETAS = 6;
@@ -29,13 +30,19 @@ function Etiquetas({ tecnologias }: { tecnologias: SiteDocument['technologies'] 
  * El resumen tiene sitio para una frase completa, que es lo que convierte la
  * tarjeta en algo informativo y no en un simple enlace con título.
  */
-export function TarjetaProyecto({ documento }: { documento: SiteDocument }) {
-  const periodo = formatPeriod(documento.startsOn, documento.endsOn);
+export function TarjetaProyecto({
+  documento,
+  lang = 'es',
+}: {
+  documento: SiteDocument;
+  lang?: Lang;
+}) {
+  const periodo = formatPeriod(documento.startsOn, documento.endsOn, lang);
   const rol = typeof documento.metadata['rol'] === 'string' ? documento.metadata['rol'] : null;
 
   return (
     <Link
-      href={`/${documento.slug}`}
+      href={`/${lang}/${documento.slug}`}
       className="group flex flex-col rounded-xl border border-line bg-surface p-5 transition-colors hover:border-line-strong"
     >
       <div className="flex items-start justify-between gap-3">
@@ -73,32 +80,23 @@ export function TarjetaProyecto({ documento }: { documento: SiteDocument }) {
 
 /**
  * Entrada de experiencia.
- *
- * En lista y no en rejilla: una trayectoria se lee en orden cronológico, y una
- * rejilla obliga a reconstruir mentalmente ese orden en zigzag. El periodo va
- * en una columna propia para que la secuencia se pueda recorrer de un vistazo
- * por el margen izquierdo.
  */
-export function EntradaExperiencia({ documento }: { documento: SiteDocument }) {
-  const periodo = formatPeriod(documento.startsOn, documento.endsOn);
+export function EntradaExperiencia({
+  documento,
+  lang = 'es',
+}: {
+  documento: SiteDocument;
+  lang?: Lang;
+}) {
+  const periodo = formatPeriod(documento.startsOn, documento.endsOn, lang);
   const organizacion =
     typeof documento.metadata['organizacion'] === 'string'
       ? documento.metadata['organizacion']
       : null;
 
-  /*
-   * La fila entera es el enlace, no solo el título: el destino es el mismo y un
-   * área de pulsación grande se acierta mejor con el pulgar. Se puede envolver
-   * sin más porque las etiquetas de tecnología son <span> y no enlaces; anidar
-   * un enlace dentro de otro sería HTML inválido.
-   *
-   * Hasta ahora estas entradas no enlazaban a ninguna parte, así que las doce
-   * fichas de experiencia existían, estaban en el sitemap y el asistente las
-   * citaba, pero desde la portada no había forma de llegar a ellas.
-   */
   return (
     <Link
-      href={`/${documento.slug}`}
+      href={`/${lang}/${documento.slug}`}
       className="group grid gap-x-6 gap-y-1 border-b border-line pb-6 last:border-0 sm:grid-cols-[9rem_1fr]"
     >
       <p className="pt-0.5 text-[11px] text-ink-faint">{periodo ?? '—'}</p>

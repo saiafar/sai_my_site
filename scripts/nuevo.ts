@@ -142,15 +142,26 @@ function frontmatter(tipo: Tipo, titulo: string): string {
 }
 
 async function main(): Promise<void> {
-  const [tipoBruto, ...resto] = process.argv.slice(2);
+  const langIndex = process.argv.indexOf('--lang');
+  let lang = 'es';
+  if (langIndex !== -1 && process.argv[langIndex + 1]) {
+    lang = process.argv[langIndex + 1] === 'en' ? 'en' : 'es';
+  }
+
+  const argsSinLang = process.argv.slice(2).filter((arg, i, arr) => {
+    return arg !== '--lang' && arr[i - 1] !== '--lang';
+  });
+
+  const [tipoBruto, ...resto] = argsSinLang;
   const titulo = resto.join(' ').trim();
 
   const tipo = tipoBruto as Tipo;
   if (!tipoBruto || !(tipoBruto in CARPETAS) || !titulo) {
     console.error(
-      'Uso: npm run nuevo -- <tipo> "Título del documento"\n' +
+      'Uso: npm run nuevo -- <tipo> "Título del documento" [--lang es|en]\n' +
         `Tipos: ${Object.keys(CARPETAS).join(', ')}\n\n` +
-        'Ejemplo:  npm run nuevo -- proyecto "Migración del ERP a PostgreSQL"',
+        'Ejemplo:  npm run nuevo -- proyecto "Migración del ERP a PostgreSQL"\n' +
+        '          npm run nuevo -- proyecto "ERP Migration to PostgreSQL" --lang en',
     );
     process.exitCode = 1;
     return;
@@ -158,7 +169,7 @@ async function main(): Promise<void> {
 
   const carpeta = CARPETAS[tipo];
   const slug = slugify(titulo);
-  const ruta = path.join(process.cwd(), 'knowledge', carpeta, `${slug}.md`);
+  const ruta = path.join(process.cwd(), 'knowledge', lang, carpeta, `${slug}.md`);
 
   // Nunca sobreescribir: el corpus es trabajo escrito a mano y perderlo por un
   // título repetido sería absurdo.

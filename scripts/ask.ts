@@ -17,17 +17,27 @@ const args = process.argv.slice(2);
 const showFull = args.includes('--full');
 const kIndex = args.indexOf('--k');
 const matchCount = kIndex >= 0 ? Number(args[kIndex + 1]) : 6;
-const question = args.filter((a, i) => !a.startsWith('--') && i !== kIndex + 1).join(' ').trim();
+const langIndex = args.indexOf('--lang');
+const lang = (langIndex >= 0 ? args[langIndex + 1] : 'es') as 'es' | 'en';
+const question = args
+  .filter(
+    (a, i) =>
+      !a.startsWith('--') &&
+      (kIndex < 0 || i !== kIndex + 1) &&
+      (langIndex < 0 || i !== langIndex + 1),
+  )
+  .join(' ')
+  .trim();
 
 async function main(): Promise<void> {
   if (!question) {
-    console.error('Uso: npm run ask -- "tu pregunta"  [--k 6] [--full]');
+    console.error('Uso: npm run ask -- "tu pregunta"  [--k 6] [--lang en|es] [--full]');
     process.exitCode = 1;
     return;
   }
 
   const started = Date.now();
-  const results = await retrieve(question, { matchCount });
+  const results = await retrieve(question, { matchCount, lang });
   const elapsed = Date.now() - started;
 
   console.log(`\n  ${question}`);

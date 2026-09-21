@@ -1,0 +1,105 @@
+import type { Dictionary } from '../types.ts';
+
+export const en: Dictionary = {
+  lang: 'en',
+  langLabel: 'EN',
+  otherLang: 'es',
+  otherLangLabel: 'ES',
+  meta: {
+    title: 'Rafaías Villán — Backend Engineering, Data & AI',
+    description:
+      'Searchable professional track record: ask questions in plain English about projects, technologies, and technical architecture.',
+  },
+  nav: {
+    projects: 'Projects',
+    experience: 'Experience',
+    stack: 'Stack',
+    ask: 'Ask AI',
+    contact: 'Contact',
+    faq: 'FAQ',
+  },
+  hero: {
+    fallbackSubtitle:
+      'Backend engineering, databases, and applied AI. Ask in natural language: the assistant answers strictly with real documentation and cites every source.',
+  },
+  chat: {
+    prompt: 'Ask about projects, technologies, or architectural decisions…',
+    placeholder: 'Type your question…',
+    submit: 'Ask',
+    disclaimer: 'Ask about career and technical track record',
+    sourcesTitle: 'Cited sources',
+    clear: 'ask another question',
+    suggestions: [
+      'What experience does he have with PostgreSQL?',
+      'What technical challenges has he solved?',
+      'How does he approach system architecture?',
+      'What key projects has he worked on?',
+    ],
+    loading: 'Searching documentation…',
+    empty: 'No results found in documentation.',
+    networkError: 'Unable to connect to the assistant. Please try again.',
+  },
+  sections: {
+    experience: {
+      title: 'Experience',
+      desc: 'Career milestones, what I built in each role and the stack involved.',
+      singular: 'milestone',
+      plural: 'milestones',
+      empty: 'No experience entries in the knowledge base yet.',
+      seeMore: 'View earlier {n} milestones',
+    },
+    projects: {
+      title: 'Featured Projects',
+      desc: 'Each case study details business context, technical choices, and challenges.',
+      empty: 'No projects found.',
+      seeMore: 'View other {n} projects',
+    },
+    stack: {
+      title: 'Stack',
+      desc: 'Ranked by documentation density, not alphabetically: reflects the tools with substantial hands-on history.',
+      singular: 'technology',
+      plural: 'technologies',
+      empty: 'Technologies are extracted from document frontmatter.',
+      seeMore: 'View other {n} technologies',
+    },
+    notes: {
+      title: 'Notes',
+      desc: 'Technical decisions and engineering learnings in depth.',
+      singular: 'note',
+      plural: 'notes',
+    },
+    contact: {
+      title: 'Let’s talk about what you want to build.',
+      desc: 'Whether it is an engineering role, a consulting project, or an early-stage idea. I always reply.',
+    },
+  },
+  contactForm: {
+    name: 'Name',
+    namePlaceholder: 'Your name',
+    email: 'Email',
+    emailPlaceholder: 'so I can reply to you',
+    message: 'Message',
+    messagePlaceholder: 'What do you need, what problem are you solving, or what is the role about…',
+    submit: 'Send message',
+    sending: 'Sending…',
+    successTitle: 'Message received.',
+    successDesc: 'I will reply to your email address as soon as I read it.',
+    errorRequired: 'Please fill in all fields.',
+    errorEmail: 'Please enter a valid email address.',
+    errorGeneric: 'Could not send message. Please try again in a few minutes.',
+    sendAnother: 'Send another message',
+  },
+  detail: {
+    back: 'Back to overview',
+    technologies: 'Technologies used',
+    role: 'Role',
+    organization: 'Organization',
+    links: 'Related documents',
+    notFound: 'Document not found',
+    notFoundDesc: 'The page you are looking for does not exist or has been moved.',
+  },
+  footer: {
+    copy: 'All rights reserved.',
+    privacy: 'No invasive tracking cookies.',
+  },
+};

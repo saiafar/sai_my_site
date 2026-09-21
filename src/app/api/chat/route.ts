@@ -19,6 +19,7 @@ export const dynamic = 'force-dynamic';
 interface ChatBody {
   question?: unknown;
   conversationId?: unknown;
+  lang?: unknown;
 }
 
 export async function POST(request: Request): Promise<NextResponse> {
@@ -31,9 +32,13 @@ export async function POST(request: Request): Promise<NextResponse> {
 
   const question = typeof body.question === 'string' ? body.question : '';
   const conversationId = typeof body.conversationId === 'string' ? body.conversationId : undefined;
+  const lang = body.lang === 'en' ? 'en' : 'es';
 
   if (!question.trim()) {
-    return NextResponse.json({ error: 'Falta la pregunta.' }, { status: 400 });
+    return NextResponse.json(
+      { error: lang === 'en' ? 'Missing question.' : 'Falta la pregunta.' },
+      { status: 400 },
+    );
   }
 
   const userAgent = request.headers.get('user-agent') ?? '';
@@ -41,6 +46,7 @@ export async function POST(request: Request): Promise<NextResponse> {
   try {
     const result = await answerQuestion(question, {
       clientKey: clientKeyOf(request),
+      lang,
       ...(conversationId ? { conversationId } : {}),
       ...(userAgent ? { userAgent } : {}),
     });

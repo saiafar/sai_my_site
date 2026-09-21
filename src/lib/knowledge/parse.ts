@@ -33,22 +33,15 @@ export interface ParsedChunk {
   headingPath: string[];
   /** Texto tal cual, es lo que se cita al usuario. */
   content: string;
-  /**
-   * Texto que se vectoriza: el contenido precedido del título del documento y
-   * de la ruta de encabezados. Sin este prefijo, un fragmento que empieza por
-   * "Sustituimos SQL Server por PostgreSQL 15" no contiene ninguna señal de a
-   * qué proyecto pertenece, y no se parece a la pregunta que debería
-   * recuperarlo. No lleva el prefijo "passage:" que exige el modelo e5: eso se
-   * añade en el proveedor de embeddings, para no acoplar lo almacenado a un
-   * modelo concreto.
-   */
   embedInput: string;
   contentHash: string;
+  lang: 'es' | 'en';
 }
 
 export interface ParsedDocument {
   slug: string;
   sourcePath: string;
+  lang: 'es' | 'en';
   kind: DocumentKind;
   title: string;
   summary: string | null;
@@ -65,10 +58,23 @@ export interface ParsedDocument {
 
 const KIND_BY_FOLDER: Record<string, DocumentKind> = {
   perfil: 'perfil',
+  profile: 'perfil',
   experiencia: 'experiencia',
+  experience: 'experiencia',
   proyectos: 'proyecto',
+  projects: 'proyecto',
   tecnologias: 'tecnologia',
+  technologies: 'tecnologia',
   notas: 'nota',
+  notes: 'nota',
+};
+
+const FOLDER_BY_KIND: Record<DocumentKind, string> = {
+  perfil: 'perfil',
+  experiencia: 'experiencia',
+  proyecto: 'proyectos',
+  tecnologia: 'tecnologias',
+  nota: 'notas',
 };
 
 export function sha256(text: string): string {
@@ -99,7 +105,7 @@ function toStringArray(value: unknown): string[] {
  * en lugar de reserializar el árbol: así el texto citado al usuario es
  * exactamente el que él escribió, con su formato intacto.
  */
-function chunkBody(body: string, title: string): ParsedChunk[] {
+function chunkBody(body: string, title: string, lang: 'es' | 'en'): ParsedChunk[] {
   const tree = unified().use(remarkParse).parse(body) as Root;
   const nodes = tree.children;
 
@@ -180,6 +186,7 @@ function chunkBody(body: string, title: string): ParsedChunk[] {
       content: piece.content,
       embedInput,
       contentHash: sha256(embedInput),
+      lang,
     };
   });
 }
@@ -207,7 +214,17 @@ export function parseDocument(sourcePath: string, raw: string): ParsedDocument {
   const meta = data;
 
   const segments = sourcePath.replace(/\.md$/, '').split('/');
-  const folder = segments[0] ?? '';
+  let lang: 'es' | 'en' = 'es';
+  let pathSegments = segments;
+
+  if (segments[0] === 'es' || segments[0] === 'en') {
+    lang = segments[0];
+    pathSegments = segments.slice(1);
+  } else if (meta['lang'] === 'en') {
+    lang = 'en';
+  }
+
+  const folder = pathSegments[0] ?? '';
   const kind = KIND_BY_FOLDER[folder];
   if (!kind) {
     throw new Error(
@@ -235,20 +252,25 @@ export function parseDocument(sourcePath: string, raw: string): ParsedDocument {
     links.push({ targetSlug: target, relation: 'continua' });
   }
 
+  const canonicalFolder = FOLDER_BY_KIND[kind];
+  const canonicalSlug = [canonicalFolder, ...pathSegments.slice(1)].join('/');
+  const finalSlug = typeof meta['slug'] === 'string' ? (meta['slug'] as string).trim() : canonicalSlug;
+
   return {
-    slug: segments.join('/'),
+    slug: finalSlug,
     sourcePath,
+    lang,
     kind,
     title,
     summary: typeof meta['summary'] === 'string' ? meta['summary'].trim() : null,
     body,
     metadata: meta,
     visibility,
-    startsOn: toDate(meta['inicio']),
-    endsOn: toDate(meta['fin']),
-    technologies: toStringArray(meta['tecnologias']),
+    startsOn: toDate(meta['inicio'] ?? meta['start']),
+    endsOn: toDate(meta['fin'] ?? meta['end']),
+    technologies: toStringArray(meta['tecnologias'] ?? meta['technologies']),
     links,
     contentHash: sha256(raw),
-    chunks: chunkBody(body, title),
+    chunks: chunkBody(body, title, lang),
   };
 }

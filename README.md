@@ -37,10 +37,19 @@ está diseñado para admitir que no sabe algo antes que improvisarlo.
 
 ### Decisiones que conviene entender antes de leer el código
 
-**El Markdown de `knowledge/` es la única fuente de verdad.** Las tablas de
-PostgreSQL son una proyección que genera el pipeline de ingestión: se pueden
+**El Markdown de `knowledge/` es la única fuente de verdad (multilingüe).** Las
+carpetas `knowledge/es/` y `knowledge/en/` estructuran los documentos por idioma
+compartiendo el mismo `slug` canónico (por ejemplo `proyectos/sitio-personal-rag`).
+Las tablas de PostgreSQL son una proyección que genera el pipeline de ingestión: se pueden
 borrar y reconstruir enteras sin pérdida. Editar un `.md` y desplegar actualiza
-a la vez la web y el asistente, porque ambos leen la misma proyección.
+a la vez la web y el asistente en su respectivo idioma.
+
+**Internacionalización e idioma en búsqueda híbrida.** Los embeddings se generan con
+el modelo multilingüe cuantizado `Xenova/multilingual-e5-small`. En PostgreSQL, la columna
+generada `tsv` aplica el diccionario correspondiente (`spanish` para `es`, `english` para `en`),
+garantizando stemming y lematización nativos en ambos idiomas. La recuperación RAG es estricta
+por idioma: el asistente en inglés solo consulta y cita fragmentos en inglés (`lang = 'en'`),
+y si un proyecto no está documentado en inglés admite limpiamente que no consta en sus fuentes.
 
 **Los fragmentos se cortan por secciones semánticas, no por tamaño fijo.** Con
 documentos cortos y estructurados, una ventana de N tokens parte ideas por la
@@ -77,14 +86,14 @@ que la media—, así que el total de Google no es el total.
 
 **El sitio se escribe para que lo lea una máquina, no solo una persona.** Todo
 el contenido se sirve renderizado desde el servidor —los rastreadores de IA no
-ejecutan JavaScript—, cada página declara su JSON-LD, y `/preguntas` pone en
-HTML lo que el asistente solo responde por `POST /api/chat`, que ningún
-rastreador va a llamar nunca. Esas respuestas se generan con `npm run faq` a
-partir del corpus, con cada afirmación enlazada al documento que la respalda, y
+ejecutan JavaScript—, cada página declara su JSON-LD en su idioma (`inLanguage: es` o `en`),
+y `/es/preguntas` y `/en/preguntas` ponen en HTML lo que el asistente responde por
+`POST /api/chat`. Esas respuestas se generan con `npm run faq` (`--lang es` o `--lang en`)
+a partir del corpus, con cada afirmación enlazada al documento que la respalda, y
 **se revisan a mano antes de commitearse**: es la página que un motor de
 respuestas va a citar como la voz de Rafaías, así que no puede contener texto
-que él no haya leído. Viven en `contenido/preguntas.md` y no en `knowledge/`
-para que el asistente no acabe citando respuestas derivadas de su propio corpus.
+que él no haya leído. Viven en `contenido/preguntas.md` y `contenido/preguntas.en.md` y
+no en `knowledge/` para que el asistente no acabe citando respuestas derivadas de su propio corpus.
 
 **El formulario de contacto guarda primero y avisa después.** El mensaje se
 escribe en la base de datos y solo entonces se reenvía al webhook de N8N, firmado
@@ -104,15 +113,19 @@ ejecutar `npm run assets`; no hay ninguna lista que mantener en el código.
 ## Comandos
 
 ```bash
-npm run migrate                  # aplica migraciones (idempotente, con checksum)
-npm run ingest                   # markdown → documentos, fragmentos y embeddings
-npm run ingest -- --dry          # muestra el plan sin escribir
-npm run ingest -- --force        # revectoriza todo (tras cambiar el troceado)
-npm run ask -- "pregunta"        # interroga el corpus sin LLM ni frontend
-npm run eval -- --verbose        # recall@k y MRR sobre las preguntas doradas
-npm run admin:clave              # genera ADMIN_PASSWORD_HASH para el panel
-npm run faq                      # borradores de /preguntas (solo rellena huecos)
-npm run og                       # public/og.jpg, la tarjeta al compartir
+npm run migrate                           # aplica migraciones (idempotente, con checksum)
+npm run ingest                            # markdown → documentos, fragmentos y embeddings
+npm run ingest -- --dry                   # muestra el plan sin escribir
+npm run ingest -- --force                 # revectoriza todo (tras cambiar el troceado)
+npm run nuevo -- proyecto "..." --lang en # crea plantilla en knowledge/en/proyectos/
+npm run ask -- "pregunta"                 # interroga el corpus (por defecto en español)
+npm run ask -- "query" --lang en          # interroga el corpus en inglés
+npm run chat -- "pregunta"                # conversación en terminal (acepta --lang en)
+npm run eval -- --verbose                 # recall@k y MRR sobre las preguntas doradas
+npm run admin:clave                       # genera ADMIN_PASSWORD_HASH para el panel
+npm run faq                               # borradores de contenido/preguntas.md
+npm run faq -- --lang en                  # borradores de contenido/preguntas.en.md
+npm run og                                # public/og.jpg, la tarjeta al compartir
 npm run typecheck
 ```
 

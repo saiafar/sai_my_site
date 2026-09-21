@@ -31,6 +31,7 @@ export interface RetrieveOptions {
   /** Candidatos que aporta cada ranking antes de fusionar. */
   candidateCount?: number;
   kinds?: DocumentKind[];
+  lang?: 'es' | 'en';
 }
 
 interface Row {
@@ -50,14 +51,14 @@ export async function retrieve(
   question: string,
   options: RetrieveOptions = {},
 ): Promise<RetrievedChunk[]> {
-  const { matchCount = 8, candidateCount = 40, kinds } = options;
+  const { matchCount = 8, candidateCount = 40, kinds, lang = 'es' } = options;
 
   const provider = getEmbeddingProvider();
   const embedding = await provider.embedQuery(question);
 
   const rows = await query<Row>(
-    `select * from search_chunks($1::vector, $2, $3, $4, 60, $5)`,
-    [toVectorLiteral(embedding), question, matchCount, candidateCount, kinds ?? null],
+    `select * from search_chunks($1::vector, $2, $3, $4, 60, $5, 0.20, $6)`,
+    [toVectorLiteral(embedding), question, matchCount, candidateCount, kinds ?? null, lang],
   );
 
   return rows.map((row) => ({

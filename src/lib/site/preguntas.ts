@@ -26,7 +26,15 @@ export interface Preguntas {
   entradas: EntradaPregunta[];
 }
 
-export const RUTA_PREGUNTAS = path.join(process.cwd(), 'contenido', 'preguntas.md');
+export function rutaPreguntas(lang: 'es' | 'en' = 'es'): string {
+  return path.join(
+    process.cwd(),
+    'contenido',
+    lang === 'en' ? 'preguntas.en.md' : 'preguntas.md',
+  );
+}
+
+export const RUTA_PREGUNTAS = rutaPreguntas('es');
 
 /** Parte el Markdown en preámbulo y entradas. */
 export function parsearPreguntas(markdown: string): Preguntas {
@@ -50,13 +58,10 @@ export function serializarPreguntas({ preambulo, entradas }: Preguntas): string 
 
 /**
  * Lee el fichero y devuelve solo las entradas con respuesta.
- *
- * Una pregunta sin respuesta es un borrador a medias: publicarla con un hueco
- * sería peor que no publicarla, y además el JSON-LD emitiría una Question sin
- * acceptedAnswer, que es una estructura inválida.
  */
-export async function leerPreguntas(): Promise<Preguntas> {
-  const markdown = await readFile(RUTA_PREGUNTAS, 'utf8').catch(() => '');
+export async function leerPreguntas(lang: 'es' | 'en' = 'es'): Promise<Preguntas> {
+  const ruta = rutaPreguntas(lang);
+  const markdown = await readFile(ruta, 'utf8').catch(() => '');
   if (markdown === '') return { preambulo: '', entradas: [] };
 
   const { preambulo, entradas } = parsearPreguntas(markdown);
