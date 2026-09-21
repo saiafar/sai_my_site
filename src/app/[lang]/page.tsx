@@ -173,11 +173,18 @@ export default async function HomePage({ params }: Props) {
           </p>
 
           <ul
-            className="escena-sube mt-6 flex flex-wrap items-center justify-center gap-x-5 gap-y-1 text-[11px] text-ink-muted"
+            className="escena-sube mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-ink-muted"
             style={{ '--desde': 0.45 } as React.CSSProperties}
           >
-            {cifras.map((cifra) => (
-              <li key={cifra}>{cifra}</li>
+            {cifras.map((cifra, idx) => (
+              <li key={cifra} className="inline-flex items-center gap-4">
+                {idx > 0 ? (
+                  <span aria-hidden className="select-none text-accent/60">
+                    •
+                  </span>
+                ) : null}
+                <span>{cifra}</span>
+              </li>
             ))}
           </ul>
 
@@ -280,10 +287,12 @@ export default async function HomePage({ params }: Props) {
                 {tecnologiasVisibles.map((tecnologia) => (
                   <span
                     key={tecnologia.slug}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[12px] text-ink-muted"
+                    className="group inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[12px] text-ink-muted transition-all duration-200 hover:border-accent/35 hover:text-ink"
                   >
                     {tecnologia.name}
-                    <span className="text-[10px] text-ink-faint">{tecnologia.documentCount}</span>
+                    <span className="font-mono text-[10px] text-accent/80 transition-colors group-hover:text-accent">
+                      +{tecnologia.documentCount}
+                    </span>
                   </span>
                 ))}
               </div>
@@ -300,10 +309,12 @@ export default async function HomePage({ params }: Props) {
                     {tecnologiasOcultas.map((tecnologia) => (
                       <span
                         key={tecnologia.slug}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[12px] text-ink-muted"
+                        className="group inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[12px] text-ink-muted transition-all duration-200 hover:border-accent/35 hover:text-ink"
                       >
                         {tecnologia.name}
-                        <span className="text-[10px] text-ink-faint">{tecnologia.documentCount}</span>
+                        <span className="font-mono text-[10px] text-accent/80 transition-colors group-hover:text-accent">
+                          +{tecnologia.documentCount}
+                        </span>
                       </span>
                     ))}
                   </div>

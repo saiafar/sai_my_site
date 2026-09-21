@@ -67,11 +67,13 @@ export function Pie({
       <div className="mt-4 divide-y divide-line border-y border-line">
         {preguntas.map((entrada) => (
           <details key={entrada.pregunta} className="group py-3">
-            <summary className="flex cursor-pointer list-none items-center gap-2 text-[13px] text-ink-muted transition-colors hover:text-ink">
-              <span className="text-ink-faint transition-transform group-open:rotate-90">›</span>
+            <summary className="flex cursor-pointer list-none items-center gap-2.5 text-[13px] text-ink-muted transition-colors hover:text-ink">
+              <span className="font-mono text-[14px] leading-none text-accent transition-transform duration-200 group-open:rotate-45 select-none">
+                +
+              </span>
               {entrada.pregunta}
             </summary>
-            <p className="mt-2 pl-4 text-[13px] leading-relaxed text-ink-muted">
+            <p className="mt-2 pl-5 text-[13px] leading-relaxed text-ink-muted">
               {entrada.respuesta}
             </p>
           </details>

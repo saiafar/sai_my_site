@@ -68,9 +68,12 @@ export default async function PreguntasPage({ params }: Props) {
       <main className="mx-auto max-w-lectura px-6 pb-24 pt-12">
         <Link
           href={`/${lang}`}
-          className="text-[11px] text-ink-faint transition-colors hover:text-ink-muted"
+          className="group inline-flex items-center gap-1.5 text-[11px] text-ink-muted transition-colors hover:text-ink"
         >
-          ← {dict.detail.back}
+          <span className="text-accent transition-transform duration-200 group-hover:-translate-x-1">
+            ←
+          </span>
+          <span>{dict.detail.back}</span>
         </Link>
 
         <header className="mt-6 border-b border-line pb-6">

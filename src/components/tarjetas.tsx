@@ -16,7 +16,12 @@ function Etiquetas({ tecnologias }: { tecnologias: SiteDocument['technologies'] 
       {visibles.map((tecnologia) => (
         <Etiqueta key={tecnologia.slug}>{tecnologia.name}</Etiqueta>
       ))}
-      {restantes > 0 ? <Etiqueta>+{restantes}</Etiqueta> : null}
+      {restantes > 0 ? (
+        <Etiqueta destacada>
+          <span className="mr-0.5 font-semibold text-accent">+</span>
+          {restantes}
+        </Etiqueta>
+      ) : null}
     </div>
   );
 }
@@ -43,7 +48,7 @@ export function TarjetaProyecto({
   return (
     <Link
       href={`/${lang}/${documento.slug}`}
-      className="group flex flex-col rounded-xl border border-line bg-surface p-5 transition-colors hover:border-line-strong"
+      className="group flex flex-col rounded-xl border border-line bg-surface p-5 transition-all duration-200 hover:border-accent/35 hover:shadow-[0_4px_24px_-6px_rgba(225,93,59,0.08)]"
     >
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-[15px] font-medium leading-snug text-ink transition-colors group-hover:text-accent">
@@ -55,7 +60,7 @@ export function TarjetaProyecto({
           fill="none"
           stroke="currentColor"
           strokeWidth="1.6"
-          className="mt-1 h-3 w-3 shrink-0 text-ink-faint transition-colors group-hover:text-accent"
+          className="mt-1 h-3.5 w-3.5 shrink-0 text-accent/75 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
         >
           <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
@@ -112,7 +117,7 @@ export function EntradaExperiencia({
             fill="none"
             stroke="currentColor"
             strokeWidth="1.6"
-            className="mt-1 h-3 w-3 shrink-0 text-ink-faint transition-colors group-hover:text-accent"
+            className="mt-1 h-3.5 w-3.5 shrink-0 text-accent/75 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
           >
             <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
           </svg>

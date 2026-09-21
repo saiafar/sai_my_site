@@ -25,7 +25,7 @@ export function Seccion({
       <div className="flex items-baseline justify-between gap-4">
         <h2 className="text-[15px] font-medium tracking-tight text-ink">{titulo}</h2>
         {recuento ? (
-          <span className="shrink-0 text-[11px] text-ink-faint">{recuento}</span>
+          <span className="shrink-0 font-mono text-[11px] text-accent/80">{recuento}</span>
         ) : null}
       </div>
 

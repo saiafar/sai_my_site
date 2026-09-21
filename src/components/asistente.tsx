@@ -143,7 +143,7 @@ export function Asistente({ lang = 'es' }: { lang?: Lang }) {
                 setPregunta(sugerencia);
                 void preguntar(sugerencia);
               }}
-              className="rounded-full border border-line bg-surface/50 px-3 py-1.5 text-[11px] sm:text-[12px] text-ink-faint transition-colors hover:border-line-strong hover:bg-surface hover:text-ink-muted"
+              className="rounded-full border border-line bg-surface/50 px-3 py-1.5 text-[11px] sm:text-[12px] text-ink-faint transition-all duration-200 hover:border-accent/40 hover:bg-surface hover:text-ink"
             >
               {sugerencia}
             </button>

@@ -23,8 +23,10 @@ export function VerMas({
 }) {
   return (
     <details className="group mt-5">
-      <summary className="inline-flex cursor-pointer list-none items-center gap-2 border border-line px-3 py-1.5 text-[12px] text-ink-muted transition-colors hover:border-line-strong hover:text-ink">
-        <span className="text-ink-faint transition-transform group-open:rotate-90">›</span>
+      <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded-lg border border-line bg-surface/40 px-3 py-1.5 text-[12px] text-ink-muted transition-all duration-200 hover:border-accent/40 hover:text-ink">
+        <span className="font-mono text-[13px] leading-none text-accent transition-transform duration-200 group-open:rotate-45 select-none">
+          +
+        </span>
         <span className="group-open:hidden">{texto}</span>
         <span className="hidden group-open:inline">{textoCerrar}</span>
       </summary>

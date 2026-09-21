@@ -166,9 +166,14 @@ export function FormularioContacto({ lang = 'es' }: { lang?: Lang }) {
         <button
           type="submit"
           disabled={estado === 'enviando'}
-          className="rounded-lg border border-line-strong px-4 py-2 text-[13px] text-ink transition-colors hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-40"
+          className="group inline-flex items-center gap-2 rounded-lg border border-line-strong px-4 py-2 text-[13px] text-ink transition-all duration-200 hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-40"
         >
-          {estado === 'enviando' ? dict.contactForm.sending : dict.contactForm.submit}
+          <span>{estado === 'enviando' ? dict.contactForm.sending : dict.contactForm.submit}</span>
+          {estado !== 'enviando' ? (
+            <span className="text-accent transition-transform duration-200 group-hover:translate-x-0.5">
+              →
+            </span>
+          ) : null}
         </button>
       </div>
     </form>

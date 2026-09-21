@@ -8,9 +8,20 @@ import Link from 'next/link';
  * como textura reconocible, que es justo lo que se quiere de una lista de
  * catorce tecnologías bajo una tarjeta.
  */
-export function Etiqueta({ children, href }: { children: React.ReactNode; href?: string }) {
-  const clases =
-    'inline-flex items-center rounded border border-line px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-faint transition-colors';
+export function Etiqueta({
+  children,
+  href,
+  destacada = false,
+  className = '',
+}: {
+  children: React.ReactNode;
+  href?: string;
+  destacada?: boolean;
+  className?: string;
+}) {
+  const clases = destacada
+    ? `inline-flex items-center rounded border border-accent/30 bg-accent/5 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent transition-colors ${className}`.trim()
+    : `inline-flex items-center rounded border border-line px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-faint transition-colors ${className}`.trim();
 
   return href ? (
     <Link href={href} className={`${clases} hover:border-line-strong hover:text-ink-muted`}>
