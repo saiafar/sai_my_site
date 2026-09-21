@@ -95,4 +95,10 @@ export interface Dictionary {
     copy: string;
     privacy: string;
   };
+  consent: {
+    ariaLabel: string;
+    message: string;
+    decline: string;
+    accept: string;
+  };
 }

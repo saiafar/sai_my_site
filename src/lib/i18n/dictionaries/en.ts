@@ -102,4 +102,11 @@ export const en: Dictionary = {
     copy: 'All rights reserved.',
     privacy: 'No invasive tracking cookies.',
   },
+  consent: {
+    ariaLabel: 'Analytics',
+    message:
+      'I use Google Analytics to see what gets read. If you accept, Google will set a cookie in your browser. If not, the site works just the same and I still see visit counts, which I track on my own without storing your IP.',
+    decline: 'No, thanks',
+    accept: 'Accept',
+  },
 };
