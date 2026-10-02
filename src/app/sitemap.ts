@@ -27,6 +27,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   return [
     { url: `${base}/es`, lastModified: documentos[0]?.updated_at ?? new Date(), priority: 1 },
     { url: `${base}/en`, lastModified: documentos[0]?.updated_at ?? new Date(), priority: 1 },
+    { url: `${base}/links`, lastModified: new Date(), priority: 0.8 },
     { url: `${base}/es/preguntas`, lastModified: new Date(), priority: 0.8 },
     { url: `${base}/en/preguntas`, lastModified: new Date(), priority: 0.8 },
     ...documentos.map((documento) => ({

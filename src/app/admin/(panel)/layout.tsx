@@ -24,6 +24,7 @@ const PESTANAS = [
   { href: '/admin', texto: 'Resumen' },
   { href: '/admin/consultas', texto: 'Consultas' },
   { href: '/admin/ajustes', texto: 'Ajustes' },
+  { href: '/admin/links', texto: 'Links' },
 ];
 
 export default function LayoutPanel({ children }: { children: React.ReactNode }) {

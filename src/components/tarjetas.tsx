@@ -44,12 +44,37 @@ export function TarjetaProyecto({
 }) {
   const periodo = formatPeriod(documento.startsOn, documento.endsOn, lang);
   const rol = typeof documento.metadata['rol'] === 'string' ? documento.metadata['rol'] : null;
+  const portada =
+    typeof documento.metadata['portada'] === 'string'
+      ? (documento.metadata['portada'] as string)
+      : typeof documento.metadata['imagen'] === 'string'
+        ? (documento.metadata['imagen'] as string)
+        : typeof documento.metadata['cover'] === 'string'
+          ? (documento.metadata['cover'] as string)
+          : null;
+  const portadaAlt =
+    typeof documento.metadata['portada_alt'] === 'string'
+      ? (documento.metadata['portada_alt'] as string)
+      : typeof documento.metadata['alt'] === 'string'
+        ? (documento.metadata['alt'] as string)
+        : documento.title;
 
   return (
     <Link
       href={`/${lang}/${documento.slug}`}
       className="group flex flex-col rounded-xl border border-line bg-surface p-5 transition-all duration-200 hover:border-accent/35 hover:shadow-[0_4px_24px_-6px_rgba(225,93,59,0.08)]"
     >
+      {portada ? (
+        <div className="mb-4 aspect-video w-full overflow-hidden rounded-lg border border-line/60 bg-ground/50">
+          <img
+            src={portada}
+            alt={portadaAlt}
+            loading="lazy"
+            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          />
+        </div>
+      ) : null}
+
       <div className="flex items-start justify-between gap-3">
         <h3 className="text-[15px] font-medium leading-snug text-ink transition-colors group-hover:text-accent">
           {documento.title}
