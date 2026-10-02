@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { FondoHero } from '@/components/fondo-hero';
+import { FondoNodos } from '@/components/fondo-nodos';
 import { BarraSuperior } from '@/components/barra-superior';
 import { Asistente } from '@/components/asistente';
 import { Seccion, SeccionVacia } from '@/components/seccion';
@@ -158,48 +159,52 @@ export default async function HomePage({ params }: Props) {
           <div aria-hidden data-recorrido className="escena-recorrido" />
         </div>
 
-        <section className="mx-auto max-w-lectura px-6 pb-24 pt-6 text-center sm:pb-32">
-          {titular ? (
+        <div className="relative">
+          <FondoNodos />
+
+          <section className="relative z-10 mx-auto max-w-lectura px-6 pb-24 pt-6 text-center sm:pb-32">
+            {titular ? (
+              <p
+                className="escena-sube mx-auto max-w-2xl font-heading text-[24px] font-semibold leading-snug tracking-tight text-ink sm:text-[28px]"
+                style={{ '--desde': 0.3 } as React.CSSProperties}
+              >
+                {titular}
+              </p>
+            ) : null}
+
             <p
-              className="escena-sube mx-auto max-w-2xl font-heading text-[24px] font-semibold leading-snug tracking-tight text-ink sm:text-[28px]"
-              style={{ '--desde': 0.3 } as React.CSSProperties}
+              className={`escena-sube mx-auto max-w-md font-heading text-[14px] leading-relaxed text-ink-muted${
+                titular ? ' mt-4' : ''
+              }`}
+              style={{ '--desde': 0.38 } as React.CSSProperties}
             >
-              {titular}
+              {subtitulo ?? dict.hero.fallbackSubtitle}
             </p>
-          ) : null}
 
-          <p
-            className={`escena-sube mx-auto max-w-md font-heading text-[14px] leading-relaxed text-ink-muted${
-              titular ? ' mt-4' : ''
-            }`}
-            style={{ '--desde': 0.38 } as React.CSSProperties}
-          >
-            {subtitulo ?? dict.hero.fallbackSubtitle}
-          </p>
+            <ul
+              className="escena-sube mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-ink-muted"
+              style={{ '--desde': 0.45 } as React.CSSProperties}
+            >
+              {cifras.map((cifra, idx) => (
+                <li key={cifra} className="inline-flex items-center gap-4">
+                  {idx > 0 ? (
+                    <span aria-hidden className="select-none text-accent/60">
+                      •
+                    </span>
+                  ) : null}
+                  <span>{cifra}</span>
+                </li>
+              ))}
+            </ul>
 
-          <ul
-            className="escena-sube mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-ink-muted"
-            style={{ '--desde': 0.45 } as React.CSSProperties}
-          >
-            {cifras.map((cifra, idx) => (
-              <li key={cifra} className="inline-flex items-center gap-4">
-                {idx > 0 ? (
-                  <span aria-hidden className="select-none text-accent/60">
-                    •
-                  </span>
-                ) : null}
-                <span>{cifra}</span>
-              </li>
-            ))}
-          </ul>
-
-          <div
-            className="escena-sube mx-auto mt-14 max-w-2xl sm:mt-18"
-            style={{ '--desde': 0.55 } as React.CSSProperties}
-          >
-            <Asistente lang={lang} />
-          </div>
-        </section>
+            <div
+              className="escena-sube mx-auto mt-14 max-w-2xl sm:mt-18"
+              style={{ '--desde': 0.55 } as React.CSSProperties}
+            >
+              <Asistente lang={lang} />
+            </div>
+          </section>
+        </div>
       </div>
 
       <main className="mx-auto max-w-lectura space-y-14 px-6 pb-4">
