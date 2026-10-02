@@ -77,7 +77,7 @@ export default async function PreguntasPage({ params }: Props) {
         </Link>
 
         <header className="mt-6 border-b border-line pb-6">
-          <h1 className="font-display text-4xl leading-tight tracking-tight text-ink">
+          <h1 className="font-heading text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl">
             {lang === 'en' ? 'Frequently asked questions' : 'Preguntas frecuentes'}
           </h1>
           {intro ? (

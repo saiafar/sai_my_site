@@ -27,7 +27,8 @@
   --color-accent-soft: #432c25;
 
   --font-sans: var(--fuente-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--fuente-display), ui-serif, Georgia, serif;
+  --font-heading: var(--fuente-heading), var(--fuente-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--fuente-heading), var(--fuente-sans), ui-sans-serif, system-ui, sans-serif;
   --font-brand: var(--fuente-marca), ui-sans-serif, system-ui, sans-serif;
 
   /* La columna de la referencia mide 911 px de 2560. Esa contención —dos
@@ -77,6 +78,10 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+  }
+
   /* Quien haya pedido menos movimiento al sistema operativo no debería recibir
      desplazamiento animado ni transiciones. */
   @media (prefers-reduced-motion: reduce) {
@@ -110,9 +115,10 @@
 .prose-sitio > * + * { margin-top: 1rem; }
 
 .prose-sitio h2 {
+  font-family: var(--font-heading);
   color: var(--color-ink);
-  font-size: 15px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: 600;
   letter-spacing: -0.01em;
   margin-top: 2.25rem;
   padding-top: 1.25rem;
@@ -120,9 +126,10 @@
 }
 
 .prose-sitio h3 {
+  font-family: var(--font-heading);
   color: var(--color-ink);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   margin-top: 1.75rem;
 }
 

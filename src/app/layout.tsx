@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Instrument_Serif, Inter, Poppins } from 'next/font/google';
+import { Plus_Jakarta_Sans, Inter, Poppins } from 'next/font/google';
 import { Consentimiento } from '@/components/consentimiento';
 import { env } from '@/lib/env';
 import './globals.css';
@@ -7,11 +7,9 @@ import './globals.css';
 // next/font descarga y auto-aloja las fuentes durante la construcción: en
 // producción no hay ninguna petición a Google, ni cookies de terceros, ni un
 // salto de red antes de que el texto se pinte.
-const display = Instrument_Serif({
+const heading = Plus_Jakarta_Sans({
   subsets: ['latin'],
-  weight: '400',
-  style: ['normal', 'italic'],
-  variable: '--fuente-display',
+  variable: '--fuente-heading',
   display: 'swap',
 });
 
@@ -69,7 +67,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${display.variable} ${sans.variable} ${marca.variable}`}>
+    <html lang="es" className={`${heading.variable} ${sans.variable} ${marca.variable}`}>
       <body>
         {children}
         {/*

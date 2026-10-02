@@ -68,6 +68,14 @@ export const es: Dictionary = {
       singular: 'nota',
       plural: 'notas',
     },
+    testimonials: {
+      title: 'Lo que dicen de mí',
+      desc: 'Recomendaciones públicas de LinkedIn de directivos, compañeros de equipo y clientes con los que he colaborado.',
+      singular: 'recomendación',
+      plural: 'recomendaciones',
+      empty: 'Todavía no hay recomendaciones.',
+      seeMore: 'Ver las otras {n} recomendaciones',
+    },
     contact: {
       title: 'Cuéntame qué quieres construir.',
       desc: 'Da igual si es un puesto, un encargo o una idea que todavía no tiene forma. Respondo siempre.',

@@ -61,6 +61,14 @@ export interface Dictionary {
       singular: string;
       plural: string;
     };
+    testimonials: {
+      title: string;
+      desc: string;
+      singular: string;
+      plural: string;
+      empty: string;
+      seeMore: string;
+    };
     contact: {
       title: string;
       desc: string;

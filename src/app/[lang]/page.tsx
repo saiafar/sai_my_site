@@ -3,7 +3,7 @@ import { FondoHero } from '@/components/fondo-hero';
 import { BarraSuperior } from '@/components/barra-superior';
 import { Asistente } from '@/components/asistente';
 import { Seccion, SeccionVacia } from '@/components/seccion';
-import { TarjetaProyecto, EntradaExperiencia } from '@/components/tarjetas';
+import { TarjetaProyecto, EntradaExperiencia, TarjetaTestimonio } from '@/components/tarjetas';
 import { Etiqueta } from '@/components/etiqueta';
 import { Pie } from '@/components/pie';
 import { EscenaHero } from '@/components/escena-hero';
@@ -15,6 +15,7 @@ import * as jsonLd from '@/lib/site/datos-estructurados';
 import { getByKind, getStats, getTechnologies } from '@/lib/site/queries';
 import { ENLACES } from '@/lib/site/enlaces';
 import { env } from '@/lib/env';
+import { getTestimonios } from '@/lib/site/testimonios';
 import { getDictionary, isValidLang, DEFAULT_LANG, type Lang } from '@/lib/i18n';
 
 export const dynamic = 'force-dynamic';
@@ -81,6 +82,10 @@ export default async function HomePage({ params }: Props) {
   const destacados = proyectos.filter((p) => p.metadata['destacado'] === true);
   const proyectosVisibles = destacados.length > 0 ? destacados : proyectos;
   const proyectosOcultos = proyectos.filter((p) => !proyectosVisibles.includes(p));
+
+  const testimonios = getTestimonios(lang);
+  const testimoniosVisibles = testimonios.filter((t) => t.destacado);
+  const testimoniosOcultos = testimonios.filter((t) => !t.destacado);
 
   const ETAPAS_VISIBLES = 3;
   const experienciasVisibles = experiencias.slice(0, ETAPAS_VISIBLES);
@@ -156,7 +161,7 @@ export default async function HomePage({ params }: Props) {
         <section className="mx-auto max-w-lectura px-6 pb-24 pt-6 text-center sm:pb-32">
           {titular ? (
             <p
-              className="escena-sube mx-auto max-w-2xl text-[24px] font-medium leading-snug tracking-tight text-ink sm:text-[28px]"
+              className="escena-sube mx-auto max-w-2xl font-heading text-[24px] font-semibold leading-snug tracking-tight text-ink sm:text-[28px]"
               style={{ '--desde': 0.3 } as React.CSSProperties}
             >
               {titular}
@@ -164,7 +169,7 @@ export default async function HomePage({ params }: Props) {
           ) : null}
 
           <p
-            className={`escena-sube mx-auto max-w-md text-[14px] leading-relaxed text-ink-muted${
+            className={`escena-sube mx-auto max-w-md font-heading text-[14px] leading-relaxed text-ink-muted${
               titular ? ' mt-4' : ''
             }`}
             style={{ '--desde': 0.38 } as React.CSSProperties}
@@ -238,40 +243,6 @@ export default async function HomePage({ params }: Props) {
         </Seccion>
 
         <Seccion
-          id="proyectos"
-          titulo={dict.sections.projects.title}
-          descripcion={dict.sections.projects.desc}
-        >
-          {proyectosVisibles.length > 0 ? (
-            <>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {proyectosVisibles.map((documento) => (
-                  <TarjetaProyecto key={documento.slug} documento={documento} lang={lang} />
-                ))}
-              </div>
-
-              {proyectosOcultos.length > 0 ? (
-                <VerMas
-                  texto={dict.sections.projects.seeMore.replace(
-                    '{n}',
-                    String(proyectosOcultos.length),
-                  )}
-                  textoCerrar={lang === 'en' ? 'Show less' : 'Ver menos'}
-                >
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {proyectosOcultos.map((documento) => (
-                      <TarjetaProyecto key={documento.slug} documento={documento} lang={lang} />
-                    ))}
-                  </div>
-                </VerMas>
-              ) : null}
-            </>
-          ) : (
-            <SeccionVacia mensaje={dict.sections.projects.empty} />
-          )}
-        </Seccion>
-
-        <Seccion
           id="stack"
           titulo={dict.sections.stack.title}
           descripcion={dict.sections.stack.desc}
@@ -326,6 +297,83 @@ export default async function HomePage({ params }: Props) {
           )}
         </Seccion>
 
+        <Seccion
+          id="proyectos"
+          titulo={dict.sections.projects.title}
+          descripcion={dict.sections.projects.desc}
+        >
+          {proyectosVisibles.length > 0 ? (
+            <>
+              <div className="grid gap-3 sm:grid-cols-2">
+                {proyectosVisibles.map((documento) => (
+                  <TarjetaProyecto key={documento.slug} documento={documento} lang={lang} />
+                ))}
+              </div>
+
+              {proyectosOcultos.length > 0 ? (
+                <VerMas
+                  texto={dict.sections.projects.seeMore.replace(
+                    '{n}',
+                    String(proyectosOcultos.length),
+                  )}
+                  textoCerrar={lang === 'en' ? 'Show less' : 'Ver menos'}
+                >
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {proyectosOcultos.map((documento) => (
+                      <TarjetaProyecto key={documento.slug} documento={documento} lang={lang} />
+                    ))}
+                  </div>
+                </VerMas>
+              ) : null}
+            </>
+          ) : (
+            <SeccionVacia mensaje={dict.sections.projects.empty} />
+          )}
+        </Seccion>
+
+        <Seccion
+          id="testimonios"
+          titulo={dict.sections.testimonials.title}
+          descripcion={dict.sections.testimonials.desc}
+          recuento={plural(
+            testimonios.length,
+            dict.sections.testimonials.singular,
+            dict.sections.testimonials.plural,
+          )}
+        >
+          {testimoniosVisibles.length > 0 ? (
+            <>
+              <div className="columns-1 sm:columns-2 gap-3">
+                {testimoniosVisibles.map((testimonio) => (
+                  <div key={testimonio.id} className="break-inside-avoid mb-3">
+                    <TarjetaTestimonio testimonio={testimonio} />
+                  </div>
+                ))}
+              </div>
+
+              {testimoniosOcultos.length > 0 ? (
+                <VerMas
+                  texto={dict.sections.testimonials.seeMore.replace(
+                    '{n}',
+                    String(testimoniosOcultos.length),
+                  )}
+                  textoCerrar={lang === 'en' ? 'Show less' : 'Ver menos'}
+                >
+                  <div className="columns-1 sm:columns-2 gap-3">
+                    {testimoniosOcultos.map((testimonio) => (
+                      <div key={testimonio.id} className="break-inside-avoid mb-3">
+                        <TarjetaTestimonio testimonio={testimonio} />
+                      </div>
+                    ))}
+                  </div>
+                </VerMas>
+              ) : null}
+            </>
+          ) : (
+            <SeccionVacia mensaje={dict.sections.testimonials.empty} />
+          )}
+        </Seccion>
+
         {notas.length > 0 ? (
           <Seccion
             id="notas"
@@ -362,10 +410,10 @@ export default async function HomePage({ params }: Props) {
           data-aparecer
           className="scroll-mt-20 border-t border-line pt-10"
         >
-          <h2 className="text-[22px] font-medium leading-snug tracking-tight text-ink sm:text-[26px]">
+          <h2 className="font-heading text-[22px] font-semibold leading-snug tracking-tight text-ink sm:text-[26px]">
             {dict.sections.contact.title}
           </h2>
-          <p className="mt-2 max-w-xl text-[14px] leading-relaxed text-ink-muted">
+          <p className="font-heading mt-2 max-w-xl text-[14px] leading-relaxed text-ink-muted">
             {dict.sections.contact.desc}
           </p>
 

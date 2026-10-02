@@ -26,9 +26,9 @@ export function BarraSuperior({
   const targetHref = currentSlug ? `/${otherLang}/${currentSlug}` : `/${otherLang}`;
 
   const enlaces = [
-    { texto: dict.nav.projects, href: `/${lang}#proyectos` },
     { texto: dict.nav.experience, href: `/${lang}#experiencia` },
     { texto: dict.nav.stack, href: `/${lang}#stack` },
+    { texto: dict.nav.projects, href: `/${lang}#proyectos` },
     { texto: dict.nav.ask, href: `/${lang}#asistente` },
   ];
 

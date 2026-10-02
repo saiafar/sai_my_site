@@ -23,14 +23,14 @@ export function Seccion({
   return (
     <section id={id} data-aparecer className="scroll-mt-20 border-t border-line pt-10">
       <div className="flex items-baseline justify-between gap-4">
-        <h2 className="text-[15px] font-medium tracking-tight text-ink">{titulo}</h2>
+        <h2 className="font-heading text-[15px] font-semibold tracking-tight text-ink">{titulo}</h2>
         {recuento ? (
           <span className="shrink-0 font-mono text-[11px] text-accent/80">{recuento}</span>
         ) : null}
       </div>
 
       {descripcion ? (
-        <p className="mt-1.5 max-w-xl text-[13px] leading-relaxed text-ink-muted">
+        <p className="font-heading mt-1.5 max-w-xl text-[13px] leading-relaxed text-ink-muted">
           {descripcion}
         </p>
       ) : null}

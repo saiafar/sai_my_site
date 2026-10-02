@@ -147,18 +147,18 @@ export default async function Ficha({ params }: Props) {
         <header className="mt-6 border-b border-line pb-6">
           <p className="text-[11px] uppercase tracking-wider text-ink-faint">{documento.kind}</p>
 
-          <h1 className="mt-2 font-display text-4xl leading-tight tracking-tight text-ink">
+          <h1 className="mt-2 font-heading text-3xl font-bold leading-tight tracking-tight text-ink sm:text-4xl">
             {documento.title}
           </h1>
 
           {[periodo, organizacion, rol].some(Boolean) ? (
-            <p className="mt-2 text-[12px] text-ink-muted">
+            <p className="font-heading mt-2 text-[12px] font-medium text-ink-muted">
               {[periodo, organizacion, rol].filter(Boolean).join(' · ')}
             </p>
           ) : null}
 
           {documento.summary ? (
-            <p className="mt-4 max-w-2xl text-[14px] leading-relaxed text-ink-muted">
+            <p className="font-heading mt-4 max-w-2xl text-[14px] leading-relaxed text-ink-muted">
               {documento.summary}
             </p>
           ) : null}
