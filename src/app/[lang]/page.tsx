@@ -8,6 +8,7 @@ import { TarjetaProyecto, EntradaExperiencia, TarjetaTestimonio } from '@/compon
 import { Etiqueta } from '@/components/etiqueta';
 import { Pie } from '@/components/pie';
 import { EscenaHero } from '@/components/escena-hero';
+import { RestauradorScroll } from '@/components/restaurador-scroll';
 import { FormularioContacto } from '@/components/formulario-contacto';
 import { Telemetria } from '@/components/telemetria';
 import { VerMas } from '@/components/ver-mas';
@@ -123,6 +124,7 @@ export default async function HomePage({ params }: Props) {
     <>
       <BarraSuperior github={ENLACES.github} linkedin={ENLACES.linkedin} sobreImagen lang={lang} />
       <EscenaHero />
+      <RestauradorScroll />
 
       <noscript>
         <style>{'[data-escena],[data-escena-barra]{--p:1!important}'}</style>
@@ -228,6 +230,7 @@ export default async function HomePage({ params }: Props) {
 
               {experienciasOcultas.length > 0 ? (
                 <VerMas
+                  id="experiencias"
                   texto={dict.sections.experience.seeMore.replace(
                     '{n}',
                     String(experienciasOcultas.length),
@@ -275,6 +278,7 @@ export default async function HomePage({ params }: Props) {
 
               {tecnologiasOcultas.length > 0 ? (
                 <VerMas
+                  id="stack"
                   texto={dict.sections.stack.seeMore.replace(
                     '{n}',
                     String(tecnologiasOcultas.length),
@@ -317,6 +321,7 @@ export default async function HomePage({ params }: Props) {
 
               {proyectosOcultos.length > 0 ? (
                 <VerMas
+                  id="proyectos"
                   texto={dict.sections.projects.seeMore.replace(
                     '{n}',
                     String(proyectosOcultos.length),
@@ -358,6 +363,7 @@ export default async function HomePage({ params }: Props) {
 
               {testimoniosOcultos.length > 0 ? (
                 <VerMas
+                  id="testimonios"
                   texto={dict.sections.testimonials.seeMore.replace(
                     '{n}',
                     String(testimoniosOcultos.length),

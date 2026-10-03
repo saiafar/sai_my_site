@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { BarraSuperior } from '@/components/barra-superior';
+import { BotonVolver } from '@/components/boton-volver';
 import { Etiqueta } from '@/components/etiqueta';
 import { Telemetria } from '@/components/telemetria';
 import { DatosEstructurados } from '@/components/datos-estructurados';
@@ -134,15 +135,11 @@ export default async function Ficha({ params }: Props) {
       />
 
       <main className="mx-auto max-w-lectura px-6 pb-24 pt-12">
-        <Link
-          href={`/${lang}`}
-          className="group inline-flex items-center gap-1.5 text-[11px] text-ink-muted transition-colors hover:text-ink"
-        >
-          <span className="text-accent transition-transform duration-200 group-hover:-translate-x-1">
-            ←
-          </span>
-          <span>{dict.detail.back}</span>
-        </Link>
+        <BotonVolver
+          targetId={documento.slug.replace(/\//g, '-')}
+          fallbackHref={`/${lang}#${documento.slug.replace(/\//g, '-')}`}
+          texto={dict.detail.back}
+        />
 
         <header className="mt-6 border-b border-line pb-6">
           <p className="text-[11px] uppercase tracking-wider text-ink-faint">{documento.kind}</p>

@@ -43,6 +43,7 @@ export function TarjetaProyecto({
   documento: SiteDocument;
   lang?: Lang;
 }) {
+  const elementId = documento.slug.replace(/\//g, '-');
   const periodo = formatPeriod(documento.startsOn, documento.endsOn, lang);
   const rol = typeof documento.metadata['rol'] === 'string' ? documento.metadata['rol'] : null;
   const portada =
@@ -62,8 +63,9 @@ export function TarjetaProyecto({
 
   return (
     <Link
+      id={elementId}
       href={`/${lang}/${documento.slug}`}
-      className="group flex flex-col rounded-xl border border-line bg-surface p-5 transition-all duration-200 hover:border-accent/35 hover:shadow-[0_4px_24px_-6px_rgba(225,93,59,0.08)]"
+      className="group flex flex-col rounded-xl border border-line bg-surface p-5 transition-all duration-200 hover:border-accent/35 hover:shadow-[0_4px_24px_-6px_rgba(225,93,59,0.08)] scroll-mt-24"
     >
       {portada ? (
         <div className="mb-4 aspect-video w-full overflow-hidden rounded-lg border border-line/60 bg-ground/50">
@@ -119,6 +121,7 @@ export function EntradaExperiencia({
   documento: SiteDocument;
   lang?: Lang;
 }) {
+  const elementId = documento.slug.replace(/\//g, '-');
   const periodo = formatPeriod(documento.startsOn, documento.endsOn, lang);
   const organizacion =
     typeof documento.metadata['organizacion'] === 'string'
@@ -127,8 +130,9 @@ export function EntradaExperiencia({
 
   return (
     <Link
+      id={elementId}
       href={`/${lang}/${documento.slug}`}
-      className="group grid gap-x-6 gap-y-1 border-b border-line pb-6 last:border-0 sm:grid-cols-[9rem_1fr]"
+      className="group grid gap-x-6 gap-y-1 border-b border-line pb-6 last:border-0 sm:grid-cols-[9rem_1fr] scroll-mt-24"
     >
       <p className="pt-0.5 text-[11px] text-ink-faint">{periodo ?? '—'}</p>
 

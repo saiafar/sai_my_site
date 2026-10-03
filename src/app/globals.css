@@ -401,3 +401,33 @@
 @media (prefers-reduced-motion: reduce) {
   .aparecer-activo [data-aparecer]:not([data-visible]) { transform: none; }
 }
+
+/* ---------------------------------------------------------------------------
+   Desplegable «Ver más».
+   Aislamiento de estilos sin colisión con clases .group de los hijos.
+--------------------------------------------------------------------------- */
+details.desplegable-vermas > summary .icono-vermas {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+details.desplegable-vermas[open] > summary .icono-vermas {
+  transform: rotate(45deg);
+}
+
+details.desplegable-vermas > summary .texto-vermas-abrir {
+  display: inline;
+}
+
+details.desplegable-vermas[open] > summary .texto-vermas-abrir {
+  display: none;
+}
+
+details.desplegable-vermas > summary .texto-vermas-cerrar {
+  display: none;
+}
+
+details.desplegable-vermas[open] > summary .texto-vermas-cerrar {
+  display: inline;
+}
+
