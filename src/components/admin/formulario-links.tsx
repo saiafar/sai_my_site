@@ -219,6 +219,38 @@ export function FormularioLinks({ inicial }: Props) {
               />
             </div>
           </div>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div>
+              <label htmlFor="cvTitulo" className="block text-[12px] text-ink-faint">
+                Título del CV (para descarga)
+              </label>
+              <input
+                id="cvTitulo"
+                type="text"
+                value={config.cvTitulo ?? ''}
+                onChange={(e) => actualizarCampo('cvTitulo', e.target.value)}
+                placeholder="CV PDF Rafaias Villan Desarrollador"
+                className="mt-1.5 w-full border border-line bg-ground px-3 py-2 text-[13px] text-ink outline-none transition-colors focus:border-line-strong"
+              />
+              <p className="mt-1 text-[11px] text-ink-faint">Texto mostrado en la tarjeta de descarga del currículum.</p>
+            </div>
+
+            <div>
+              <label htmlFor="cvUrl" className="block text-[12px] text-ink-faint">
+                Ruta / URL del archivo PDF del CV
+              </label>
+              <input
+                id="cvUrl"
+                type="text"
+                value={config.cvUrl ?? ''}
+                onChange={(e) => actualizarCampo('cvUrl', e.target.value)}
+                placeholder="/cv-rafaias-villan-desarrollador.pdf"
+                className="mt-1.5 w-full border border-line bg-ground px-3 py-2 font-mono text-[13px] text-ink outline-none transition-colors focus:border-line-strong"
+              />
+              <p className="mt-1 text-[11px] text-ink-faint">Por defecto: /cv-rafaias-villan-desarrollador.pdf (en el servidor).</p>
+            </div>
+          </div>
         </div>
       </div>
 

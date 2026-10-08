@@ -18,6 +18,8 @@ export interface ConfiguracionLinks {
   web: string;
   linkedin: string;
   behance: string;
+  cvUrl?: string | undefined;
+  cvTitulo?: string | undefined;
   enlacesExtra: EnlaceAdicional[];
 }
 
@@ -30,6 +32,8 @@ export const CONFIG_LINKS_DEFECTO: ConfiguracionLinks = {
   web: 'https://rafaiasvillan.com/',
   linkedin: 'https://www.linkedin.com/in/rafaiasvillan',
   behance: 'https://www.behance.net/rafaiasvillan',
+  cvUrl: '/cv-rafaias-villan-desarrollador.pdf',
+  cvTitulo: 'CV PDF Rafaias Villan Desarrollador',
   enlacesExtra: [],
 };
 
@@ -59,6 +63,8 @@ export async function leerConfiguracionLinks(): Promise<ConfiguracionLinks> {
         web: typeof v.web === 'string' ? v.web.trim() : CONFIG_LINKS_DEFECTO.web,
         linkedin: typeof v.linkedin === 'string' ? v.linkedin.trim() : CONFIG_LINKS_DEFECTO.linkedin,
         behance: typeof v.behance === 'string' ? v.behance.trim() : CONFIG_LINKS_DEFECTO.behance,
+        cvUrl: typeof v.cvUrl === 'string' ? v.cvUrl.trim() : CONFIG_LINKS_DEFECTO.cvUrl,
+        cvTitulo: typeof v.cvTitulo === 'string' && v.cvTitulo.trim() ? v.cvTitulo.trim() : CONFIG_LINKS_DEFECTO.cvTitulo,
         enlacesExtra: Array.isArray(v.enlacesExtra) ? v.enlacesExtra : [],
       };
       cache = { valor: config, hasta: Date.now() + CACHE_MS };
@@ -81,6 +87,8 @@ export async function guardarConfiguracionLinks(config: ConfiguracionLinks): Pro
     web: config.web?.trim() ?? '',
     linkedin: config.linkedin?.trim() ?? '',
     behance: config.behance?.trim() ?? '',
+    cvUrl: config.cvUrl !== undefined ? config.cvUrl.trim() : CONFIG_LINKS_DEFECTO.cvUrl,
+    cvTitulo: config.cvTitulo?.trim() || CONFIG_LINKS_DEFECTO.cvTitulo,
     enlacesExtra: Array.isArray(config.enlacesExtra)
       ? config.enlacesExtra.map((e) => ({
           id: e.id || crypto.randomUUID(),

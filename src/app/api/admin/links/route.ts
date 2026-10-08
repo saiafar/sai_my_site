@@ -45,6 +45,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     web: datos.web || '',
     linkedin: datos.linkedin || '',
     behance: datos.behance || '',
+    cvUrl: typeof datos.cvUrl === 'string' ? datos.cvUrl : undefined,
+    cvTitulo: typeof datos.cvTitulo === 'string' ? datos.cvTitulo : undefined,
     enlacesExtra: Array.isArray(datos.enlacesExtra) ? datos.enlacesExtra : [],
   });
 
