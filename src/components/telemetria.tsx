@@ -3,6 +3,8 @@
 import { usePathname } from 'next/navigation';
 import { useEffect } from 'react';
 
+import { uuid } from '@/lib/site/uuid';
+
 /**
  * Aviso de visita.
  *
@@ -21,7 +23,7 @@ export function Telemetria({ documentSlug }: { documentSlug?: string }) {
   const ruta = usePathname();
 
   useEffect(() => {
-    const viewId = crypto.randomUUID();
+    const viewId = uuid();
     const inicio = performance.now();
     let cerrado = false;
 

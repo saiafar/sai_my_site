@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import type { ConfiguracionLinks, EnlaceAdicional } from '@/lib/site/links';
+import { uuid } from '@/lib/site/uuid';
 
 interface Props {
   inicial: ConfiguracionLinks;
@@ -22,7 +23,7 @@ export function FormularioLinks({ inicial }: Props) {
 
   const agregarEnlaceExtra = () => {
     const nuevo: EnlaceAdicional = {
-      id: crypto.randomUUID(),
+      id: uuid(),
       titulo: '',
       url: '',
       subtitulo: '',
