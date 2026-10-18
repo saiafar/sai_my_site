@@ -7,7 +7,10 @@ inicio: 2014-07
 fin: 2016-07
 parte_de: experiencia/freelance-2014-2016
 tecnologias: [php, laravel, postgresql, html, css, javascript, api-rest, wordpress, phonegap]
+portada: /imagenes/proyectos/chispa-sport-app.webp
+portada_alt: App de estadísticas de béisbol en un teléfono móvil
 visibilidad: public
+destacado: 4
 ---
 
 ## Contexto

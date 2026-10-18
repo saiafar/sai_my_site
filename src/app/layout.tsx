@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Plus_Jakarta_Sans, Inter, Poppins } from 'next/font/google';
+import { Bricolage_Grotesque, Space_Mono } from 'next/font/google';
 import { Consentimiento } from '@/components/consentimiento';
 import { env } from '@/lib/env';
 import './globals.css';
@@ -7,24 +7,27 @@ import './globals.css';
 // next/font descarga y auto-aloja las fuentes durante la construcción: en
 // producción no hay ninguna petición a Google, ni cookies de terceros, ni un
 // salto de red antes de que el texto se pinte.
-const heading = Plus_Jakarta_Sans({
+//
+// Bricolage Grotesque es una sola familia variable para todo el texto. Se le
+// pide el eje `opsz` además del grosor porque es lo que hace que funcione a los
+// dos extremos de la escala: el eje de tamaño óptico aprieta el interletraje y
+// afina los trazos a medida que crece el cuerpo, que es exactamente lo que
+// necesita una página cuyos titulares llegan a 200 px y cuyo cuerpo baja a 13.
+// Sin ese eje, el titular grande se vería basto y el texto pequeño, débil.
+const display = Bricolage_Grotesque({
   subsets: ['latin'],
-  variable: '--fuente-heading',
+  axes: ['opsz'],
+  variable: '--fuente-display',
   display: 'swap',
 });
 
-const sans = Inter({
+// El monoespacio no es decorativo: marca lo que anota el sistema —el número de
+// sección, el recuento, el estado— frente a lo que afirma el texto. Solo se
+// usan dos grosores y no es variable, así que cada uno es un fichero aparte.
+const mono = Space_Mono({
   subsets: ['latin'],
-  variable: '--fuente-sans',
-  display: 'swap',
-});
-
-// Solo para el nombre del hero. Poppins no es una fuente variable, así que
-// cada grosor es un fichero aparte: se carga únicamente el que se usa.
-const marca = Poppins({
-  subsets: ['latin'],
-  weight: '600',
-  variable: '--fuente-marca',
+  weight: ['400', '700'],
+  variable: '--fuente-mono',
   display: 'swap',
 });
 
@@ -67,7 +70,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="es" className={`${heading.variable} ${sans.variable} ${marca.variable}`}>
+    <html lang="es" className={`${display.variable} ${mono.variable}`}>
       <body>
         {children}
         {/*

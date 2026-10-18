@@ -1,30 +1,42 @@
 import Link from 'next/link';
+import { TONOS, type Tono } from '@/lib/site/tonos';
 
 /**
  * Etiqueta de tecnología.
  *
- * Diminuta y en mayúsculas, como los distintivos de formato de la referencia.
- * A este tamaño el texto deja de leerse palabra a palabra y pasa a funcionar
- * como textura reconocible, que es justo lo que se quiere de una lista de
- * catorce tecnologías bajo una tarjeta.
+ * Píldora de contorno en monoespaciado: la misma forma que el resto de lo que
+ * se pulsa, pero sin relleno, porque una fila de seis etiquetas rellenas
+ * competiría con el titular de la tarjeta que las lleva debajo.
+ *
+ * El contorno y el color salen del tono de la banda y no del componente: la
+ * misma etiqueta aparece sobre crema, sobre noche y sobre naranja.
  */
 export function Etiqueta({
   children,
   href,
+  tono = 'crema',
   destacada = false,
   className = '',
 }: {
   children: React.ReactNode;
   href?: string;
+  tono?: Tono;
+  /** Resalta la etiqueta: se usa para el «+N» que cierra una fila. */
   destacada?: boolean;
   className?: string;
 }) {
-  const clases = destacada
-    ? `inline-flex items-center rounded border border-accent/30 bg-accent/5 px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-accent transition-colors ${className}`.trim()
-    : `inline-flex items-center rounded border border-line px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-ink-faint transition-colors ${className}`.trim();
+  const t = TONOS[tono];
+  const clases = [
+    'inline-flex items-center gap-1 rounded-full px-3 py-1.5 font-mono text-[12px] leading-none sm:text-[13px]',
+    destacada ? `${t.chip} ${t.acento}` : t.chip,
+    'transition-colors',
+    className,
+  ]
+    .filter(Boolean)
+    .join(' ');
 
   return href ? (
-    <Link href={href} className={`${clases} hover:border-line-strong hover:text-ink-muted`}>
+    <Link href={href} className={`${clases} hover:border-current`}>
       {children}
     </Link>
   ) : (

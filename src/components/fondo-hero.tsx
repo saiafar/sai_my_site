@@ -15,7 +15,7 @@ const capas = manifiesto as Capa[];
  * cuánto más alta que la ventana se pinta la imagen, y pasarse por arriba solo
  * hace que un móvil descargue la variante siguiente.
  */
-const DESFASE_VH = 10;
+const DESFASE_VH = 14;
 
 function srcSet(capa: Capa, formato: string): string {
   return capa.variantes
@@ -70,11 +70,9 @@ export function FondoHero({ escena = 'atardecer' }: { escena?: string }) {
   return (
     <div
       aria-hidden
-      className={`escena-telon pointer-events-none absolute inset-x-0 bottom-0 -z-10 overflow-hidden${
+      className={`escena-telon pointer-events-none absolute inset-0 overflow-hidden${
         parallax ? ' escena-telon-parallax' : ''
       }`}
-      // Sube por detrás de la barra superior: la imagen cubre la ventana entera.
-      style={{ top: 'calc(-1 * var(--altura-barra))' }}
     >
       {pila.map((capa, i) => (
         <picture
@@ -122,24 +120,19 @@ export function FondoHero({ escena = 'atardecer' }: { escena?: string }) {
       {/* Velo uniforme: casi nada al principio, el 60 % al final. La
           ilustración es muy saturada y, con el texto encima, sin bajarle la
           luminosidad no se leería por mucho contraste de color que hubiera. */}
-      <div className="escena-velo absolute inset-0 bg-ground" />
+      <div className="escena-velo absolute inset-0 bg-noche" />
 
       {/* Oscurece la franja de la barra superior mientras esta es transparente,
           para que los enlaces se lean sobre cualquier zona de la imagen. */}
-      <div className="escena-cabecera absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-ground/70 to-transparent" />
+      <div className="escena-cabecera absolute inset-x-0 top-0 h-36 bg-gradient-to-b from-noche/70 to-transparent" />
 
       {/* Fundido inferior permanente: la imagen nunca termina en una línea. */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent from-70% to-ground" />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent from-70% to-noche" />
 
-      {/* Cierre. Al final del recorrido el borde inferior del telón coincide
-          con el del bloque del nombre, así que este degradado alcanza el color
-          de la página justo antes del logo: por encima la imagen sigue viéndose
-          velada, y por debajo, donde empieza el texto, ya no hay imagen. */}
-      <div className="escena-cierre absolute inset-0 bg-[linear-gradient(to_bottom,transparent_45%,var(--color-ground)_90%)]" />
-
-      {/* Los laterales se cierran también: enmarca la columna central y evita
-          que la imagen toque los bordes de la ventana. */}
-      <div className="escena-vineta absolute inset-0 bg-[radial-gradient(ellipse_70%_85%_at_50%_35%,transparent,var(--color-ground))]" />
+      {/* Los laterales y las esquinas se cierran: enmarca el nombre y evita que
+          la imagen toque los bordes de la ventana. Al final del recorrido la
+          viñeta está casi cerrada y lo que queda detrás del texto es noche. */}
+      <div className="escena-vineta absolute inset-0 bg-[radial-gradient(ellipse_70%_80%_at_50%_40%,transparent,var(--color-noche))]" />
     </div>
   );
 }

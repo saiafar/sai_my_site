@@ -1,115 +1,73 @@
 import Link from 'next/link';
-import type { Lang } from '@/lib/i18n';
+import { getDictionary, type Lang } from '@/lib/i18n';
 
 /**
  * Pie.
  *
- * Reproduce el bloque de preguntas frecuentes de la referencia con <details>
- * nativo: sin JavaScript, accesible por teclado de serie y con el contenido
- * presente en el HTML, de modo que un buscador lo indexa aunque esté plegado.
+ * Es también la navegación de salida: la cabecera vive dentro del hero y se va
+ * con él, así que quien llega abajo tiene aquí los destinos del sitio, el
+ * cambio de idioma y los perfiles externos. Un pie que solo pone el año obliga
+ * a volver arriba.
  */
-
-const PREGUNTAS_ES = [
-  {
-    pregunta: '¿De dónde salen las respuestas del asistente?',
-    respuesta:
-      'De una base de conocimiento propia escrita en Markdown, troceada por secciones y convertida en vectores que se almacenan en PostgreSQL con pgvector. Cada respuesta cita los fragmentos concretos en los que se apoya, y si la documentación no cubre la pregunta el asistente lo dice en lugar de improvisar.',
-  },
-  {
-    pregunta: '¿Puede inventarse cosas sobre mi experiencia?',
-    respuesta:
-      'El modelo solo recibe los fragmentos recuperados y tiene prohibido completar con conocimiento general. Cada afirmación va marcada con la fuente que la respalda, así que cualquier dato es verificable pulsando la cita.',
-  },
-  {
-    pregunta: '¿Qué tecnología hay detrás?',
-    respuesta:
-      'Next.js sobre Node, PostgreSQL 17 con pgvector para la búsqueda híbrida (vectorial y full-text fusionadas con Reciprocal Rank Fusion), embeddings generados en local con ONNX y un proveedor externo solo para redactar la respuesta. Todo en contenedores Docker sobre un servidor propio.',
-  },
-];
-
-const PREGUNTAS_EN = [
-  {
-    pregunta: 'Where do the assistant’s answers come from?',
-    respuesta:
-      'From a curated Markdown knowledge base, split into semantic sections and vectorized in PostgreSQL with pgvector. Each response cites the exact chunks it relies upon, and if the documentation does not cover the question, the assistant admits it instead of improvising.',
-  },
-  {
-    pregunta: 'Can it hallucinate details about experience?',
-    respuesta:
-      'The model only receives retrieved chunks and is explicitly forbidden from using general knowledge. Every statement is flagged with the backing source marker, making every detail verifiable by clicking the citation.',
-  },
-  {
-    pregunta: 'What technology powers this website?',
-    respuesta:
-      'Next.js on Node, PostgreSQL 17 with pgvector for hybrid search (vector + full-text combined via Reciprocal Rank Fusion), quantized local embeddings via ONNX, and Google Gemini strictly for answer generation. Everything runs in Docker on a self-hosted server.',
-  },
-];
-
 export function Pie({
   github,
   linkedin,
+  behance,
   ano,
   lang = 'es',
+  currentSlug,
 }: {
   github?: string;
   linkedin?: string;
+  behance?: string;
   ano: number;
   lang?: Lang;
+  currentSlug?: string;
 }) {
-  const preguntas = lang === 'en' ? PREGUNTAS_EN : PREGUNTAS_ES;
+  const dict = getDictionary(lang);
+  const otroIdioma = currentSlug ? `/${dict.otherLang}/${currentSlug}` : `/${dict.otherLang}`;
+
+  const internos = [
+    { texto: dict.nav.work, href: `/${lang}#trabajo` },
+    { texto: dict.nav.lab, href: `/${lang}#lab` },
+    { texto: dict.nav.journey, href: `/${lang}#trayectoria` },
+    { texto: dict.nav.faq, href: `/${lang}/preguntas` },
+    { texto: dict.nav.ask, href: `/${lang}#preguntar` },
+  ];
+
+  const externos = [
+    { texto: 'LinkedIn', href: linkedin },
+    { texto: 'Behance', href: behance },
+    { texto: 'GitHub', href: github },
+  ].filter((enlace): enlace is { texto: string; href: string } => Boolean(enlace.href));
 
   return (
-    <footer className="mt-20 border-t border-line pt-10">
-      <h2 className="text-[15px] font-medium text-ink">
-        {lang === 'en' ? 'About this website' : 'Sobre este sitio'}
-      </h2>
+    <footer className="bg-noche text-ink-inverso">
+      <div className="mx-auto flex max-w-ancho flex-wrap items-center justify-between gap-x-8 gap-y-6 px-6 py-10 font-mono text-[12px] sm:px-8 sm:text-[13px]">
+        <nav aria-label={dict.nav.about} className="flex flex-wrap items-center gap-x-4 gap-y-2">
+          {internos.map((enlace) => (
+            <Link key={enlace.href} href={enlace.href} className="text-ink-inverso-muted hover:text-ink-inverso">
+              {enlace.texto}
+            </Link>
+          ))}
+        </nav>
 
-      <div className="mt-4 divide-y divide-line border-y border-line">
-        {preguntas.map((entrada) => (
-          <details key={entrada.pregunta} className="group py-3">
-            <summary className="flex cursor-pointer list-none items-center gap-2.5 text-[13px] text-ink-muted transition-colors hover:text-ink">
-              <span className="font-mono text-[14px] leading-none text-accent transition-transform duration-200 group-open:rotate-45 select-none">
-                +
-              </span>
-              {entrada.pregunta}
-            </summary>
-            <p className="mt-2 pl-5 text-[13px] leading-relaxed text-ink-muted">
-              {entrada.respuesta}
-            </p>
-          </details>
-        ))}
-      </div>
-
-      <div className="mt-8 flex flex-wrap items-center justify-between gap-3 pb-12 text-[11px] text-ink-faint">
-        <p>© {ano} Rafaías Villán</p>
-        <div className="flex gap-4">
-          <Link href={`/${lang}/preguntas`} className="transition-colors hover:text-ink-muted">
-            {lang === 'en' ? 'Frequently asked questions' : 'Preguntas frecuentes'}
-          </Link>
-          <Link href={`/${lang}#asistente`} className="transition-colors hover:text-ink-muted">
-            {lang === 'en' ? 'Ask the assistant' : 'Preguntar al asistente'}
-          </Link>
-          {linkedin ? (
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-ink-inverso-muted">
+          {externos.map((enlace) => (
             <a
-              href={linkedin}
+              key={enlace.texto}
+              href={enlace.href}
               target="_blank"
               rel="noreferrer noopener"
-              className="transition-colors hover:text-ink-muted"
+              className="hover:text-ink-inverso"
             >
-              LinkedIn
+              {enlace.texto}
             </a>
-          ) : null}
-
-          {github ? (
-            <a
-              href={github}
-              target="_blank"
-              rel="noreferrer noopener"
-              className="transition-colors hover:text-ink-muted"
-            >
-              {lang === 'en' ? 'Source code' : 'Código del sitio'}
-            </a>
-          ) : null}
+          ))}
+          <Link href={otroIdioma} lang={dict.otherLang} className="hover:text-ink-inverso">
+            {dict.otherLangLabel}
+          </Link>
+          <span className="text-ink-inverso-faint">© {ano} Rafaías Villán</span>
         </div>
       </div>
     </footer>

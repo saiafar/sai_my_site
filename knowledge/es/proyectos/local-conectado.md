@@ -7,8 +7,10 @@ inicio: 2020-01
 fin: 2023-01
 tecnologias: [php, laravel, react, react-native, nodejs, electronjs, socket-io, sqlite, javascript, linux, google-cloud]
 parte_de: experiencia/portalweb
+portada: /imagenes/proyectos/local-conectado-cobro.webp
+portada_alt: Pantalla de cobro con importes rápidos y métodos de pago
 visibilidad: public
-destacado: true
+destacado: 3
 ---
 
 ## Contexto

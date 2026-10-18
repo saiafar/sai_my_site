@@ -8,4 +8,8 @@
 export const ENLACES = {
   github: 'https://github.com/saiafar/sai_my_site',
   linkedin: 'https://www.linkedin.com/in/rafaiasvillan/',
+  behance: 'https://www.behance.net/rafaiasvillan',
+  // El rediseño publica la dirección junto al formulario: quien prefiere su
+  // propio correo no debería tener que rellenar tres campos para escribir.
+  email: 'rafaiasvillan@gmail.com',
 } as const;

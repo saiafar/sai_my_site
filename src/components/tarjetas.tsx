@@ -1,26 +1,40 @@
 import Link from 'next/link';
 import { Etiqueta } from './etiqueta';
+import { Onda } from './onda';
 import { formatPeriod, type SiteDocument } from '@/lib/site/queries';
-import type { Lang } from '@/lib/i18n';
+import { getDictionary, type Lang } from '@/lib/i18n';
+import { TONOS, type Tono } from '@/lib/site/tonos';
 import type { Testimonio } from '@/lib/site/testimonios';
 
 /** Cuántas etiquetas caben antes de que la fila deje de leerse. */
-const MAX_ETIQUETAS = 6;
+const MAX_ETIQUETAS = 5;
 
-function Etiquetas({ tecnologias }: { tecnologias: SiteDocument['technologies'] }) {
+function texto(documento: SiteDocument, clave: string): string | null {
+  const valor = documento.metadata[clave];
+  return typeof valor === 'string' && valor.trim() !== '' ? valor.trim() : null;
+}
+
+function Etiquetas({
+  tecnologias,
+  tono,
+}: {
+  tecnologias: SiteDocument['technologies'];
+  tono: Tono;
+}) {
   if (tecnologias.length === 0) return null;
   const visibles = tecnologias.slice(0, MAX_ETIQUETAS);
   const restantes = tecnologias.length - visibles.length;
 
   return (
-    <div className="mt-3 flex flex-wrap gap-1">
+    <div className="flex flex-wrap gap-2">
       {visibles.map((tecnologia) => (
-        <Etiqueta key={tecnologia.slug}>{tecnologia.name}</Etiqueta>
+        <Etiqueta key={tecnologia.slug} tono={tono}>
+          {tecnologia.name}
+        </Etiqueta>
       ))}
       {restantes > 0 ? (
-        <Etiqueta destacada>
-          <span className="mr-0.5 font-semibold text-accent">+</span>
-          {restantes}
+        <Etiqueta tono={tono} destacada>
+          +{restantes}
         </Etiqueta>
       ) : null}
     </div>
@@ -28,197 +42,357 @@ function Etiquetas({ tecnologias }: { tecnologias: SiteDocument['technologies'] 
 }
 
 /**
- * Tarjeta de proyecto.
+ * Ficha del proyecto, para cuando todavía no hay imagen.
  *
- * Más grande que las de la referencia, y a dos columnas en lugar de tres. Allí
- * la densidad funciona porque hay 179 elementos y la abundancia es el mensaje;
- * con ocho proyectos la misma rejilla no se lee como densa sino como escasa.
- * El resumen tiene sitio para una frase completa, que es lo que convierte la
- * tarjeta en algo informativo y no en un simple enlace con título.
+ * La mitad derecha de cada banda es una captura o una pieza gráfica. Mientras no
+ * exista —hoy no hay ninguna, y las de un proyecto no se pueden publicar porque
+ * llevan datos de otros empleados— el hueco no se deja vacío ni se rellena con
+ * una imagen inventada: se muestran los datos que la ficha sí tiene. Es una
+ * pieza de diseño hecha con información verdadera, y el día que haya captura se
+ * sustituye sin tocar la banda.
  */
-export function TarjetaProyecto({
-  documento,
-  lang = 'es',
-}: {
-  documento: SiteDocument;
-  lang?: Lang;
-}) {
-  const elementId = documento.slug.replace(/\//g, '-');
-  const periodo = formatPeriod(documento.startsOn, documento.endsOn, lang);
-  const rol = typeof documento.metadata['rol'] === 'string' ? documento.metadata['rol'] : null;
-  const portada =
-    typeof documento.metadata['portada'] === 'string'
-      ? (documento.metadata['portada'] as string)
-      : typeof documento.metadata['imagen'] === 'string'
-        ? (documento.metadata['imagen'] as string)
-        : typeof documento.metadata['cover'] === 'string'
-          ? (documento.metadata['cover'] as string)
-          : null;
-  const portadaAlt =
-    typeof documento.metadata['portada_alt'] === 'string'
-      ? (documento.metadata['portada_alt'] as string)
-      : typeof documento.metadata['alt'] === 'string'
-        ? (documento.metadata['alt'] as string)
-        : documento.title;
+function FichaVisual({ documento, lang }: { documento: SiteDocument; lang: Lang }) {
+  const dict = getDictionary(lang);
+  const filas = [
+    { clave: dict.detail.role, valor: texto(documento, 'rol') },
+    { clave: dict.detail.organization, valor: texto(documento, 'organizacion') },
+    { clave: dict.detail.period, valor: formatPeriod(documento.startsOn, documento.endsOn, lang) },
+  ].filter((fila): fila is { clave: string; valor: string } => Boolean(fila.valor));
 
   return (
-    <Link
-      id={elementId}
-      href={`/${lang}/${documento.slug}`}
-      className="group flex flex-col rounded-xl border border-line bg-surface p-5 transition-all duration-200 hover:border-accent/35 hover:shadow-[0_4px_24px_-6px_rgba(225,93,59,0.08)] scroll-mt-24"
-    >
-      {portada ? (
-        <div className="mb-4 aspect-video w-full overflow-hidden rounded-lg border border-line/60 bg-ground/50">
-          <img
-            src={portada}
-            alt={portadaAlt}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-          />
+    <div className="rotate-[1.5deg]">
+      <div className="overflow-hidden rounded-tarjeta bg-crema text-tinta shadow-[0_40px_80px_rgba(0,0,0,0.45)]">
+        <div className="flex items-center gap-3 border-b border-line bg-crema-honda px-5 py-4">
+          <span
+            aria-hidden
+            className="flex size-9 items-center justify-center rounded-full bg-naranja font-extrabold text-tinta"
+          >
+            {documento.title.slice(0, 1)}
+          </span>
+          <span className="truncate text-[15px] font-semibold">{documento.title}</span>
+          <span className="ml-auto shrink-0 font-mono text-[11px] text-ink-faint">
+            {documento.slug}
+          </span>
         </div>
-      ) : null}
 
-      <div className="flex items-start justify-between gap-3">
-        <h3 className="font-heading text-[15px] font-semibold leading-snug text-ink transition-colors group-hover:text-accent">
-          {documento.title}
-        </h3>
-        <svg
-          aria-hidden
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.6"
-          className="mt-1 h-3.5 w-3.5 shrink-0 text-accent/75 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
-        >
-          <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        <dl className="grid gap-x-6 gap-y-5 px-5 py-6 sm:grid-cols-2">
+          {filas.map((fila) => (
+            <div key={fila.clave}>
+              <dt className="font-mono text-[11px] uppercase tracking-[0.08em] text-ink-faint">
+                {fila.clave}
+              </dt>
+              <dd className="mt-1.5 text-[16px] font-semibold leading-snug">{fila.valor}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
-
-      {periodo || rol ? (
-        <p className="font-heading mt-1 text-[11px] text-ink-faint">
-          {[periodo, rol].filter(Boolean).join(' · ')}
-        </p>
-      ) : null}
-
-      {documento.summary ? (
-        <p className="mt-2.5 text-[13px] leading-relaxed text-ink-muted">{documento.summary}</p>
-      ) : null}
-
-      <div className="mt-auto">
-        <Etiquetas tecnologias={documento.technologies} />
-      </div>
-    </Link>
+    </div>
   );
 }
 
 /**
- * Entrada de experiencia.
+ * El lado visual de una banda.
+ *
+ * Con una sola imagen, basta girarla un par de grados: el giro es lo que evita
+ * que una captura rectangular dentro de una banda rectangular parezca un hueco
+ * de maqueta. Con dos, la segunda se monta sobre la primera girada al contrario
+ * y con un filo grueso del color de la tinta, que es lo que la separa de la de
+ * abajo sin necesidad de sombra.
  */
-export function EntradaExperiencia({
+function VisualProyecto({ documento, portada }: { documento: SiteDocument; portada: string }) {
+  const segunda = texto(documento, 'portada_2');
+  const alt = texto(documento, 'portada_alt') ?? documento.title;
+
+  if (!segunda) {
+    return (
+      <img
+        src={portada}
+        alt={alt}
+        loading="lazy"
+        className="block aspect-4/3 w-full -rotate-2 rounded-tarjeta object-cover shadow-[0_30px_60px_rgba(20,16,18,0.35)]"
+      />
+    );
+  }
+
+  return (
+    <div className="relative pb-8">
+      <img
+        src={portada}
+        alt={alt}
+        loading="lazy"
+        className="block aspect-4/3 w-[78%] -rotate-3 rounded-tarjeta object-cover shadow-[0_30px_60px_rgba(20,16,18,0.35)]"
+      />
+      <img
+        src={segunda}
+        alt={texto(documento, 'portada_2_alt') ?? ''}
+        loading="lazy"
+        className="absolute -bottom-1 right-0 block aspect-4/3 w-[46%] rotate-[4deg] rounded-2xl border-[6px] border-tinta object-cover shadow-[0_30px_60px_rgba(20,16,18,0.35)]"
+      />
+    </div>
+  );
+}
+
+/**
+ * Banda de proyecto destacado.
+ *
+ * Cada proyecto destacado ocupa una franja entera de la página con su propio
+ * color, el nombre a cuerpo de titular y el detalle al lado. No es una tarjeta
+ * más grande: es la diferencia entre una lista de proyectos y cuatro proyectos
+ * que se leen uno detrás de otro. Los demás quedan debajo, en rejilla.
+ *
+ * El lado del visual se alterna con el índice para que dos bandas seguidas no
+ * tengan la misma composición.
+ */
+export function BandaProyecto({
   documento,
+  indice,
+  tono,
+  onda,
   lang = 'es',
 }: {
   documento: SiteDocument;
+  /** Empezando en 0: se pinta como 01, 02, 03… */
+  indice: number;
+  tono: Tono;
+  onda?: { hacia: Tono; forma?: number };
   lang?: Lang;
 }) {
-  const elementId = documento.slug.replace(/\//g, '-');
+  const dict = getDictionary(lang);
+  const t = TONOS[tono];
   const periodo = formatPeriod(documento.startsOn, documento.endsOn, lang);
-  const organizacion =
-    typeof documento.metadata['organizacion'] === 'string'
-      ? documento.metadata['organizacion']
-      : null;
+  const dominio = texto(documento, 'dominio') ?? texto(documento, 'organizacion');
+  const portada = texto(documento, 'portada') ?? texto(documento, 'imagen');
+  const visualPrimero = indice % 2 === 1;
+
+  const kicker = [String(indice + 1).padStart(2, '0'), periodo, dominio]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
-    <Link
-      id={elementId}
-      href={`/${lang}/${documento.slug}`}
-      className="group grid gap-x-6 gap-y-1 border-b border-line pb-6 last:border-0 sm:grid-cols-[9rem_1fr] scroll-mt-24"
-    >
-      <p className="pt-0.5 text-[11px] text-ink-faint">{periodo ?? '—'}</p>
+    <section data-aparecer className={t.fondo}>
+      <div
+        className={`mx-auto flex max-w-ancho flex-wrap items-center gap-12 px-6 py-24 sm:gap-16 sm:px-8 sm:py-32 ${
+          visualPrimero ? 'flex-wrap-reverse' : ''
+        }`}
+      >
+        <div className="flex min-w-0 flex-[1_1_22rem] flex-col gap-5">
+          <p className={`font-mono text-[13px] ${t.acento}`}>{kicker}</p>
 
-      <div>
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="font-heading text-[15px] font-semibold text-ink transition-colors group-hover:text-accent">
+          <h3 className="text-[clamp(40px,8.3vw,120px)] font-extrabold leading-[0.85] tracking-[-0.05em]">
             {documento.title}
           </h3>
-          <svg
-            aria-hidden
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.6"
-            className="mt-1 h-3.5 w-3.5 shrink-0 text-accent/75 transition-all duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
+
+          {documento.summary ? (
+            <p className={`max-w-xl text-[17px] leading-relaxed sm:text-[21px] ${t.apagado}`}>
+              {documento.summary}
+            </p>
+          ) : null}
+
+          <Etiquetas tecnologias={documento.technologies} tono={tono} />
+
+          <Link
+            href={`/${lang}/${documento.slug}`}
+            className={`font-mono text-[14px] hover:underline sm:text-[15px] ${t.acento}`}
           >
-            <path d="M7 17 17 7M9 7h8v8" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+            {dict.sections.work.cardCta}
+          </Link>
         </div>
-        {organizacion ? (
-          <p className="font-heading mt-0.5 text-[12px] text-ink-muted">{organizacion}</p>
-        ) : null}
-        {documento.summary ? (
-          <p className="mt-2 text-[13px] leading-relaxed text-ink-muted">{documento.summary}</p>
-        ) : null}
-        <Etiquetas tecnologias={documento.technologies} />
+
+        <div className="min-w-0 flex-[1_1_26rem]">
+          {portada ? (
+            <VisualProyecto documento={documento} portada={portada} />
+          ) : (
+            <FichaVisual documento={documento} lang={lang} />
+          )}
+        </div>
       </div>
+
+      {onda ? <Onda hacia={onda.hacia} forma={onda.forma ?? 0} /> : null}
+    </section>
+  );
+}
+
+/**
+ * Tarjeta breve: los proyectos que no tienen banda propia.
+ *
+ * Van en tinta sobre la banda crema. Es lo que las separa de las cuatro
+ * destacadas sin hacerlas más pequeñas: las bandas son del color de la página y
+ * estas son bloques dentro de ella.
+ */
+export function TarjetaProyectoBreve({
+  documento,
+  lang = 'es',
+}: {
+  documento: SiteDocument;
+  lang?: Lang;
+}) {
+  // Dos tecnologías separadas por una barra, como una ruta: dice de qué tipo es
+  // el proyecto en menos sitio que una frase.
+  const etiqueta = documento.technologies
+    .slice(0, 2)
+    .map((tecnologia) => tecnologia.slug)
+    .join('/');
+
+  return (
+    <Link
+      href={`/${lang}/${documento.slug}`}
+      className="group flex flex-col gap-3.5 rounded-xl bg-noche p-5.5 text-ink-inverso transition-colors hover:bg-noche-raised"
+    >
+      {etiqueta ? <span className="font-mono text-[12px] text-lila">{etiqueta}</span> : null}
+
+      <strong className="text-[22px] font-extrabold leading-tight tracking-[-0.02em] group-hover:underline">
+        {documento.title}
+      </strong>
+
+      {documento.summary ? (
+        <span className="text-[15px] leading-relaxed text-ink-inverso-muted">
+          {documento.summary}
+        </span>
+      ) : null}
     </Link>
   );
 }
 
 /**
- * Tarjeta de recomendación / testimonio de LinkedIn.
+ * Etapa de la trayectoria.
  *
- * Muestra la empresa donde coincidieron, el cargo y especialidad, la relación
- * profesional y fecha, y el texto íntegro en citas, manteniendo el anonimato
- * del autor según lo solicitado.
+ * Los años a la izquierda, en monoespaciado, y el nombre a cuerpo de titular: la
+ * trayectoria se lee bajando por la columna de fechas, y lo que cambia de una
+ * etapa a otra es el nombre, no la descripción.
  */
-export function TarjetaTestimonio({ testimonio }: { testimonio: Testimonio }) {
-  const parrafos = testimonio.contenido.split('\n\n');
+export function EtapaTrayectoria({
+  documento,
+  lang = 'es',
+  tono = 'crema',
+}: {
+  documento: SiteDocument;
+  lang?: Lang;
+  tono?: Tono;
+}) {
+  const dict = getDictionary(lang);
+  const t = TONOS[tono];
+  const periodo = formatPeriod(documento.startsOn, documento.endsOn, lang);
+  const rol = texto(documento, 'rol');
+  const organizacion = texto(documento, 'organizacion');
 
   return (
-    <article className="group relative flex flex-col justify-between rounded-xl border border-line bg-surface/60 p-5 transition-all duration-200 hover:border-accent/40 hover:bg-surface hover:shadow-[0_4px_24px_-6px_rgba(225,93,59,0.08)]">
-      <div>
-        <div className="flex items-start justify-between gap-3 border-b border-line/60 pb-3">
-          <div>
-            <span className="font-heading block text-[14px] font-semibold leading-snug text-ink transition-colors group-hover:text-accent">
-              {testimonio.empresa}
-            </span>
-            <span className="font-heading mt-0.5 block text-[11px] leading-tight text-accent/90">
-              {testimonio.cargo}
-            </span>
-          </div>
+    <article className={`grid gap-x-10 gap-y-4 border-t py-10 sm:grid-cols-[10rem_1fr] ${t.linea}`}>
+      <p className={`font-mono text-[13px] ${t.acento}`}>{periodo ?? '—'}</p>
 
-          <div
-            title="Recomendación verificada en LinkedIn"
-            className="flex shrink-0 items-center gap-1.5 rounded-md border border-line bg-surface-raised/80 px-2 py-0.5 font-mono text-[10px] text-ink-faint"
+      <div className="min-w-0">
+        <h3 className="text-subtitular font-extrabold">{organizacion ?? documento.title}</h3>
+
+        {rol ? <p className="mt-2 text-[17px] font-semibold">{rol}</p> : null}
+
+        {documento.summary ? (
+          <p className={`mt-3 max-w-2xl text-[15px] leading-relaxed sm:text-[17px] ${t.apagado}`}>
+            {documento.summary}
+          </p>
+        ) : null}
+
+        <div className="mt-5 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <Link
+            href={`/${lang}/${documento.slug}`}
+            className={`font-mono text-[14px] hover:underline ${t.acento}`}
           >
-            <svg
-              aria-hidden
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              className="size-3 text-[#0a66c2]"
-            >
-              <path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.46 10.9v8.37H9.2V10.9H6.46M7.83 6.27a1.62 1.62 0 1 0 0 3.24 1.62 1.62 0 0 0 0-3.24Z" />
-            </svg>
-            <span>{testimonio.fecha}</span>
-          </div>
+            {dict.sections.journey.cardCta}
+          </Link>
+          <Etiquetas tecnologias={documento.technologies.slice(0, 4)} tono={tono} />
         </div>
-
-        <div className="mt-2.5 flex items-center gap-1.5 text-[11px] text-ink-faint">
-          <span className="size-1.5 rounded-full bg-accent/70" />
-          <span>{testimonio.relacion}</span>
-        </div>
-
-        <blockquote className="mt-3.5 space-y-2 text-[13px] leading-relaxed text-ink-muted italic select-text">
-          {parrafos.map((p, idx) => (
-            <p key={idx}>
-              {idx === 0 ? '“' : ''}
-              {p}
-              {idx === parrafos.length - 1 ? '”' : ''}
-            </p>
-          ))}
-        </blockquote>
       </div>
     </article>
   );
 }
 
+/** Primera frase completa de un texto largo, para los extractos. */
+function extracto(contenido: string, minimo = 80): string {
+  const plano = contenido.replace(/\s+/g, ' ').trim();
+  // El primer punto que cierre una frase lo bastante larga para valerse sola:
+  // cortar por número de caracteres parte palabras y deja la cita a medias.
+  const corte = plano.indexOf('. ', minimo);
+  return corte === -1 ? plano : plano.slice(0, corte + 1);
+}
+
+/** Los tres colores que se van turnando en las recomendaciones cortas. */
+const COLORES_TESTIMONIO = ['bg-lila', 'bg-naranja', 'bg-crema-honda'] as const;
+
+/**
+ * Recomendación de LinkedIn.
+ *
+ * Dos tamaños. La destacada va sola, en tinta y a cuerpo de titular, porque es
+ * la que una persona que llega al sitio se va a leer entera; las demás van en
+ * extracto —la primera frase completa— sobre los colores de la casa, turnándose,
+ * de modo que la fila se lee como un muestrario y no como una lista.
+ *
+ * El autor no se nombra: se identifican por cargo y empresa, que es lo que hace
+ * comprobable la cita sin publicar el nombre de quien la escribió.
+ */
+export function TarjetaTestimonio({
+  testimonio,
+  lang = 'es',
+  tamano = 'normal',
+  indice = 0,
+}: {
+  testimonio: Testimonio;
+  lang?: Lang;
+  tamano?: 'grande' | 'normal';
+  /** Posición en la fila: decide el color de la tarjeta corta. */
+  indice?: number;
+}) {
+  const dict = getDictionary(lang);
+  const parrafos = testimonio.contenido.split('\n\n');
+  const resumen = extracto(parrafos[0] ?? '');
+  const cargo = testimonio.cargo.split('|')[0]?.trim();
+  const hayMas = resumen !== testimonio.contenido.replace(/\s+/g, ' ').trim();
+
+  if (tamano === 'grande') {
+    return (
+      <article className="rounded-bloque bg-noche p-8 text-ink-inverso sm:p-16">
+        <blockquote className="text-[clamp(24px,3.9vw,56px)] font-bold leading-[1.02] tracking-[-0.03em]">
+          “{resumen}”
+        </blockquote>
+
+        <p className="mt-7 text-[15px] sm:text-[16px]">
+          <strong className="font-semibold">
+            {cargo} · {testimonio.empresa}
+          </strong>{' '}
+          <span className="text-ink-inverso-faint">
+            · {testimonio.relacion.toLowerCase()} · {testimonio.fecha.toLowerCase()}
+          </span>
+        </p>
+
+        {hayMas ? (
+          <details className="acordeon mt-5">
+            <summary className="font-mono text-[14px] text-lila">
+              <span aria-hidden className="acordeon-signo mr-2 inline-block">
+                +
+              </span>
+              {dict.sections.testimonials.readFull}
+            </summary>
+            <div className="mt-5 space-y-4 text-[15px] leading-relaxed text-ink-inverso-muted sm:text-[17px]">
+              {parrafos.map((parrafo, i) => (
+                <p key={i}>{parrafo}</p>
+              ))}
+            </div>
+          </details>
+        ) : null}
+
+      </article>
+    );
+  }
+
+  return (
+    <figure
+      className={`m-0 flex h-full flex-col justify-between gap-4 rounded-[22px] p-7 text-tinta ${
+        COLORES_TESTIMONIO[indice % COLORES_TESTIMONIO.length]
+      }`}
+    >
+      <blockquote className="text-[18px] font-semibold leading-snug sm:text-[21px]">
+        “{resumen}”
+      </blockquote>
+      <figcaption className="font-mono text-[12px]">
+        {cargo} · {testimonio.empresa} · {testimonio.fecha}
+      </figcaption>
+    </figure>
+  );
+}

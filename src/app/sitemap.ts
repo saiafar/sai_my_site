@@ -30,6 +30,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${base}/links`, lastModified: new Date(), priority: 0.8 },
     { url: `${base}/es/preguntas`, lastModified: new Date(), priority: 0.8 },
     { url: `${base}/en/preguntas`, lastModified: new Date(), priority: 0.8 },
+    { url: `${base}/es/proyectos`, lastModified: documentos[0]?.updated_at ?? new Date(), priority: 0.8 },
+    { url: `${base}/en/proyectos`, lastModified: documentos[0]?.updated_at ?? new Date(), priority: 0.8 },
     ...documentos.map((documento) => ({
       url: `${base}/${documento.lang}/${documento.slug}`,
       lastModified: documento.updated_at,

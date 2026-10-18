@@ -5,10 +5,15 @@ import { useState } from 'react';
 /**
  * Formulario de contacto.
  *
- * El sitio no publica ninguna dirección de correo: los mensajes se guardan en
- * la base de datos. La consecuencia para quien escribe es que necesita saber
- * que su mensaje ha llegado, así que el estado de envío es explícito y el
- * formulario no se limpia hasta que el servidor confirma.
+ * El mensaje se guarda en la base de datos propia y solo después se reenvía al
+ * webhook, así que no se pierde aunque la automatización esté caída. La
+ * consecuencia para quien escribe es que necesita saber que ha llegado: el
+ * estado de envío es explícito y el formulario no se limpia hasta que el
+ * servidor confirma.
+ *
+ * Al lado se publica la dirección de correo. No sobra: el formulario sirve para
+ * que el mensaje quede registrado con lo que esa persona había mirado antes, y
+ * el correo para quien prefiere escribir desde su propio buzón.
  *
  * El campo trampa está oculto para la vista y para los lectores de pantalla, y
  * marcado como no autocompletable: una persona no puede rellenarlo sin querer.
@@ -59,15 +64,17 @@ export function FormularioContacto({ lang = 'es' }: { lang?: Lang }) {
 
   if (estado === 'enviado') {
     return (
-      <div className="rounded-xl border border-line-strong bg-surface-raised/60 p-6 text-center">
-        <p className="text-[15px] text-ink">{dict.contactForm.successTitle}</p>
-        <p className="mt-2 text-[13px] leading-relaxed text-ink-muted">
+      <div className="rounded-bloque bg-crema p-8 text-center text-tinta sm:p-10">
+        <p className="text-[22px] font-bold tracking-[-0.02em] sm:text-[28px]">
+          ✓ {dict.contactForm.successTitle}
+        </p>
+        <p className="mt-3 text-[15px] leading-relaxed text-ink-muted sm:text-[17px]">
           {dict.contactForm.successDesc}
         </p>
         <button
           type="button"
           onClick={() => setEstado('inactivo')}
-          className="mt-4 text-[12px] text-ink-faint underline-offset-4 transition-colors hover:text-accent hover:underline"
+          className="mt-6 cursor-pointer rounded-full bg-tinta px-5 py-3 font-mono text-[13px] text-crema transition-colors hover:bg-noche-raised"
         >
           {dict.contactForm.sendAnother}
         </button>
@@ -75,8 +82,10 @@ export function FormularioContacto({ lang = 'es' }: { lang?: Lang }) {
     );
   }
 
+  // Los campos van en crema sobre la banda naranja: un campo de formulario
+  // tiene que parecer hueco, y sobre naranja solo lo parece si es más claro.
   const campo =
-    'w-full rounded-xl border border-line-strong bg-surface-raised/80 px-4 py-3 text-[14px] text-ink placeholder:text-ink-faint focus:border-accent focus:outline-none';
+    'w-full border border-tinta/20 bg-crema px-5 py-4 text-[16px] text-tinta placeholder:text-tinta/45 focus:border-tinta focus:outline-none';
 
   return (
     <form
@@ -84,10 +93,10 @@ export function FormularioContacto({ lang = 'es' }: { lang?: Lang }) {
         evento.preventDefault();
         void enviar();
       }}
-      className="space-y-3"
+      className="space-y-4"
       noValidate
     >
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label htmlFor="contacto-nombre" className="sr-only">
             {dict.contactForm.name}
@@ -100,7 +109,7 @@ export function FormularioContacto({ lang = 'es' }: { lang?: Lang }) {
             autoComplete="name"
             maxLength={80}
             required
-            className={campo}
+            className={`${campo} rounded-full`}
           />
         </div>
 
@@ -117,7 +126,7 @@ export function FormularioContacto({ lang = 'es' }: { lang?: Lang }) {
             autoComplete="email"
             maxLength={254}
             required
-            className={campo}
+            className={`${campo} rounded-full`}
           />
         </div>
       </div>
@@ -134,7 +143,7 @@ export function FormularioContacto({ lang = 'es' }: { lang?: Lang }) {
           rows={5}
           maxLength={MAX_MENSAJE}
           required
-          className={`${campo} resize-y`}
+          className={`${campo} resize-y rounded-tarjeta`}
         />
       </div>
 
@@ -151,26 +160,24 @@ export function FormularioContacto({ lang = 'es' }: { lang?: Lang }) {
       </div>
 
       {error ? (
-        <p role="alert" className="text-[13px] text-accent">
+        <p role="alert" className="font-mono text-[13px] font-bold text-tinta">
           {error}
         </p>
       ) : null}
 
-      <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-        <p className="max-w-sm text-[11px] leading-relaxed text-ink-faint">
-          {lang === 'en'
-            ? 'Your name, email, and message are securely stored on this server and used solely to reply to you. Never shared.'
-            : 'Tu nombre, tu correo y tu mensaje se guardan en la base de datos de este sitio, alojada en un servidor propio, y se usan únicamente para responderte. No se ceden a nadie.'}
+      <div className="flex flex-wrap items-center justify-between gap-4 pt-2">
+        <p className="max-w-sm font-mono text-[11px] leading-relaxed text-tinta/65">
+          {dict.contactForm.privacy}
         </p>
 
         <button
           type="submit"
           disabled={estado === 'enviando'}
-          className="group inline-flex items-center gap-2 rounded-lg border border-line-strong px-4 py-2 text-[13px] text-ink transition-all duration-200 hover:border-accent hover:text-accent disabled:pointer-events-none disabled:opacity-40"
+          className="group inline-flex cursor-pointer items-center gap-2 rounded-full bg-tinta px-6 py-4 font-mono text-[14px] font-bold text-crema transition-colors hover:bg-noche-raised disabled:pointer-events-none disabled:opacity-40"
         >
           <span>{estado === 'enviando' ? dict.contactForm.sending : dict.contactForm.submit}</span>
           {estado !== 'enviando' ? (
-            <span className="text-accent transition-transform duration-200 group-hover:translate-x-0.5">
+            <span aria-hidden className="transition-transform duration-200 group-hover:translate-x-0.5">
               →
             </span>
           ) : null}

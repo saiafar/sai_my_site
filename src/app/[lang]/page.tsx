@@ -1,12 +1,18 @@
 import type { Metadata } from 'next';
-import { FondoHero } from '@/components/fondo-hero';
-import { FondoNodos } from '@/components/fondo-nodos';
-import { BarraSuperior } from '@/components/barra-superior';
+import Link from 'next/link';
+import { Hero } from '@/components/hero';
+import { Cinta } from '@/components/cinta';
+import { Banda, Titular, Punto, SeccionVacia } from '@/components/seccion';
+import { BandaProyecto, TarjetaProyectoBreve, EtapaTrayectoria, TarjetaTestimonio } from '@/components/tarjetas';
+import { SeccionCreativo } from '@/components/seccion-creativo';
+import { SeccionLab } from '@/components/seccion-lab';
+import { SobreElSitio } from '@/components/sobre-el-sitio';
+import type { SeccionCorpus } from '@/components/mapa-rag';
 import { Asistente } from '@/components/asistente';
-import { Seccion, SeccionVacia } from '@/components/seccion';
-import { TarjetaProyecto, EntradaExperiencia, TarjetaTestimonio } from '@/components/tarjetas';
 import { Etiqueta } from '@/components/etiqueta';
 import { Pie } from '@/components/pie';
+import { Pildora } from '@/components/pildora';
+import { TextoDestacado } from '@/components/texto-destacado';
 import { EscenaHero } from '@/components/escena-hero';
 import { RestauradorScroll } from '@/components/restaurador-scroll';
 import { FormularioContacto } from '@/components/formulario-contacto';
@@ -14,13 +20,26 @@ import { Telemetria } from '@/components/telemetria';
 import { VerMas } from '@/components/ver-mas';
 import { DatosEstructurados } from '@/components/datos-estructurados';
 import * as jsonLd from '@/lib/site/datos-estructurados';
-import { getByKind, getStats, getTechnologies } from '@/lib/site/queries';
+import { getByKind, getMapaCorpus, getStats, getTechnologies } from '@/lib/site/queries';
+import { getTestimonios } from '@/lib/site/testimonios';
+import { getExperimentos } from '@/lib/site/lab';
+import { getPiezasCreativas } from '@/lib/site/creativo';
+import { getPreguntasSitio } from '@/lib/site/sobre-el-sitio';
+import { CICLO_TONOS } from '@/lib/site/tonos';
 import { ENLACES } from '@/lib/site/enlaces';
 import { env } from '@/lib/env';
-import { getTestimonios } from '@/lib/site/testimonios';
 import { getDictionary, isValidLang, DEFAULT_LANG, type Lang } from '@/lib/i18n';
 
 export const dynamic = 'force-dynamic';
+
+/** Proyectos que tienen banda propia. */
+const BANDAS = 4;
+/** Y los que van en la rejilla de debajo. Los demás, en el índice completo. */
+const EN_REJILLA = 6;
+/** Etapas visibles antes del desplegable. */
+const ETAPAS_VISIBLES = 4;
+/** Recomendaciones visibles: una entera y tres en extracto. */
+const TESTIMONIOS_VISIBLES = 4;
 
 interface Props {
   params: Promise<{ lang: string }>;
@@ -54,8 +73,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-function plural(n: number, singular: string, plural: string): string {
-  return `${n} ${n === 1 ? singular : plural}`;
+/** Año de inicio y de fin de un grupo de etapas, para el texto del desplegable. */
+function tramo(fechas: readonly (string | null)[]): { desde: string; hasta: string } {
+  const anos = fechas
+    .filter((fecha): fecha is string => Boolean(fecha))
+    .map((fecha) => new Date(fecha).getUTCFullYear())
+    .sort((a, b) => a - b);
+  return {
+    desde: String(anos[0] ?? ''),
+    hasta: String(anos[anos.length - 1] ?? ''),
+  };
 }
 
 export default async function HomePage({ params }: Props) {
@@ -63,383 +90,388 @@ export default async function HomePage({ params }: Props) {
   const lang: Lang = isValidLang(rawLang) ? rawLang : DEFAULT_LANG;
   const dict = getDictionary(lang);
 
-  const [perfil, experiencias, proyectos, notas, tecnologias, stats] = await Promise.all([
+  const [perfil, experiencias, proyectos, notas, tecnologias, stats, mapa] = await Promise.all([
     getByKind('perfil', lang),
     getByKind('experiencia', lang),
     getByKind('proyecto', lang),
     getByKind('nota', lang),
     getTechnologies(lang),
     getStats(lang),
+    getMapaCorpus(lang),
   ]);
 
   const presentacion = perfil[0];
-
   const delPerfil = (clave: string): string | null => {
     const valor = presentacion?.metadata[clave];
     return typeof valor === 'string' && valor.trim() !== '' ? valor.trim() : null;
   };
-  const titular = delPerfil('titular');
-  const subtitulo = delPerfil('subtitulo') ?? presentacion?.summary ?? null;
 
-  const destacados = proyectos.filter((p) => p.metadata['destacado'] === true);
-  const proyectosVisibles = destacados.length > 0 ? destacados : proyectos;
-  const proyectosOcultos = proyectos.filter((p) => !proyectosVisibles.includes(p));
+  // Los años no se escriben en ningún sitio: se cuentan desde la primera fecha
+  // del corpus, así que el 1 de enero el sitio dice uno más sin tocar nada.
+  const anos = stats.primerAno ? new Date().getFullYear() - stats.primerAno : null;
+  const conAnos = (texto: string): string => texto.replace('{n}', String(anos ?? ''));
 
-  const testimonios = getTestimonios(lang);
-  const testimoniosVisibles = testimonios.filter((t) => t.destacado);
-  const testimoniosOcultos = testimonios.filter((t) => !t.destacado);
+  // La cinta son las cuatro líneas del diccionario y las cifras de carrera que
+  // el perfil declara en su frontmatter. Las segundas son afirmaciones sobre su
+  // trabajo, así que viven en el corpus y no aquí.
+  const cifras = Array.isArray(presentacion?.metadata['cifras'])
+    ? (presentacion.metadata['cifras'] as unknown[]).filter(
+        (cifra): cifra is string => typeof cifra === 'string' && cifra.trim() !== '',
+      )
+    : [];
+  const cinta = [
+    ...dict.hero.ticker.filter((texto) => anos !== null || !texto.includes('{n}')).map(conAnos),
+    ...cifras,
+  ];
 
-  const ETAPAS_VISIBLES = 3;
-  const experienciasVisibles = experiencias.slice(0, ETAPAS_VISIBLES);
-  const experienciasOcultas = experiencias.slice(ETAPAS_VISIBLES);
+  // `destacado` en el frontmatter admite un número —la posición dentro de la
+  // sección de trabajo— o `true`, que vale «destácalo, donde quepa». Los cuatro
+  // primeros abren banda propia y los seis siguientes van en la rejilla; el
+  // resto vive en el índice completo. El orden no es el de las fechas: alterna
+  // dominios, y eso lo decide quien escribe el corpus, no la consulta. Los que
+  // no llevan número quedan detrás, ya ordenados por fecha, porque Array.sort
+  // es estable.
+  const posicion = (proyecto: (typeof proyectos)[number]): number => {
+    const valor = proyecto.metadata['destacado'];
+    if (typeof valor === 'number') return valor;
+    return Number.MAX_SAFE_INTEGER;
+  };
+  const ordenados = [...proyectos].sort((a, b) => posicion(a) - posicion(b));
+  const conBanda = ordenados.slice(0, BANDAS);
+  const enRejilla = ordenados.slice(BANDAS, BANDAS + EN_REJILLA);
 
+  const etapasVisibles = experiencias.slice(0, ETAPAS_VISIBLES);
+  const etapasOcultas = experiencias.slice(ETAPAS_VISIBLES);
+  const tramoOculto = tramo(etapasOcultas.flatMap((etapa) => [etapa.startsOn, etapa.endsOn]));
+
+  // Tecnologías que el perfil destaca; si no declara ninguna, las más escritas.
   const metaDestacadas =
     presentacion?.metadata['destacadas'] ??
     presentacion?.metadata['tecnologias'] ??
     presentacion?.metadata['technologies'];
-
   const slugsDestacados = new Set(
-    (Array.isArray(metaDestacadas)
-      ? metaDestacadas
-      : presentacion?.technologies.map((t) => t.slug) ?? []
-    ).map((s) => String(s).toLowerCase().trim()),
+    (Array.isArray(metaDestacadas) ? metaDestacadas : []).map((slug) =>
+      String(slug).toLowerCase().trim(),
+    ),
   );
-
-  const tecnologiasVisibles =
+  const stack =
     slugsDestacados.size > 0
-      ? tecnologias.filter((t) => slugsDestacados.has(t.slug.toLowerCase()))
+      ? tecnologias.filter((tecnologia) => slugsDestacados.has(tecnologia.slug.toLowerCase()))
       : tecnologias.slice(0, 14);
-  const tecnologiasOcultas = tecnologias.filter((t) => !tecnologiasVisibles.includes(t));
 
-  const cifrasPerfil = presentacion?.metadata['cifras'];
-  const cifras = Array.isArray(cifrasPerfil)
-    ? cifrasPerfil.filter((c): c is string => typeof c === 'string' && c.trim() !== '')
-    : [
-        `${stats.proyectos} ${stats.proyectos === 1 ? (lang === 'en' ? 'project' : 'proyecto') : (lang === 'en' ? 'projects' : 'proyectos')}`,
-        `${stats.tecnologias} ${stats.tecnologias === 1 ? (lang === 'en' ? 'technology' : 'tecnología') : (lang === 'en' ? 'technologies' : 'tecnologías')}`,
-        ...(stats.primerAno ? [lang === 'en' ? `since ${stats.primerAno}` : `desde ${stats.primerAno}`] : []),
-      ];
+  const testimonios = getTestimonios(lang);
+  const [destacado, ...otrosTestimonios] = testimonios;
+  const pequenos = otrosTestimonios.slice(0, TESTIMONIOS_VISIBLES - 1);
+  const testimoniosOcultos = otrosTestimonios.slice(TESTIMONIOS_VISIBLES - 1);
+
+  // Cada empresa una vez, en el orden en que aparecen las recomendaciones.
+  const empresas = [...new Set(testimonios.map((testimonio) => testimonio.empresa))].slice(0, 6);
+
+  const experimentos = getExperimentos(lang);
+  const piezas = getPiezasCreativas(lang);
+  const preguntasSitio = getPreguntasSitio(lang);
+
+  // El mapa que se dibuja detrás del asistente: las secciones del corpus con
+  // sus documentos y el número real de fragmentos de cada uno. Son los mismos
+  // que consulta la búsqueda, así que el grafo no ilustra el sistema: lo enseña.
+  const ETIQUETAS: Partial<Record<(typeof mapa)[number]['kind'], string>> = {
+    experiencia: dict.sections.experience.title,
+    proyecto: dict.sections.work.title,
+    perfil: dict.sections.assistant.mapProfile,
+    nota: dict.sections.notes.title,
+  };
+  const secciones: SeccionCorpus[] = (['experiencia', 'proyecto', 'perfil', 'nota'] as const)
+    .map((kind) => ({
+      etiqueta: ETIQUETAS[kind] ?? kind,
+      documentos: mapa
+        .filter((nodo) => nodo.kind === kind)
+        .map((nodo) => ({ titulo: nodo.title, fragmentos: nodo.fragmentos })),
+    }))
+    .filter((seccion) => seccion.documentos.length > 0);
 
   return (
     <>
-      <BarraSuperior github={ENLACES.github} linkedin={ENLACES.linkedin} sobreImagen lang={lang} />
       <EscenaHero />
       <RestauradorScroll />
 
-      <noscript>
-        <style>{'[data-escena],[data-escena-barra]{--p:1!important}'}</style>
-      </noscript>
+      <Hero lang={lang} titular={delPerfil('titular')} subtitulo={delPerfil('subtitulo')} />
 
-      <div data-escena className="relative" style={{ '--p': 0 } as React.CSSProperties}>
-        <div className="relative">
-          <FondoHero />
+      <Cinta textos={cinta} />
 
-          <div aria-hidden className="escena-entrada" />
-
-          <div className="escena-bloque flex flex-col items-center px-6 text-center">
-            <span className="escena-logo relative block">
-              <img
-                src="/logo.svg"
-                alt=""
-                width={72}
-                height={72}
-                className="escena-logo-blanco absolute inset-0 size-full brightness-0 invert"
-              />
-              <img
-                src="/logo.svg"
-                alt=""
-                width={72}
-                height={72}
-                className="escena-logo-color relative size-full"
-              />
+      {/* Presentación: la foto y la tesis. */}
+      <Banda tono="crema">
+        <div className="flex flex-wrap items-center gap-12 sm:gap-16">
+          <div className="relative min-w-0 flex-[1_1_18rem]">
+            <img
+              src="/imagenes/perfil/rafaias-villan.webp"
+              alt={dict.intro.photoAlt}
+              width={800}
+              height={1000}
+              className="block aspect-4/5 w-full -rotate-2 rounded-bloque object-cover shadow-[12px_12px_0_var(--color-tinta)]"
+            />
+            {/* La chapa va girada al contrario que la foto: es lo que hace que
+                se lea como una pegatina encima y no como parte del marco. */}
+            <span className="absolute -right-3 bottom-8 rotate-[4deg] rounded-full bg-lila px-4 py-2.5 font-mono text-[13px] font-bold text-tinta">
+              {dict.intro.kicker}
             </span>
-            <h1 className="escena-nombre font-brand font-semibold uppercase leading-none tracking-[0.14em] text-ink">
-              {env.siteOwner}
-            </h1>
           </div>
 
-          <div aria-hidden data-recorrido className="escena-recorrido" />
+          <div className="flex min-w-0 flex-[999_1_32rem] flex-col gap-7">
+            <h2 className="text-[clamp(38px,7.2vw,104px)] font-extrabold uppercase leading-[0.88] tracking-[-0.045em]">
+              {dict.intro.title.split('|').map((linea, indice, lineas) => (
+                <span key={linea} className={indice === lineas.length - 1 ? 'text-naranja' : ''}>
+                  {linea}
+                  {indice < lineas.length - 1 ? <br /> : null}
+                </span>
+              ))}
+            </h2>
+
+            <p className="max-w-3xl text-[19px] font-medium leading-[1.45] sm:text-[26px]">
+              <TextoDestacado
+                texto={conAnos(dict.intro.body)}
+                clases={['bg-naranja', 'bg-tinta text-crema', 'bg-lila']}
+              />
+            </p>
+          </div>
         </div>
+      </Banda>
 
-        <div className="relative">
-          <FondoNodos />
+      {/* Proyectos: cuatro bandas y el resto en rejilla. */}
+      <Banda id="trabajo" tono="crema" compacta>
+        <Titular
+          titulo={dict.sections.work.title}
+          tamano="gigante"
+          lead={dict.sections.work.lead
+            .replace('{n}', String(conBanda.length).padStart(2, '0'))
+            .replace('{total}', String(proyectos.length))}
+        />
+      </Banda>
 
-          <section className="relative z-10 mx-auto max-w-lectura px-6 pb-24 pt-6 text-center sm:pb-32">
-            {titular ? (
-              <p
-                className="escena-sube mx-auto max-w-2xl font-heading text-[24px] font-semibold leading-snug tracking-tight text-ink sm:text-[28px]"
-                style={{ '--desde': 0.3 } as React.CSSProperties}
+      {conBanda.length > 0 ? (
+        conBanda.map((proyecto, indice) => (
+          <BandaProyecto
+            key={proyecto.slug}
+            documento={proyecto}
+            indice={indice}
+            lang={lang}
+            tono={CICLO_TONOS[indice % CICLO_TONOS.length]!}
+            onda={{
+              hacia:
+                indice === conBanda.length - 1
+                  ? 'crema'
+                  : CICLO_TONOS[(indice + 1) % CICLO_TONOS.length]!,
+              forma: indice,
+            }}
+          />
+        ))
+      ) : (
+        <Banda tono="crema">
+          <SeccionVacia mensaje={dict.sections.work.empty} />
+        </Banda>
+      )}
+
+      {enRejilla.length > 0 ? (
+        <Banda tono="crema">
+          <Titular
+            titulo={dict.sections.work.moreTitle}
+            tamano="normal"
+            sinPunto
+            derecha={
+              <Link
+                href={`/${lang}/proyectos`}
+                className="mb-3 font-mono text-[13px] text-accent hover:underline sm:text-[14px]"
               >
-                {titular}
-              </p>
+                {dict.sections.work.moreCta.replace('{n}', String(proyectos.length))}
+              </Link>
+            }
+          />
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {enRejilla.map((proyecto) => (
+              <TarjetaProyectoBreve key={proyecto.slug} documento={proyecto} lang={lang} />
+            ))}
+          </div>
+        </Banda>
+      ) : null}
+
+      {/* Trabajo gráfico. */}
+      <Banda id="creativo" tono="noche" onda={{ hacia: 'crema', forma: 1 }}>
+        <SeccionCreativo piezas={piezas} behance={ENLACES.behance} lang={lang} />
+      </Banda>
+
+      {/* Lab: la única sección con trama de fondo. */}
+      <Banda id="lab" tono="crema" className="rejilla border-b-[1.5px] border-tinta">
+        <SeccionLab experimentos={experimentos} lang={lang} />
+      </Banda>
+
+      {/* Trayectoria. */}
+      <Banda id="trayectoria" tono="crema">
+        <Titular titulo={dict.sections.journey.title} tamano="gigante" />
+
+        {experiencias.length > 0 ? (
+          <>
+            <div className="mt-12 flex items-center gap-4 font-mono text-[12px] text-ink-faint">
+              <span>
+                {stats.primerAno ?? ''} · {dict.sections.journey.first}
+              </span>
+              <span aria-hidden className="h-px flex-1 bg-line" />
+              <span>
+                {new Date().getFullYear()} · {dict.sections.journey.now}
+              </span>
+            </div>
+
+            <div className="mt-4">
+              {etapasVisibles.map((etapa) => (
+                <EtapaTrayectoria key={etapa.slug} documento={etapa} lang={lang} />
+              ))}
+            </div>
+
+            {etapasOcultas.length > 0 ? (
+              <VerMas
+                id="etapas"
+                texto={dict.sections.journey.seeMore
+                  .replace('{n}', String(etapasOcultas.length))
+                  .replace('{desde}', tramoOculto.desde)
+                  .replace('{hasta}', tramoOculto.hasta)}
+                textoCerrar={lang === 'en' ? 'Show less' : 'Ver menos'}
+              >
+                <div>
+                  {etapasOcultas.map((etapa) => (
+                    <EtapaTrayectoria key={etapa.slug} documento={etapa} lang={lang} />
+                  ))}
+                </div>
+              </VerMas>
             ) : null}
 
-            <p
-              className={`escena-sube mx-auto max-w-md font-heading text-[14px] leading-relaxed text-ink-muted${
-                titular ? ' mt-4' : ''
-              }`}
-              style={{ '--desde': 0.38 } as React.CSSProperties}
-            >
-              {subtitulo ?? dict.hero.fallbackSubtitle}
-            </p>
-
-            <ul
-              className="escena-sube mt-6 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 text-[11px] text-ink-muted"
-              style={{ '--desde': 0.45 } as React.CSSProperties}
-            >
-              {cifras.map((cifra, idx) => (
-                <li key={cifra} className="inline-flex items-center gap-4">
-                  {idx > 0 ? (
-                    <span aria-hidden className="select-none text-accent/60">
-                      •
-                    </span>
-                  ) : null}
-                  <span>{cifra}</span>
-                </li>
-              ))}
-            </ul>
-
-            <div
-              className="escena-sube mx-auto mt-14 max-w-2xl sm:mt-18"
-              style={{ '--desde': 0.55 } as React.CSSProperties}
-            >
-              <Asistente lang={lang} />
-            </div>
-          </section>
-        </div>
-      </div>
-
-      <main className="mx-auto max-w-lectura space-y-14 px-6 pb-4">
-        <Seccion
-          id="experiencia"
-          titulo={dict.sections.experience.title}
-          descripcion={dict.sections.experience.desc}
-          recuento={plural(
-            experiencias.length,
-            dict.sections.experience.singular,
-            dict.sections.experience.plural,
-          )}
-        >
-          {experiencias.length > 0 ? (
-            <>
-              <div className="space-y-6">
-                {experienciasVisibles.map((documento) => (
-                  <EntradaExperiencia key={documento.slug} documento={documento} lang={lang} />
-                ))}
-              </div>
-
-              {experienciasOcultas.length > 0 ? (
-                <VerMas
-                  id="experiencias"
-                  texto={dict.sections.experience.seeMore.replace(
-                    '{n}',
-                    String(experienciasOcultas.length),
-                  )}
-                  textoCerrar={lang === 'en' ? 'Show less' : 'Ver menos'}
-                >
-                  <div className="space-y-6">
-                    {experienciasOcultas.map((documento) => (
-                      <EntradaExperiencia key={documento.slug} documento={documento} lang={lang} />
-                    ))}
-                  </div>
-                </VerMas>
-              ) : null}
-            </>
-          ) : (
-            <SeccionVacia mensaje={dict.sections.experience.empty} />
-          )}
-        </Seccion>
-
-        <Seccion
-          id="stack"
-          titulo={dict.sections.stack.title}
-          descripcion={dict.sections.stack.desc}
-          recuento={plural(
-            tecnologias.length,
-            dict.sections.stack.singular,
-            dict.sections.stack.plural,
-          )}
-        >
-          {tecnologiasVisibles.length > 0 ? (
-            <>
-              <div className="flex flex-wrap gap-1.5">
-                {tecnologiasVisibles.map((tecnologia) => (
-                  <span
-                    key={tecnologia.slug}
-                    className="group inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[12px] text-ink-muted transition-all duration-200 hover:border-accent/35 hover:text-ink"
-                  >
-                    {tecnologia.name}
-                    <span className="font-mono text-[10px] text-accent/80 transition-colors group-hover:text-accent">
-                      +{tecnologia.documentCount}
-                    </span>
-                  </span>
-                ))}
-              </div>
-
-              {tecnologiasOcultas.length > 0 ? (
-                <VerMas
-                  id="stack"
-                  texto={dict.sections.stack.seeMore.replace(
-                    '{n}',
-                    String(tecnologiasOcultas.length),
-                  )}
-                  textoCerrar={lang === 'en' ? 'Show less' : 'Ver menos'}
-                >
-                  <div className="flex flex-wrap gap-1.5">
-                    {tecnologiasOcultas.map((tecnologia) => (
-                      <span
-                        key={tecnologia.slug}
-                        className="group inline-flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1.5 text-[12px] text-ink-muted transition-all duration-200 hover:border-accent/35 hover:text-ink"
-                      >
-                        {tecnologia.name}
-                        <span className="font-mono text-[10px] text-accent/80 transition-colors group-hover:text-accent">
-                          +{tecnologia.documentCount}
-                        </span>
+            {stack.length > 0 ? (
+              <div className="mt-16 border-t border-line pt-8">
+                <p className="font-mono text-[12px] uppercase tracking-[0.08em] text-ink-faint">
+                  {dict.sections.journey.stackTitle}
+                </p>
+                <div className="mt-5 flex flex-wrap gap-2">
+                  {stack.map((tecnologia) => (
+                    <Etiqueta key={tecnologia.slug}>
+                      {tecnologia.name}
+                      <span className="font-mono text-[11px] text-accent">
+                        +{tecnologia.documentCount}
                       </span>
-                    ))}
-                  </div>
-                </VerMas>
-              ) : null}
-            </>
-          ) : (
-            <SeccionVacia mensaje={dict.sections.stack.empty} />
-          )}
-        </Seccion>
-
-        <Seccion
-          id="proyectos"
-          titulo={dict.sections.projects.title}
-          descripcion={dict.sections.projects.desc}
-        >
-          {proyectosVisibles.length > 0 ? (
-            <>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {proyectosVisibles.map((documento) => (
-                  <TarjetaProyecto key={documento.slug} documento={documento} lang={lang} />
-                ))}
+                    </Etiqueta>
+                  ))}
+                </div>
               </div>
+            ) : null}
+          </>
+        ) : (
+          <SeccionVacia mensaje={dict.sections.journey.empty} />
+        )}
+      </Banda>
 
-              {proyectosOcultos.length > 0 ? (
-                <VerMas
-                  id="proyectos"
-                  texto={dict.sections.projects.seeMore.replace(
-                    '{n}',
-                    String(proyectosOcultos.length),
-                  )}
-                  textoCerrar={lang === 'en' ? 'Show less' : 'Ver menos'}
-                >
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    {proyectosOcultos.map((documento) => (
-                      <TarjetaProyecto key={documento.slug} documento={documento} lang={lang} />
-                    ))}
-                  </div>
-                </VerMas>
-              ) : null}
-            </>
-          ) : (
-            <SeccionVacia mensaje={dict.sections.projects.empty} />
-          )}
-        </Seccion>
+      {/* Recomendaciones. */}
+      <Banda id="testimonios" tono="crema">
+        {destacado ? (
+          <>
+            <Titular
+              kicker={dict.sections.testimonials.kicker.replace('{n}', String(testimonios.length))}
+              titulo={dict.sections.testimonials.title}
+              tamano="gigante"
+            />
 
-        <Seccion
-          id="testimonios"
-          titulo={dict.sections.testimonials.title}
-          descripcion={dict.sections.testimonials.desc}
-          recuento={plural(
-            testimonios.length,
-            dict.sections.testimonials.singular,
-            dict.sections.testimonials.plural,
-          )}
-        >
-          {testimoniosVisibles.length > 0 ? (
-            <>
-              <div className="columns-1 sm:columns-2 gap-3">
-                {testimoniosVisibles.map((testimonio) => (
-                  <div key={testimonio.id} className="break-inside-avoid mb-3">
-                    <TarjetaTestimonio testimonio={testimonio} />
-                  </div>
-                ))}
-              </div>
+            <div className="mt-12">
+              <TarjetaTestimonio testimonio={destacado} lang={lang} tamano="grande" />
+            </div>
 
-              {testimoniosOcultos.length > 0 ? (
-                <VerMas
-                  id="testimonios"
-                  texto={dict.sections.testimonials.seeMore.replace(
-                    '{n}',
-                    String(testimoniosOcultos.length),
-                  )}
-                  textoCerrar={lang === 'en' ? 'Show less' : 'Ver menos'}
-                >
-                  <div className="columns-1 sm:columns-2 gap-3">
-                    {testimoniosOcultos.map((testimonio) => (
-                      <div key={testimonio.id} className="break-inside-avoid mb-3">
-                        <TarjetaTestimonio testimonio={testimonio} />
-                      </div>
-                    ))}
-                  </div>
-                </VerMas>
-              ) : null}
-            </>
-          ) : (
-            <SeccionVacia mensaje={dict.sections.testimonials.empty} />
-          )}
-        </Seccion>
-
-        {notas.length > 0 ? (
-          <Seccion
-            id="notas"
-            titulo={dict.sections.notes.title}
-            descripcion={dict.sections.notes.desc}
-            recuento={plural(
-              notas.length,
-              dict.sections.notes.singular,
-              dict.sections.notes.plural,
-            )}
-          >
-            <ul className="divide-y divide-line border-y border-line">
-              {notas.map((nota) => (
-                <li key={nota.slug}>
-                  <a
-                    href={`/${lang}/${nota.slug}`}
-                    className="group flex items-baseline justify-between gap-4 py-3"
-                  >
-                    <span className="text-[13px] text-ink-muted transition-colors group-hover:text-ink">
-                      {nota.title}
-                    </span>
-                    {nota.technologies[0] ? (
-                      <Etiqueta>{nota.technologies[0].name}</Etiqueta>
-                    ) : null}
-                  </a>
-                </li>
+            <div className="mt-4 grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-4">
+              {pequenos.map((testimonio, indice) => (
+                <TarjetaTestimonio
+                  key={testimonio.id}
+                  testimonio={testimonio}
+                  lang={lang}
+                  indice={indice}
+                />
               ))}
-            </ul>
-          </Seccion>
-        ) : null}
+            </div>
 
-        <section
-          id="contacto"
-          data-aparecer
-          className="scroll-mt-20 border-t border-line pt-10"
-        >
-          <h2 className="font-heading text-[22px] font-semibold leading-snug tracking-tight text-ink sm:text-[26px]">
-            {dict.sections.contact.title}
-          </h2>
-          <p className="font-heading mt-2 max-w-xl text-[14px] leading-relaxed text-ink-muted">
-            {dict.sections.contact.desc}
-          </p>
+            {/* Las empresas, en fila. Repetir aquí el nombre de quien ya firma
+                cada cita no es redundante: juntas dicen de un vistazo en cuántos
+                sitios distintos ha trabajado, que es lo que una cita suelta no
+                puede decir. */}
+            {empresas.length > 0 ? (
+              <ul className="flex flex-wrap justify-around gap-x-11 gap-y-5 pt-12 text-[18px] font-bold tracking-[-0.01em] text-ink-faint sm:text-[22px]">
+                {empresas.map((empresa) => (
+                  <li key={empresa}>{empresa}</li>
+                ))}
+              </ul>
+            ) : null}
 
-          <div className="mt-7">
-            <FormularioContacto lang={lang} />
+            {testimoniosOcultos.length > 0 ? (
+              <VerMas
+                id="testimonios"
+                texto={dict.sections.testimonials.readAll.replace(
+                  '{n}',
+                  String(testimonios.length),
+                )}
+                textoCerrar={lang === 'en' ? 'Show less' : 'Ver menos'}
+              >
+                <div className="grid grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))] gap-4">
+                  {testimoniosOcultos.map((testimonio, indice) => (
+                    <TarjetaTestimonio
+                      key={testimonio.id}
+                      testimonio={testimonio}
+                      lang={lang}
+                      indice={indice + pequenos.length}
+                    />
+                  ))}
+                </div>
+              </VerMas>
+            ) : null}
+          </>
+        ) : (
+          <SeccionVacia mensaje={dict.sections.testimonials.empty} />
+        )}
+      </Banda>
+
+      {/* El asistente. El componente trae el mapa, el panel y la leyenda: son
+          una sola pieza porque el recorrido de la búsqueda sale de la caja de
+          la pregunta y cruza el grafo. */}
+      <Banda id="preguntar" tono="noche" className="relative min-h-[820px] overflow-hidden">
+        <Asistente secciones={secciones} lang={lang} />
+      </Banda>
+
+      {/* Sobre este sitio. */}
+      <Banda id="sobre" tono="crema">
+        <SobreElSitio preguntas={preguntasSitio} github={ENLACES.github} lang={lang} />
+      </Banda>
+
+      {/* Contacto. */}
+      <Banda id="contacto" tono="naranja">
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
+          <div>
+            <Titular
+              tono="naranja"
+              kicker={dict.sections.contact.badge}
+              titulo={dict.sections.contact.title.replace(/\.$/, '')}
+              descripcion={dict.sections.contact.desc}
+            />
+            <p className="mt-8 font-mono text-[13px] text-tinta/75">
+              {dict.sections.contact.emailQuestion}
+            </p>
+            <div className="mt-3">
+              <Pildora href={`mailto:${ENLACES.email}`} variante="tinta">
+                {ENLACES.email} →
+              </Pildora>
+            </div>
           </div>
-        </section>
 
-        <Pie
-          github={ENLACES.github}
-          linkedin={ENLACES.linkedin}
-          ano={new Date().getFullYear()}
-          lang={lang}
-        />
-      </main>
+          <FormularioContacto lang={lang} />
+        </div>
+      </Banda>
+
+      <Pie
+        github={ENLACES.github}
+        linkedin={ENLACES.linkedin}
+        behance={ENLACES.behance}
+        ano={new Date().getFullYear()}
+        lang={lang}
+      />
 
       <Telemetria />
 

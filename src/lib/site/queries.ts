@@ -189,6 +189,39 @@ export async function getStats(lang: 'es' | 'en' = 'es'): Promise<SiteStats> {
   };
 }
 
+export interface NodoCorpus {
+  kind: SiteDocument['kind'];
+  slug: string;
+  title: string;
+  /** Fragmentos vectorizados: lo que el asistente puede citar de este documento. */
+  fragmentos: number;
+}
+
+/**
+ * El corpus, documento a documento y con su número de fragmentos.
+ *
+ * Alimenta el mapa que se dibuja detrás del asistente. Es la misma proyección
+ * que consulta la búsqueda, así que el mapa no es una ilustración de un sistema
+ * RAG: es el inventario del que hay detrás. Una ficha nueva aparece ahí sola.
+ */
+export async function getMapaCorpus(lang: 'es' | 'en' = 'es'): Promise<NodoCorpus[]> {
+  const rows = await query<{ kind: SiteDocument['kind']; slug: string; title: string; n: string }>(
+    `select d.kind, d.slug, d.title, count(c.id)::text as n
+       from documents d
+       left join chunks c on c.document_id = d.id and c.embedding is not null
+      where d.visibility = 'public' and d.lang = $1
+      group by d.id, d.kind, d.slug, d.title, d.starts_on
+      order by d.kind, d.starts_on desc nulls last, d.title`,
+    [lang],
+  );
+  return rows.map((row) => ({
+    kind: row.kind,
+    slug: row.slug,
+    title: row.title,
+    fragmentos: Number(row.n),
+  }));
+}
+
 /** Formatea el periodo de un documento: «abr 2023 — nov 2024», «desde 2023» o en inglés. */
 export function formatPeriod(
   startsOn: string | null,

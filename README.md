@@ -102,6 +102,77 @@ mensaje queda marcado como pendiente para reintentarlo desde el panel. Un
 formulario que depende de que un servicio externo esté vivo pierde clientes sin
 enterarse.
 
+**El mapa del asistente es el corpus, no una ilustración.** Detrás de la caja
+de preguntas hay un `<canvas>` con un grafo: un círculo por sección, un punto
+por documento y un punto pequeño por fragmento indexado, con los recuentos que
+devuelve la misma consulta que alimenta la búsqueda. Una ficha nueva aparece
+ahí sola. Al preguntar sale una onda del centro —la consulta recorriendo el
+índice— y, cuando llega la respuesta, se traza el camino hasta los documentos
+que de verdad se han citado y de vuelta a la pregunta: los destinos son las
+fuentes que devuelve `/api/chat`, así que el recorrido no está guionizado. Va en
+canvas y no en el DOM porque son unos doscientos nodos moviéndose a la vez, y
+con elementos del DOM cada fotograma obligaría a remaquetar la página entera.
+
+Las tres líneas de estado —vectorizar, fusionar los dos rankings, redactar— sí
+se muestran por tiempo, porque la petición es una sola y no informa de su
+progreso; son las tres cosas que el servidor está haciendo de verdad mientras
+tanto, y lo que no se estima es el final: el número de fuentes y los
+milisegundos salen de la respuesta.
+
+**El color es el separador, y por eso hay dos superficies y no una.** La
+portada no divide secciones con filetes: las alterna entre crema (`#F1ECE2`) y
+noche (`#141012`), con naranja y lila para las bandas que tienen que destacar, y
+una curva SVG donde un color invade al siguiente. Cada sección declara su tono y
+hereda de él todos sus colores —texto, texto apagado, líneas, acento y chips— en
+`src/lib/site/tonos.ts`: así una sección se puede mover de sitio o cambiar de
+tono sin repasar el color de cada elemento que lleva dentro. El naranja tiene
+tres valores porque sobre crema un enlace necesita oscurecerse al pasar el ratón
+y sobre noche necesita lo contrario; y el verde no tiene variantes porque no es
+decoración, es la señal de «disponible» o «hecho».
+
+**Una familia de texto, un monoespacio y nada más.** Bricolage Grotesque
+variable para todo, con el eje `opsz` activado: es lo que sostiene una escala
+que va de 13 px a 200 px, porque el tamaño óptico aprieta el interletraje y
+afina el trazo a medida que crece el cuerpo. Space Mono marca lo que anota el
+sistema —el número de la banda, el recuento, el estado— frente a lo que afirma
+el texto, sin necesidad de otro color. Los escalones de titular viven en
+`@theme` con su propio interletraje cada uno, porque el tracking correcto
+depende del cuerpo: lo que a 34 px es ajustado, a 200 px se ve suelto.
+
+**La píldora es la unidad.** Setenta y uno de los radios del diseño son 999 px:
+todo lo que se pulsa, se filtra o se etiqueta tiene esa forma. Está en un único
+componente con variantes de relleno, porque el relleno es lo que dice de qué
+clase es cada cosa —el destino principal en naranja, el asistente en lila, el
+resto en crema— y repartir esa decisión por la página es como se acaba con dos
+botones primarios en la misma pantalla.
+
+**La sección de trabajo se ordena desde el corpus, no por fecha.** `destacado:
+1` en el frontmatter es la primera banda, y la numeración sigue: del 1 al 4 son
+las cuatro bandas de ancho completo y del 5 al 10 la rejilla de debajo. El orden
+alterna dominios —IA, hardware, comercio, deportes— y eso es una decisión
+editorial, así que se declara donde vive el contenido y no en la consulta. Lo
+que no lleva número queda fuera de la portada y vive en `/es/proyectos`, el
+índice completo, ordenado por fecha: ahí la pregunta ya no es qué enseñar
+primero sino qué hay.
+
+**Lo que no está escrito no se dibuja.** Hay trece imágenes —la foto del
+perfil, cuatro de producto y ocho piezas gráficas— y se sirven en WebP desde
+`public/imagenes/`, convertidas por `npm run imagenes` desde los originales de
+`assets/imagenes/`. Donde no hay imagen no se pone una de relleno: el proyecto
+que no tiene captura ocupa ese lado de la banda con su propia ficha —rol,
+organización, periodo— maquetada como pieza de diseño, y las tarjetas del Lab
+que todavía no tienen nada que enseñar llevan una recreación dibujada en HTML y
+rotulada como tal. Insinuar un producto terminado con una imagen de archivo
+sería mentir justo en la sección que presume de decir en qué punto está cada
+cosa.
+
+**Una captura con el nombre de una persona dentro no se publica.** La regla ya
+existía para Kronaly y vale igual para el resto: la captura de la app de
+discipulado del Lab muestra la lista de alumnos con sus nombres completos, así
+que esa ficha se queda sin imagen hasta que haya una con datos de ejemplo. Está
+anotado en `src/lib/site/lab.ts`, junto al experimento, y no en una lista aparte
+que nadie volvería a leer.
+
 **El fondo del hero es una pila de capas, no una imagen.** Cada fichero de
 `assets/fondos/<escena>/` lleva su profundidad en el nombre —`fondo-hero-0.png`
 es el telón y los siguientes van recortados encima—, y al hacer scroll cada capa se rezaga un
@@ -194,27 +265,40 @@ Ver `.env.deploy.example`.
 | Integración con Gemini | Hecho, en capa de pago desde el 13/09/2026 |
 | `/api/chat` | Hecho |
 | Frontend Next.js | Hecho |
+| Rediseño de la portada | Hecho: sistema de tonos, tipografía y las 15 bandas |
+| Índice de proyectos (`/es/proyectos`) | Hecho |
+| Fichas de caso y de etapa | Pendiente: hoy usan la plantilla genérica de documento |
 | Base de conocimiento | En redacción |
 | Automatización con n8n | Reenvío del formulario hecho; el resto, fase posterior |
 
 ## Siguientes pasos
 
-Por orden de impacto sobre el esfuerzo que cuestan.
+Por orden de impacto sobre el esfuerzo que cuestan. Los tres primeros son lo que
+queda del rediseño: la portada ya está, las páginas de dentro no.
 
-**CV descargable.** Hoy, quien quiera pasar el perfil a un compañero tiene que
-copiar la web. Es la fricción más barata de quitar.
+**Plantilla de ficha de caso.** Hoy un proyecto se abre con la plantilla
+genérica de documento: el Markdown renderizado. El rediseño le da una estructura
+propia —el reto, cómo funciona, la interfaz, el resultado y el caso siguiente—
+que necesita frontmatter nuevo: tres cifras de resultado, el diagrama de flujo y
+el enlace al siguiente. Es donde está el salto de calidad, porque es la página
+que alguien lee cuando ya le interesa.
 
-**Sección «cómo trabajo».** Cuatro o cinco principios, una línea cada uno. Es el
-hueco más grande de la portada y el material ya está escrito: el apartado «Cómo
-trabajo» del perfil y los comentarios de este repositorio son decisiones
-razonadas una detrás de otra. Es además donde encaja el trabajo diario con
-agentes de codificación, que en una lista de tecnologías es ruido y como forma de
-trabajar distingue.
+**Plantilla de ficha de etapa.** Lo mismo para la trayectoria: posición en las
+doce etapas, el dato de la etapa a cuerpo grande, los capítulos numerados, el
+lado creativo y los proyectos de esa etapa.
+
+**Cifras con denominador.** Las plantillas de caso tienen tres huecos de cifra
+cada una y no se pueden publicar vacíos. La lista está en
+`knowledge/_pendiente.md`: es lo que más rinde por palabra escrita.
 
 **Imágenes de los proyectos.** Lo que más nota se lleva y lo más costoso. Tiene
-una restricción propia: las capturas de Kronaly llevan datos de otros empleados y
-no pueden publicarse, así que hay que mirar ficha por ficha qué es publicable, o
-tirar de diagramas de arquitectura en lugar de capturas.
+una restricción propia: las capturas de Kronaly llevan datos de otros empleados
+y no pueden publicarse, así que hay que mirar ficha por ficha qué es publicable,
+o tirar de diagramas de arquitectura en lugar de capturas.
+
+**Fichas del Lab.** Las cuatro tarjetas del Lab no enlazan a ninguna parte
+porque todavía no hay dónde. La plantilla está diseñada: la idea, cuatro
+funciones, la bitácora y el stack.
 
 ### Dos hallazgos anotados, sin resolver
 

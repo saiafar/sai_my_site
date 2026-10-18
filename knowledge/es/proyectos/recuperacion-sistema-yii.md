@@ -6,6 +6,7 @@ inicio: 2023
 tecnologias: [php, yii, mysql]
 parte_de: experiencia/freelance-2023-2024
 visibilidad: public
+destacado: 10
 ---
 
 ## Contexto

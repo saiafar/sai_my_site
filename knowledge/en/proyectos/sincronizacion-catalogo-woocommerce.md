@@ -8,6 +8,7 @@ fin: 2024-12
 parte_de: experiencia/freelance-2023-2024
 tecnologias: [php, wordpress, woocommerce]
 visibilidad: public
+destacado: 9
 ---
 
 ## Context

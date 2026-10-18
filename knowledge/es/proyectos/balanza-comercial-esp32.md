@@ -7,8 +7,12 @@ inicio: 2018-10
 fin: 2023-01
 tecnologias: [arduino, esp32, react-native, javascript]
 parte_de: experiencia/portalweb
+portada: /imagenes/proyectos/balanza-pw-kiosco.webp
+portada_alt: Balanza integral POS con pantalla táctil e impresora
+portada_2: /imagenes/proyectos/balanza-pw-terminal.webp
+portada_2_alt: Terminal móvil POS PW en una pieza de lanzamiento
 visibilidad: public
-destacado: true
+destacado: 2
 ---
 
 ## Contexto

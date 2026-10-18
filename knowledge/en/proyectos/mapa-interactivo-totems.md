@@ -8,7 +8,6 @@ fin: 2013-03
 parte_de: experiencia/imvinet
 tecnologias: [actionscript, php, mysql, javascript, jquery, html]
 visibilidad: public
-destacado: true
 ---
 
 ## Context

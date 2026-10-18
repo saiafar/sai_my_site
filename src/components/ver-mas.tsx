@@ -42,17 +42,17 @@ export function VerMas({
     <details
       ref={detailsRef}
       onToggle={handleToggle}
-      className="desplegable-vermas mt-5"
+      className="desplegable-vermas mt-10"
     >
-      <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded-lg border border-line bg-surface/40 px-3 py-1.5 text-[12px] text-ink-muted transition-all duration-200 hover:border-accent/40 hover:text-ink">
-        <span className="icono-vermas font-mono text-[13px] leading-none text-accent transition-transform duration-200 select-none">
+      <summary className="inline-flex cursor-pointer list-none items-center gap-2 rounded-full border border-current px-4 py-2.5 font-mono text-[13px] transition-colors hover:bg-tinta hover:text-crema sm:text-[14px]">
+        <span aria-hidden className="icono-vermas text-[15px] leading-none select-none">
           +
         </span>
         <span className="texto-vermas-abrir">{texto}</span>
         <span className="texto-vermas-cerrar">{textoCerrar}</span>
       </summary>
 
-      <div className="mt-5">{children}</div>
+      <div className="mt-8">{children}</div>
     </details>
   );
 }

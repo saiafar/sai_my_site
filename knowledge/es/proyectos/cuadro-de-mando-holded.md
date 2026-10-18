@@ -7,6 +7,7 @@ inicio: 2025
 tecnologias: [holded, api-rest, laravel, php, postgresql, mysql]
 parte_de: experiencia/visados-empresas
 visibilidad: public
+destacado: 8
 ---
 
 ## Contexto

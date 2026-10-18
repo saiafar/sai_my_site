@@ -3,66 +3,133 @@
 /* ---------------------------------------------------------------------------
    Sistema de color.
 
-   Valores muestreados de la referencia, no estimados a ojo. El fondo no es
-   negro puro sino un negro con matiz cálido, y el texto claro es un blanco roto
-   igualmente cálido: esa desviación mínima respecto al gris neutro es lo que
-   evita que un tema oscuro se vea barato.
+   Dos modos, no uno. La identidad son dos superficies que se alternan por
+   sección —crema y noche— y un naranja que solo aparece en lo que se puede
+   pulsar o en el dato que la sección quiere que recuerdes. Esa alternancia es
+   la que marca el ritmo de la página: no hay separadores entre secciones
+   porque el cambio de fondo ya hace ese trabajo.
 
-   Los escalones de elevación son deliberadamente estrechos —cinco unidades
-   entre el fondo y la tarjeta— porque a esa distancia la superficie se percibe
-   sin dibujarse. Es el borde, no el relleno, lo que define la tarjeta.
+   El naranja tiene tres valores y no uno. Sobre crema, el de marca pasa a
+   #C2350F al pasar el ratón, porque a igual color un enlace necesita
+   oscurecerse para notarse. Sobre noche hace falta el contrario, #FF7A54: el
+   naranja de marca sobre un fondo casi negro pierde luminosidad y deja de
+   leerse como acento.
+
+   El verde no es decorativo y por eso no tiene variantes: es una señal, y
+   aparece únicamente en lo que está disponible o hecho.
 --------------------------------------------------------------------------- */
 @theme {
-  --color-ground: #121210;
-  --color-surface: #171716;
-  --color-surface-raised: #1b1b1a;
-  --color-line: #242422;
-  --color-line-strong: #33332f;
+  /* --- Marca ------------------------------------------------------------ */
+  --color-crema: #f1ece2;
+  --color-crema-honda: #e6dfd2;
+  --color-tinta: #141012;
+  --color-naranja: #ff5b2e;
+  --color-naranja-honda: #c2350f;
+  --color-naranja-claro: #ff7a54;
+  --color-lila: #bba8ff;
+  --color-lila-honda: #a592f0;
+  --color-verde: #9be39b;
 
-  --color-ink: #e6e1da;
-  --color-ink-muted: #9a958c;
-  --color-ink-faint: #6b675f;
+  /* --- Superficie crema (la de la mayoría de la página) ----------------- */
+  --color-ground: var(--color-crema);
+  --color-surface: #ffffff;
+  --color-surface-raised: var(--color-crema-honda);
+  --color-line: #d5ccbc;
+  --color-line-strong: var(--color-tinta);
 
-  --color-accent: #e15d3b;
-  --color-accent-soft: #432c25;
+  --color-ink: var(--color-tinta);
+  --color-ink-muted: #3f3834;
+  --color-ink-faint: #8e837c;
 
-  --font-sans: var(--fuente-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-heading: var(--fuente-heading), var(--fuente-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--fuente-heading), var(--fuente-sans), ui-sans-serif, system-ui, sans-serif;
-  --font-brand: var(--fuente-marca), ui-sans-serif, system-ui, sans-serif;
+  --color-accent: var(--color-naranja);
+  --color-accent-strong: var(--color-naranja-honda);
+  --color-accent-soft: #f6ded4;
 
-  /* La columna de la referencia mide 911 px de 2560. Esa contención —dos
-     tercios de la pantalla en aire— es la mitad de su carácter. */
+  /* --- Superficie noche (las secciones invertidas) ---------------------- */
+  --color-noche: var(--color-tinta);
+  --color-noche-surface: #1b1618;
+  --color-noche-raised: #1e191b;
+  --color-noche-line: #2e2629;
+  --color-noche-line-strong: #3a3235;
+
+  --color-ink-inverso: var(--color-crema);
+  --color-ink-inverso-muted: #d8d0c6;
+  --color-ink-inverso-faint: #b6aba5;
+
+  /* --- Tipografía -------------------------------------------------------
+     Una sola familia de texto —Bricolage Grotesque, variable— y un monoespacio
+     para las etiquetas. El mono no es un adorno retro: separa de un golpe lo
+     que el texto afirma de lo que el sistema anota (el número de sección, el
+     recuento, el estado), sin necesidad de otro color ni otro tamaño. */
+  --font-sans: var(--fuente-display), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+  --font-display: var(--font-sans);
+  --font-brand: var(--font-sans);
+  --font-mono: var(--fuente-mono), ui-monospace, monospace;
+
+  /* --- Escala de display ------------------------------------------------
+     Los titulares se declaran una vez aquí y no en cada componente. Cada
+     escalón lleva su propio interletraje porque el tracking correcto depende
+     del cuerpo: lo que a 34 px es ajustado, a 200 px se ve suelto. */
+  --text-gigante: clamp(52px, 13.9vw, 200px);
+  --text-gigante--line-height: 0.82;
+  --text-gigante--letter-spacing: -0.055em;
+
+  --text-portada: clamp(38px, 6.7vw, 96px);
+  --text-portada--line-height: 0.88;
+  --text-portada--letter-spacing: -0.05em;
+
+  --text-titular: clamp(34px, 5vw, 72px);
+  --text-titular--line-height: 0.88;
+  --text-titular--letter-spacing: -0.045em;
+
+  --text-subtitular: clamp(28px, 3.4vw, 48px);
+  --text-subtitular--line-height: 0.92;
+  --text-subtitular--letter-spacing: -0.035em;
+
+  --text-dato: clamp(32px, 4.4vw, 64px);
+  --text-dato--line-height: 1;
+  --text-dato--letter-spacing: -0.04em;
+
+  /* --- Medidas ---------------------------------------------------------- */
+  /* Ancho de la rejilla del rediseño: 1376 px de contenido. */
+  --container-ancho: 86rem;
+  /* La columna de lectura de las fichas, más estrecha a propósito: el cuerpo
+     de texto largo no se lee a 1376 px de ancho. */
   --container-lectura: 60rem;
+
+  /* La tarjeta tiene un radio y el bloque otro. Están aquí para que no se
+     vayan separando a base de valores sueltos en cada componente. */
+  --radius-tarjeta: 20px;
+  --radius-bloque: 28px;
+  --radius-bloque-grande: 40px;
 }
 
 /* ---------------------------------------------------------------------------
-   Medidas del hero.
+   Medidas de la portada.
 
-   Viven en variables porque la escena de entrada necesita conocerlas para
-   centrar el logo y el nombre en la ventana: la altura del bloque es
-   exactamente logo + hueco + nombre (el nombre va con interlineado 1, así que
-   su caja mide lo mismo que su cuerpo de letra). Si se cambia un tamaño aquí,
-   el centrado se recalcula solo.
+   Los valores son los del tablero del rediseño: el logo acaba en 96 px y
+   empieza una vez y media más grande, y el bloque entero entra un 12 % mayor.
+   Están aquí y no en el componente porque la escena los necesita en CSS para
+   animarlos sin recalcular la maquetación.
 --------------------------------------------------------------------------- */
 :root {
-  --altura-barra: 3.25rem;
   --logo-hero: 4rem;
-  --nombre-hero: 1.65rem;
-  --hueco-hero: 1rem;
-  /* Tamaño inicial respecto al final. En móvil es menor porque el nombre
-     ampliado tiene que seguir cabiendo en una línea. */
-  --escala-hero: 1.3;
-  /* Escala adicional solo del logo al principio, sobre la del bloque. */
-  --escala-logo: 1.3;
+  /* Cuánto más grande entra el logo, sobre la escala del bloque. */
+  --escala-logo: 1.5;
+  /* Cuánto más grande entra el bloque de logo + nombre. */
+  --escala-hero: 1.12;
+  /* Lo que sube el bloque para dejar sitio al texto que aparece debajo. */
+  --subida-hero: 64px;
+  /* Altura del escenario fijo y distancia de scroll que dura la escena. */
+  --alto-escenario: min(100svh, 60rem);
+  --recorrido-hero: 820px;
 }
 
 @media (min-width: 40rem) {
   :root {
-    --logo-hero: 4.5rem;
-    --nombre-hero: 2.1rem;
-    --escala-hero: 1.55;
-    --escala-logo: 1.35;
+    --logo-hero: 6rem;
+    --subida-hero: 90px;
   }
 }
 
@@ -94,7 +161,7 @@
 
   ::selection {
     background-color: var(--color-accent);
-    color: var(--color-ground);
+    color: var(--color-crema);
   }
 }
 
@@ -236,87 +303,96 @@
 }
 
 /* ---------------------------------------------------------------------------
-   Escena de entrada.
+   Escena de portada.
 
-   Todo el hero se describe en función de una única variable, --p, que va de 0
-   (página recién abierta) a 1 (el bloque del nombre ya se ha unido al texto).
-   La calcula escena-hero.tsx a partir del desplazamiento; aquí solo se declara
-   qué le pasa a cada pieza a lo largo de ese recorrido. Ligar la animación a la
-   posición del scroll, y no a un disparador, hace que sea reversible: al volver
-   arriba se deshace, y el estado nunca depende de por dónde se entró.
+   El hero es un escenario fijo del alto de la ventana dentro de una pista más
+   larga: mientras la pista pasa por debajo, el escenario se queda quieto y todo
+   lo que hay dentro se mueve en función de cuánto se ha recorrido.
+
+   Ese recorrido llega desde JavaScript en tres variables y no en una, porque la
+   escena no es un único movimiento: --p avanza lineal y gobierna los velos y el
+   color del logo; --m es la entrada del bloque, suavizada y terminada al 60 %
+   del recorrido; --i es la aparición del texto, que no empieza hasta el 42 %.
+   Calcular ahí las curvas y no aquí es deliberado: CSS no tiene una función de
+   suavizado que se pueda aplicar a un número arbitrario, y emularla con
+   aritmética haría ilegible cada regla.
 
    Solo se animan transform y opacity, que el navegador resuelve sin volver a
-   calcular la maquetación de la página en cada fotograma.
+   maquetar la página en cada fotograma.
 --------------------------------------------------------------------------- */
 [data-escena] {
   --p: 1;
-  /* Las propiedades que implican movimiento leen --p-mov en lugar de --p. Con
-     «reducir movimiento» activado se quedan en su estado final y solo se
-     conservan los fundidos de opacidad. */
-  --p-mov: var(--p);
-  --alto-bloque: calc(var(--logo-hero) + var(--hueco-hero) + var(--nombre-hero));
+  --m: 1;
+  --i: 1;
+  /* Las propiedades que implican movimiento leen las variantes -mov. Con
+     «reducir movimiento» activado se quedan en su estado final y solo quedan
+     los fundidos de opacidad. */
+  --m-mov: var(--m);
+  --i-mov: var(--i);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  [data-escena] { --p-mov: 1; }
+  [data-escena] { --m-mov: 1; --i-mov: 1; }
 }
 
-/* Hueco hasta el bloque: lo deja centrado en la ventana al cargar. */
-.escena-entrada {
-  height: calc(50svh - var(--altura-barra) - var(--alto-bloque) / 2);
+.hero-pista {
+  height: calc(var(--alto-escenario) + var(--recorrido-hero));
 }
 
-/* El bloque del nombre se queda fijo en el centro mientras dura el recorrido.
-   Cuando termina, el final de su contenedor lo arrastra y sigue subiendo
-   pegado al texto que viene detrás. */
-.escena-bloque {
+.hero-escenario {
   position: sticky;
-  top: calc(50svh - var(--alto-bloque) / 2);
-  transform: scale(calc(1 + (var(--escala-hero) - 1) * (1 - var(--p-mov))));
-  transform-origin: 50% 50%;
+  top: 0;
+  height: var(--alto-escenario);
+  overflow: hidden;
 }
 
-.escena-logo {
+/* Logo y nombre entran grandes, se asientan y suben para dejar sitio al texto. */
+.hero-bloque {
+  transform:
+    translateY(calc(-1 * var(--subida-hero) * var(--i-mov)))
+    scale(calc(1 + (var(--escala-hero) - 1) * (1 - var(--m-mov))));
+}
+
+.hero-logo {
   width: var(--logo-hero);
   height: var(--logo-hero);
-  /* Al principio el logo es más grande que el resto del bloque y está algo más
-     separado del nombre; durante el recorrido baja hasta juntarse con él y
-     vuelve a su tamaño. Crece desde su borde inferior, hacia arriba, para no
-     invadir el nombre. */
+  /* Crece desde su borde inferior, hacia arriba, para no invadir el nombre. */
   transform-origin: 50% 100%;
-  transform:
-    translateY(calc(-0.9rem * (1 - var(--p-mov))))
-    scale(calc(1 + (var(--escala-logo) - 1) * (1 - var(--p-mov))));
+  transform: scale(calc(1 + (var(--escala-logo) - 1) * (1 - var(--m-mov))));
 }
 
-/* El color entra entre el 20 % y el 80 % del recorrido. El blanco de debajo no
+/* El color entra entre el 15 % y el 65 % del recorrido. El blanco de debajo no
    se retira hasta que el color es ya opaco: si se cruzaran a la vez, a mitad de
    camino el logo se volvería translúcido, y si el blanco no se retirara nunca,
-   asomaría como un filo claro en los bordes suavizados del logo de color. */
-.escena-logo-color  { opacity: clamp(0, calc((var(--p) - 0.2) / 0.6), 1); }
-.escena-logo-blanco { opacity: calc(1 - clamp(0, calc((var(--p) - 0.8) / 0.2), 1)); }
+   asomaría como un filo claro en los bordes del logo de color. */
+.hero-logo-color  { opacity: clamp(0, calc((var(--p) - 0.15) / 0.5), 1); }
+.hero-logo-blanco { opacity: calc(1 - clamp(0, calc((var(--p) - 0.5) / 0.3), 1)); }
 
-.escena-nombre {
-  margin-top: var(--hueco-hero);
-  font-size: var(--nombre-hero);
-  /* Sobre la imagen sin velo, el nombre necesita separarse de las nubes más
-     claras. La sombra desaparece a medida que la imagen se oscurece. */
+/* Sobre la imagen sin velo el nombre necesita separarse de las nubes claras. La
+   sombra desaparece a medida que la imagen se oscurece. */
+.hero-nombre {
   text-shadow: 0 2px 28px rgb(0 0 0 / calc(0.6 * (1 - var(--p))));
 }
 
-/* Distancia de scroll durante la que el bloque permanece fijo. */
-.escena-recorrido {
-  height: 50svh;
+.hero-intro {
+  opacity: var(--i);
+  transform: translateY(calc((1 - var(--i-mov)) * 28px));
 }
 
-/* Lo que sube desde abajo. Cada elemento empieza a aparecer en un punto
-   distinto del recorrido (--desde), lo que produce un escalonado sin
-   necesidad de temporizadores. */
-.escena-sube {
-  --o: clamp(0, calc((var(--p) - var(--desde, 0.4)) / (1 - var(--desde, 0.4))), 1);
-  --o-mov: clamp(0, calc((var(--p-mov) - var(--desde, 0.4)) / (1 - var(--desde, 0.4))), 1);
-  opacity: var(--o);
-  transform: translateY(calc((1 - var(--o-mov)) * 2rem));
+/* El aviso de desliza se va en el primer quinto: en cuanto alguien ha empezado
+   a bajar, ya no hace falta pedírselo. */
+.hero-desliza {
+  opacity: clamp(0, calc(1 - var(--p) * 5), 1);
+}
+
+@keyframes hero-pista-baja {
+  0%   { transform: translateY(0); opacity: 0 }
+  30%  { opacity: 1 }
+  100% { transform: translateY(14px); opacity: 0 }
+}
+
+.hero-desliza-linea {
+  animation: hero-pista-baja 1.8s ease-in-out infinite;
 }
 
 /* Telón del hero: la pila de capas y su desfase.
@@ -334,23 +410,18 @@
    crece la mitad para exactamente la misma separación entre capas.
 
    Como todas las capas comparten la misma caja, el recorte de cover es idéntico
-   en todas y siguen encajando entre sí.
-
-   En móvil el desfase es menor: en vertical manda el alto de la imagen para
-   cubrir la ventana, y ahí cada svh se paga en aumento sobre una imagen que ya
-   se está recortando mucho por los lados. */
+   en todas y siguen encajando entre sí. */
 .escena-telon { --desfase-parallax: 0px; }
-.escena-telon-parallax { --desfase-parallax: 6svh; }
+.escena-telon-parallax { --desfase-parallax: 9svh; }
 
 @media (min-width: 40rem) {
-  .escena-telon-parallax { --desfase-parallax: 10svh; }
+  .escena-telon-parallax { --desfase-parallax: 14svh; }
 }
 
 /* --profundidad va de 1 (el fondo) a 0 (el primer plano) y la escribe el
    componente a partir del orden de las capas. Restarle 0.5 es lo que centra el
    reparto: el fondo se rezaga respecto a la página, el primer plano se adelanta
-   y la capa intermedia va con ella. Cuanto más se rezaga una capa, más lejos
-   parece estar. */
+   y la capa intermedia va con ella. */
 .escena-capa {
   position: absolute;
   inset: calc(-0.5 * var(--desfase-parallax)) 0;
@@ -365,20 +436,11 @@
   .escena-capa { transform: none; }
 }
 
-/* Velos que oscurecen el telón. Van por encima de todas las capas de imagen,
-   apilados por orden de documento. --p no está definida fuera de la portada, de
-   ahí los valores por defecto. */
-.escena-velo     { opacity: calc(0.15 + 0.45 * var(--p, 1)); }
-.escena-cierre   { opacity: var(--p, 1); }
-.escena-vineta   { opacity: calc(0.45 + 0.55 * var(--p, 1)); }
+/* Velos que oscurecen el telón, apilados por orden de documento. --p no está
+   definida fuera de la portada, de ahí los valores por defecto. */
+.escena-velo   { opacity: calc(0.08 + 0.5 * var(--p, 1)); }
+.escena-vineta { opacity: calc(0.35 + 0.65 * var(--p, 1)); }
 .escena-cabecera { opacity: calc(1 - var(--p, 1)); }
-
-/* La barra superior es transparente sobre la imagen y recupera su fondo en la
-   primera mitad del recorrido. En el resto de páginas --p no existe y la barra
-   se ve siempre opaca. */
-.barra-fondo {
-  opacity: clamp(0, calc(var(--p, 1) * 2), 1);
-}
 
 /* ---------------------------------------------------------------------------
    Aparición de las secciones.
@@ -431,3 +493,66 @@ details.desplegable-vermas[open] > summary .texto-vermas-cerrar {
   display: inline;
 }
 
+
+/* ---------------------------------------------------------------------------
+   Cinta de cifras.
+
+   Dos copias idénticas de la lista, desplazadas hasta la mitad exacta del
+   conjunto: al llegar, la segunda copia está donde empezó la primera y el salto
+   al reiniciar es invisible. Es lo que permite que el bucle no necesite saber
+   cuánto mide su contenido.
+
+   Va en CSS y no con JavaScript porque una animación de transform no toca el
+   hilo principal: la resuelve el compositor, y una cinta que se mueve siempre
+   no debería competir con el scroll.
+--------------------------------------------------------------------------- */
+@keyframes cinta-corre {
+  to { transform: translateX(-50%); }
+}
+
+.cinta {
+  display: inline-flex;
+  animation: cinta-corre 38s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinta { animation: none; }
+}
+
+/* ---------------------------------------------------------------------------
+   Acordeón.
+
+   `<details>` nativo: accesible por teclado de serie y con el contenido en el
+   HTML, de modo que un buscador —o un rastreador de IA, que no ejecuta
+   JavaScript— lo lee aunque esté plegado. El signo gira a aspa al abrirse.
+--------------------------------------------------------------------------- */
+.acordeon > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.acordeon > summary::-webkit-details-marker { display: none; }
+
+.acordeon > summary .acordeon-signo {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.acordeon[open] > summary .acordeon-signo {
+  transform: rotate(45deg);
+}
+
+/* ---------------------------------------------------------------------------
+   Rejilla de fondo.
+
+   La trama de 32 px del Lab. Marca esa sección como banco de trabajo —papel
+   milimetrado— frente a las bandas de color macizo del resto de la página, sin
+   necesidad de otro color de fondo.
+--------------------------------------------------------------------------- */
+.rejilla {
+  background-image:
+    linear-gradient(rgb(20 16 18 / 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(20 16 18 / 0.07) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
