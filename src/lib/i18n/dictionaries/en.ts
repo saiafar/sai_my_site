@@ -40,7 +40,7 @@ export const en: Dictionary = {
   },
   intro: {
     kicker: 'hi, I’m Rafa',
-    title: 'An engineer|with a|designer’s eye.',
+    title: 'A developer|with a|designer’s eye.',
     photoAlt: 'Rafaías Villán smiling outdoors, wearing a cap and sunglasses',
     body:
       'I have spent **{n} years** turning processes into software: ERPs, POS systems, SaaS and AI agents across **10+ industries**. And I never stopped drawing: **3D**, **identity** and **pixel art**.',
@@ -120,7 +120,7 @@ export const en: Dictionary = {
     },
     creative: {
       kicker: 'Design, 3D and video',
-      title: 'I also|make images.',
+      title: 'I also|design|a bit.',
       desc: 'Co-founder and creative director at Estudio Saltamontes, coordinator at OrugaFilms, and 3D designer for clients in three countries.',
       cta: 'see everything on Behance →',
     },
