@@ -3,7 +3,9 @@ import { Pildora } from './pildora';
 import { Punto } from './seccion';
 import { Etiqueta } from './etiqueta';
 import { Pie } from './pie';
+import { ConversacionLucIA } from './conversacion-luc-ia';
 import { partirEnCapitulos } from '@/lib/site/markdown';
+import { getGuionConversacion } from '@/lib/site/conversacion';
 import { formatPeriod, shortName, type SiteDocument } from '@/lib/site/queries';
 import { ENLACES } from '@/lib/site/enlaces';
 import { getDictionary, type Lang } from '@/lib/i18n';
@@ -202,6 +204,15 @@ export async function FichaProyecto({
               alt={texto(documento, 'portada_alt') ?? documento.title}
               className="block aspect-[16/8] w-full rounded-t-bloque object-cover shadow-[0_-20px_60px_rgba(20,16,18,0.25)]"
             />
+          </div>
+        ) : texto(documento, 'visual') === 'conversacion' ? (
+          // Sin captura publicable, la portada es la conversación recreada.
+          // Queda centrada y sin el sangrado de la imagen: es una pieza con su
+          // propia forma, no un plano a toda anchura.
+          <div className="mx-auto flex max-w-ancho justify-center px-6 pb-4 pt-16 sm:px-8">
+            <div className="w-full max-w-xl">
+              <ConversacionLucIA guion={getGuionConversacion(lang)} />
+            </div>
           </div>
         ) : null}
       </div>

@@ -7,6 +7,7 @@ inicio: 2025-06
 fin: 2026-08
 parte_de: experiencia/visados-empresas
 tecnologias: [n8n, llm, agentes-ia, mcp, postgresql, pgvector, ollama, microsoft-365, api-rest]
+visual: conversacion
 visibilidad: public
 destacado: 1
 ---

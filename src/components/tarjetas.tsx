@@ -1,9 +1,11 @@
 import Link from 'next/link';
 import { Etiqueta } from './etiqueta';
 import { Onda } from './onda';
+import { ConversacionLucIA } from './conversacion-luc-ia';
 import { formatPeriod, shortName, type SiteDocument } from '@/lib/site/queries';
 import { getDictionary, type Lang } from '@/lib/i18n';
 import { TONOS, type Tono } from '@/lib/site/tonos';
+import { getGuionConversacion } from '@/lib/site/conversacion';
 import type { Testimonio } from '@/lib/site/testimonios';
 
 /** Cuántas etiquetas caben antes de que la fila deje de leerse. */
@@ -199,8 +201,12 @@ export function BandaProyecto({
         </div>
 
         <div className="min-w-0 flex-[1_1_26rem]">
+          {/* Qué se enseña al lado: la captura si la hay, la conversación
+              recreada si el documento la pide, y si no, su propia ficha. */}
           {portada ? (
             <VisualProyecto documento={documento} portada={portada} />
+          ) : texto(documento, 'visual') === 'conversacion' ? (
+            <ConversacionLucIA guion={getGuionConversacion(lang)} />
           ) : (
             <FichaVisual documento={documento} lang={lang} />
           )}

@@ -655,3 +655,45 @@ details.desplegable-vermas[open] > summary .texto-vermas-cerrar {
   font-size: 12px;
   color: var(--color-ink-faint);
 }
+
+/* ---------------------------------------------------------------------------
+   Conversación recreada de Luc.IA.
+
+   El cursor y los tres puntos son los dos únicos adornos; lo demás —el goteo
+   de las letras y el orden en que entran las burbujas— lo lleva el componente,
+   porque depende del texto y este cambia de idioma.
+--------------------------------------------------------------------------- */
+@keyframes conversacion-cursor {
+  0%, 45%   { opacity: 1 }
+  50%, 95%  { opacity: 0 }
+  100%      { opacity: 1 }
+}
+
+.conversacion-cursor {
+  animation: conversacion-cursor 1s steps(1) infinite;
+}
+
+@keyframes conversacion-punto {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.45 }
+  30%           { transform: translateY(-4px); opacity: 1 }
+}
+
+.conversacion-punto {
+  display: block;
+  animation: conversacion-punto 1.1s ease-in-out infinite;
+}
+
+@keyframes conversacion-entra {
+  from { opacity: 0; transform: translateY(8px) }
+  to   { opacity: 1; transform: none }
+}
+
+.conversacion-entra {
+  animation: conversacion-entra 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .conversacion-cursor,
+  .conversacion-punto,
+  .conversacion-entra { animation: none }
+}
