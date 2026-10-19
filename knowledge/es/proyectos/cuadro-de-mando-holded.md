@@ -6,6 +6,10 @@ rol: Diseño y desarrollo
 inicio: 2025
 tecnologias: [holded, api-rest, laravel, php, postgresql, mysql]
 parte_de: experiencia/visados-empresas
+portada: /imagenes/proyectos/cuadro-de-mando-finanzas.webp
+portada_alt: Dashboard de finanzas con el resumen ejecutivo del mes frente al presupuesto y KPIs de productividad
+portada_2: /imagenes/proyectos/cuadro-de-mando-automatizacion-ia.webp
+portada_2_alt: Módulo de automatización con IA que genera resúmenes ejecutivos y alertas programadas a partir de los dashboards
 visibilidad: public
 destacado: 8
 ---

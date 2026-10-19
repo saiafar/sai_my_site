@@ -6,6 +6,10 @@ rol: Software architecture and development
 inicio: 2025
 tecnologias: [holded, api-rest, laravel, php, postgresql, mysql]
 parte_de: experiencia/visados-empresas
+portada: /imagenes/proyectos/cuadro-de-mando-finanzas.webp
+portada_alt: Finance dashboard with the monthly executive summary against budget and productivity KPIs
+portada_2: /imagenes/proyectos/cuadro-de-mando-automatizacion-ia.webp
+portada_2_alt: AI automation module that turns the dashboards into executive summaries and scheduled alerts
 visibilidad: public
 destacado: 8
 ---
