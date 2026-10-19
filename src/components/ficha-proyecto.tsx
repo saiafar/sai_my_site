@@ -142,9 +142,13 @@ export async function FichaProyecto({
     Boolean(celda.valor),
   );
 
-  const imagenes = galeria(documento);
   const pieza = video(documento);
-  const hayGaleria = imagenes.length > 0 || pieza !== null;
+  // Con vídeo, el vídeo es la portada y la imagen de portada baja a la
+  // galería: es la pieza que mejor enseña el proyecto, y la imagen no se pierde.
+  const imagenes =
+    pieza && portada
+      ? [{ src: portada, alt: texto(documento, 'portada_alt') ?? documento.title }, ...galeria(documento)]
+      : galeria(documento);
   const cifras = resultados(documento);
 
   return (
@@ -216,7 +220,19 @@ export async function FichaProyecto({
 
         {/* La imagen asoma por debajo de la banda y entra en la sección
             siguiente: es lo que cose las dos mitades de la portada. */}
-        {portada ? (
+        {pieza ? (
+          <div className="mx-auto max-w-ancho px-6 pt-12 sm:px-8">
+            <video
+              src={pieza.src}
+              poster={pieza.poster ?? portada ?? undefined}
+              controls
+              playsInline
+              preload="none"
+              aria-label={pieza.alt}
+              className="block aspect-video w-full rounded-t-bloque bg-black shadow-[0_-20px_60px_rgba(20,16,18,0.25)]"
+            />
+          </div>
+        ) : portada ? (
           <div className="mx-auto max-w-ancho px-6 pt-12 sm:px-8">
             <img
               src={portada}
@@ -262,7 +278,7 @@ export async function FichaProyecto({
         ))}
 
         {/* Galería */}
-        {hayGaleria ? (
+        {imagenes.length > 0 ? (
           <section data-aparecer className="mt-16 bg-noche text-ink-inverso">
             <div className="mx-auto max-w-ancho px-6 py-24 sm:px-8 sm:py-32">
               <span className="font-mono text-[13px] text-naranja-claro">
@@ -273,42 +289,21 @@ export async function FichaProyecto({
                 <Punto tono="noche" />
               </h2>
 
-              {pieza ? (
-                <figure className="m-0 mt-12">
-                  <video
-                    src={pieza.src}
-                    poster={pieza.poster ?? undefined}
-                    controls
-                    playsInline
-                    preload="none"
-                    aria-label={pieza.alt}
-                    className="block aspect-video w-full rounded-tarjeta bg-black"
-                  />
-                  <figcaption className="pt-2.5 font-mono text-[12px] text-ink-inverso-faint">
-                    {pieza.alt}
-                  </figcaption>
-                </figure>
-              ) : null}
-
-              {imagenes.length > 0 ? (
-                <div
-                  className={`${pieza ? 'mt-4' : 'mt-12'} grid grid-cols-[repeat(auto-fit,minmax(min(100%,26rem),1fr))] gap-4`}
-                >
-                  {imagenes.map((imagen) => (
-                    <figure key={imagen.src} className="m-0">
-                      <img
-                        src={imagen.src}
-                        alt={imagen.alt}
-                        loading="lazy"
-                        className="block aspect-4/3 w-full rounded-tarjeta object-cover"
-                      />
-                      <figcaption className="pt-2.5 font-mono text-[12px] text-ink-inverso-faint">
-                        {imagen.alt}
-                      </figcaption>
-                    </figure>
-                  ))}
-                </div>
-              ) : null}
+              <div className="mt-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,26rem),1fr))] gap-4">
+                {imagenes.map((imagen) => (
+                  <figure key={imagen.src} className="m-0">
+                    <img
+                      src={imagen.src}
+                      alt={imagen.alt}
+                      loading="lazy"
+                      className="block aspect-4/3 w-full rounded-tarjeta object-cover"
+                    />
+                    <figcaption className="pt-2.5 font-mono text-[12px] text-ink-inverso-faint">
+                      {imagen.alt}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
             </div>
           </section>
         ) : null}
@@ -321,7 +316,7 @@ export async function FichaProyecto({
           >
             <div className="flex-[1_1_18rem]">
               <span className="font-mono text-[13px] text-accent-strong">
-                {String(capitulos.length + (hayGaleria ? 2 : 1)).padStart(2, '0')}
+                {String(capitulos.length + (imagenes.length > 0 ? 2 : 1)).padStart(2, '0')}
               </span>
               <h2 className="mt-3 text-titular font-extrabold">
                 {dict.detail.results}
