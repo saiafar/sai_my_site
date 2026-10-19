@@ -45,6 +45,23 @@ function galeria(documento: SiteDocument): { src: string; alt: string }[] {
   return piezas;
 }
 
+/**
+ * El vídeo de la ficha, si lo declara: `video` es la ruta del archivo, y
+ * `video_poster` y `video_alt` el fotograma de espera y la descripción.
+ *
+ * Se sirve desde `public/` y no incrustado desde Behance: el reproductor de
+ * Adobe firma sus enlaces y caducan en días.
+ */
+function video(documento: SiteDocument): { src: string; poster: string | null; alt: string } | null {
+  const src = texto(documento, 'video');
+  if (!src) return null;
+  return {
+    src,
+    poster: texto(documento, 'video_poster'),
+    alt: texto(documento, 'video_alt') ?? documento.title,
+  };
+}
+
 /** Cifras del bloque de resultado, si la ficha las declara. */
 function resultados(documento: SiteDocument): { dato: string; etiqueta: string }[] {
   const lista = documento.metadata['resultados'];
@@ -126,6 +143,8 @@ export async function FichaProyecto({
   );
 
   const imagenes = galeria(documento);
+  const pieza = video(documento);
+  const hayGaleria = imagenes.length > 0 || pieza !== null;
   const cifras = resultados(documento);
 
   return (
@@ -243,7 +262,7 @@ export async function FichaProyecto({
         ))}
 
         {/* Galería */}
-        {imagenes.length > 0 ? (
+        {hayGaleria ? (
           <section data-aparecer className="mt-16 bg-noche text-ink-inverso">
             <div className="mx-auto max-w-ancho px-6 py-24 sm:px-8 sm:py-32">
               <span className="font-mono text-[13px] text-naranja-claro">
@@ -254,21 +273,42 @@ export async function FichaProyecto({
                 <Punto tono="noche" />
               </h2>
 
-              <div className="mt-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,26rem),1fr))] gap-4">
-                {imagenes.map((imagen) => (
-                  <figure key={imagen.src} className="m-0">
-                    <img
-                      src={imagen.src}
-                      alt={imagen.alt}
-                      loading="lazy"
-                      className="block aspect-4/3 w-full rounded-tarjeta object-cover"
-                    />
-                    <figcaption className="pt-2.5 font-mono text-[12px] text-ink-inverso-faint">
-                      {imagen.alt}
-                    </figcaption>
-                  </figure>
-                ))}
-              </div>
+              {pieza ? (
+                <figure className="m-0 mt-12">
+                  <video
+                    src={pieza.src}
+                    poster={pieza.poster ?? undefined}
+                    controls
+                    playsInline
+                    preload="none"
+                    aria-label={pieza.alt}
+                    className="block aspect-video w-full rounded-tarjeta bg-black"
+                  />
+                  <figcaption className="pt-2.5 font-mono text-[12px] text-ink-inverso-faint">
+                    {pieza.alt}
+                  </figcaption>
+                </figure>
+              ) : null}
+
+              {imagenes.length > 0 ? (
+                <div
+                  className={`${pieza ? 'mt-4' : 'mt-12'} grid grid-cols-[repeat(auto-fit,minmax(min(100%,26rem),1fr))] gap-4`}
+                >
+                  {imagenes.map((imagen) => (
+                    <figure key={imagen.src} className="m-0">
+                      <img
+                        src={imagen.src}
+                        alt={imagen.alt}
+                        loading="lazy"
+                        className="block aspect-4/3 w-full rounded-tarjeta object-cover"
+                      />
+                      <figcaption className="pt-2.5 font-mono text-[12px] text-ink-inverso-faint">
+                        {imagen.alt}
+                      </figcaption>
+                    </figure>
+                  ))}
+                </div>
+              ) : null}
             </div>
           </section>
         ) : null}
@@ -281,7 +321,7 @@ export async function FichaProyecto({
           >
             <div className="flex-[1_1_18rem]">
               <span className="font-mono text-[13px] text-accent-strong">
-                {String(capitulos.length + (imagenes.length > 0 ? 2 : 1)).padStart(2, '0')}
+                {String(capitulos.length + (hayGaleria ? 2 : 1)).padStart(2, '0')}
               </span>
               <h2 className="mt-3 text-titular font-extrabold">
                 {dict.detail.results}
