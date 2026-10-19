@@ -22,9 +22,14 @@ function texto(documento: SiteDocument, clave: string): string | null {
  * lista `galeria` de `{ src, alt }`. El texto alternativo es obligatorio en la
  * lista y no opcional: una captura sin describir deja fuera a quien no la ve, y
  * el frontmatter es justo donde se escribe sin que cueste nada.
+ *
+ * Una entrada con `completa: true` ocupa la fila entera y no se recorta: es
+ * para las piezas que solo se leen enteras, como un diagrama de pantallas.
  */
-function galeria(documento: SiteDocument): { src: string; alt: string }[] {
-  const piezas: { src: string; alt: string }[] = [];
+type PiezaGaleria = { src: string; alt: string; completa?: boolean };
+
+function galeria(documento: SiteDocument): PiezaGaleria[] {
+  const piezas: PiezaGaleria[] = [];
 
   const segunda = texto(documento, 'portada_2');
   if (segunda) {
@@ -35,9 +40,13 @@ function galeria(documento: SiteDocument): { src: string; alt: string }[] {
   if (Array.isArray(lista)) {
     for (const entrada of lista) {
       if (typeof entrada !== 'object' || entrada === null) continue;
-      const { src, alt } = entrada as { src?: unknown; alt?: unknown };
+      const { src, alt, completa } = entrada as { src?: unknown; alt?: unknown; completa?: unknown };
       if (typeof src === 'string' && src.trim() !== '') {
-        piezas.push({ src: src.trim(), alt: typeof alt === 'string' ? alt : documento.title });
+        piezas.push({
+          src: src.trim(),
+          alt: typeof alt === 'string' ? alt : documento.title,
+          completa: completa === true,
+        });
       }
     }
   }
@@ -291,12 +300,12 @@ export async function FichaProyecto({
 
               <div className="mt-12 grid grid-cols-[repeat(auto-fit,minmax(min(100%,26rem),1fr))] gap-4">
                 {imagenes.map((imagen) => (
-                  <figure key={imagen.src} className="m-0">
+                  <figure key={imagen.src} className={`m-0 ${imagen.completa ? 'col-span-full' : ''}`}>
                     <img
                       src={imagen.src}
                       alt={imagen.alt}
                       loading="lazy"
-                      className="block aspect-4/3 w-full rounded-tarjeta object-cover"
+                      className={`block w-full rounded-tarjeta ${imagen.completa ? 'h-auto' : 'aspect-4/3 object-cover'}`}
                     />
                     <figcaption className="pt-2.5 font-mono text-[12px] text-ink-inverso-faint">
                       {imagen.alt}
