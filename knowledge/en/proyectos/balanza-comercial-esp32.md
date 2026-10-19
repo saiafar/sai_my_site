@@ -11,6 +11,9 @@ portada: /imagenes/proyectos/balanza-pw-kiosco.webp
 portada_alt: All-in-one POS scale with touchscreen and printer
 portada_2: /imagenes/proyectos/balanza-pw-terminal.webp
 portada_2_alt: POS PW mobile terminal in a launch piece
+video: /videos/balanza-pw-publicidad.mp4
+video_poster: /videos/balanza-pw-publicidad.webp
+video_alt: Launch advertising piece for the Balanza PW
 galeria:
   - src: /imagenes/proyectos/local-conectado-cobro.webp
     alt: Point-of-sale checkout screen, with quick amounts and payment methods

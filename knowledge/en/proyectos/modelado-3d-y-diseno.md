@@ -6,6 +6,24 @@ inicio: 2010-07
 fin: 2024-12
 tecnologias: [sketchup, cinema-4d, lumion, unreal-engine, photoshop, illustrator, after-effects]
 relacionado: [experiencia/freelance-2023-2024, experiencia/estudio-creativo-saltamontes, experiencia/oruga-films]
+portada: /imagenes/proyectos/modelado-3d-render-fachada-arcos.webp
+portada_alt: Render of a house with arched openings, a maroon front door and a dark garage
+galeria:
+  - src: /imagenes/proyectos/modelado-3d-render-porche-piedra.webp
+    alt: Render of a two-storey house with a stone base and a front porch
+  - src: /imagenes/proyectos/modelado-3d-render-ladrillo-tejuelas.webp
+    alt: Render of a house with brick, shingled gables and a curved driveway
+  - src: /imagenes/proyectos/modelado-3d-render-planta-3d.webp
+    alt: Furnished 3D floor plan of a house with a two-car garage
+  - src: /imagenes/proyectos/modelado-3d-render-tejado-asimetrico.webp
+    alt: Render of a single-storey house with an asymmetric roof and mixed cladding
+  - src: /imagenes/proyectos/modelado-3d-render-moderna-piedra.webp
+    alt: Render of a contemporary white-and-stone house with a black garage
+  - src: /imagenes/proyectos/modelado-3d-render-dos-plantas-porche.webp
+    alt: Render of a grey two-storey house with a columned porch
+video: /videos/propuesta-arquitectonica-usa.mp4
+video_poster: /videos/propuesta-arquitectonica-usa.webp
+video_alt: 3D model and video of an architectural proposal in the United States
 visibilidad: public
 ---
 

@@ -11,6 +11,9 @@ portada: /imagenes/proyectos/balanza-pw-kiosco.webp
 portada_alt: Balanza integral POS con pantalla táctil e impresora
 portada_2: /imagenes/proyectos/balanza-pw-terminal.webp
 portada_2_alt: Terminal móvil POS PW en una pieza de lanzamiento
+video: /videos/balanza-pw-publicidad.mp4
+video_poster: /videos/balanza-pw-publicidad.webp
+video_alt: Pieza publicitaria de lanzamiento de la Balanza PW
 galeria:
   - src: /imagenes/proyectos/local-conectado-cobro.webp
     alt: Pantalla de cobro del punto de venta, con importes rápidos y métodos de pago

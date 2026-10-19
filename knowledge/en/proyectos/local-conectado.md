@@ -9,6 +9,9 @@ tecnologias: [php, laravel, react, react-native, nodejs, electronjs, socket-io, 
 parte_de: experiencia/portalweb
 portada: /imagenes/proyectos/local-conectado-cobro.webp
 portada_alt: Checkout screen with quick amounts and payment methods
+video: /videos/movil-pos-publicidad.mp4
+video_poster: /videos/movil-pos-publicidad.webp
+video_alt: Advertising piece for the mobile POS device
 visibilidad: public
 destacado: 3
 ---

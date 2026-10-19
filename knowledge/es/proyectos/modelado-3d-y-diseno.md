@@ -6,6 +6,24 @@ inicio: 2010-07
 fin: 2024-12
 tecnologias: [sketchup, cinema-4d, lumion, unreal-engine, photoshop, illustrator, after-effects]
 relacionado: [experiencia/freelance-2023-2024, experiencia/estudio-creativo-saltamontes, experiencia/oruga-films]
+portada: /imagenes/proyectos/modelado-3d-render-fachada-arcos.webp
+portada_alt: Render de una vivienda con arcos en la fachada, puerta granate y garaje oscuro
+galeria:
+  - src: /imagenes/proyectos/modelado-3d-render-porche-piedra.webp
+    alt: Render de una vivienda de dos plantas con zócalo de piedra y porche de entrada
+  - src: /imagenes/proyectos/modelado-3d-render-ladrillo-tejuelas.webp
+    alt: Render de una casa con ladrillo, tejuelas en el hastial y camino curvo de acceso
+  - src: /imagenes/proyectos/modelado-3d-render-planta-3d.webp
+    alt: Planta amueblada en 3D de una vivienda con garaje para dos coches
+  - src: /imagenes/proyectos/modelado-3d-render-tejado-asimetrico.webp
+    alt: Render de una vivienda de una planta con tejado asimétrico y revestimiento mixto
+  - src: /imagenes/proyectos/modelado-3d-render-moderna-piedra.webp
+    alt: Render de una vivienda contemporánea en blanco y piedra con garaje negro
+  - src: /imagenes/proyectos/modelado-3d-render-dos-plantas-porche.webp
+    alt: Render de una casa de dos plantas en gris con porche de columnas
+video: /videos/propuesta-arquitectonica-usa.mp4
+video_poster: /videos/propuesta-arquitectonica-usa.webp
+video_alt: Modelado y vídeo de una propuesta arquitectónica para Estados Unidos
 visibilidad: public
 ---
 
