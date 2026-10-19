@@ -119,6 +119,36 @@ progreso; son las tres cosas que el servidor está haciendo de verdad mientras
 tanto, y lo que no se estima es el final: el número de fuentes y los
 milisegundos salen de la respuesta.
 
+**Los capítulos de una ficha de caso son los del propio documento.** La
+plantilla numera las secciones —01, 02, 03— y pone el título a un lado y el
+texto al otro, pero no declara cuáles son: parte el Markdown por sus `##` (ver
+`partirEnCapitulos`). Es lo que permite que las dieciséis fichas estrenaran la
+página sin reescribir ninguna, y que reordenar un documento reordene su página.
+Era ya la razón de trocear el corpus por secciones semánticas; aquí esa misma
+estructura sirve para maquetar.
+
+Los bloques que dependen de datos que no todas las fichas tienen —la galería y
+las cifras de resultado— desaparecen cuando no hay nada que poner, en lugar de
+dejar el hueco. Una plantilla que reserva sitio para lo que falta convierte
+cada ficha incompleta en una página rota. Lo que una ficha puede declarar en su
+frontmatter, todo opcional:
+
+| Clave | Para qué |
+|---|---|
+| `nombre` | El titular a cuerpo grande, si no vale lo que hay antes de la primera coma del título |
+| `portada`, `portada_alt` | La imagen de la cabecera |
+| `portada_2`, `portada_2_alt` | La segunda pieza: se monta sobre la primera en la portada y abre la galería |
+| `galeria` | Lista de `{ src, alt }`. El texto alternativo no es opcional dentro de la lista |
+| `resultados` | Lista de `{ dato, etiqueta }` para el bloque de cifras |
+| `dominio` | El sector, cuando «IA aplicada» dice más que el nombre de la empresa |
+
+**El titular se compone según lo largo que sea el nombre.** Los títulos del
+corpus son descriptivos porque así se leen en una lista y así los encuentra la
+búsqueda, pero a 200 px eso no es un titular sino un párrafo. `shortName()` se
+queda con lo que hay antes de la primera coma —que es como están escritos los
+que tienen nombre propio— y la ficha elige uno de tres cuerpos según los
+caracteres que le toque componer. Un clamp no sabe cuánto mide su texto.
+
 **El color es el separador, y por eso hay dos superficies y no una.** La
 portada no divide secciones con filetes: las alterna entre crema (`#F1ECE2`) y
 noche (`#141012`), con naranja y lila para las bandas que tienen que destacar, y
@@ -267,7 +297,8 @@ Ver `.env.deploy.example`.
 | Frontend Next.js | Hecho |
 | Rediseño de la portada | Hecho: sistema de tonos, tipografía y las 15 bandas |
 | Índice de proyectos (`/es/proyectos`) | Hecho |
-| Fichas de caso y de etapa | Pendiente: hoy usan la plantilla genérica de documento |
+| Ficha de caso (proyectos) | Hecho |
+| Ficha de etapa (trayectoria) | Pendiente: usa la plantilla genérica de documento |
 | Base de conocimiento | En redacción |
 | Automatización con n8n | Reenvío del formulario hecho; el resto, fase posterior |
 
@@ -276,16 +307,11 @@ Ver `.env.deploy.example`.
 Por orden de impacto sobre el esfuerzo que cuestan. Los tres primeros son lo que
 queda del rediseño: la portada ya está, las páginas de dentro no.
 
-**Plantilla de ficha de caso.** Hoy un proyecto se abre con la plantilla
-genérica de documento: el Markdown renderizado. El rediseño le da una estructura
-propia —el reto, cómo funciona, la interfaz, el resultado y el caso siguiente—
-que necesita frontmatter nuevo: tres cifras de resultado, el diagrama de flujo y
-el enlace al siguiente. Es donde está el salto de calidad, porque es la página
-que alguien lee cuando ya le interesa.
-
-**Plantilla de ficha de etapa.** Lo mismo para la trayectoria: posición en las
+**Plantilla de ficha de etapa.** Lo que falta del rediseño: la trayectoria
+abre todavía con la plantilla genérica. El tablero le da posición dentro de las
 doce etapas, el dato de la etapa a cuerpo grande, los capítulos numerados, el
-lado creativo y los proyectos de esa etapa.
+lado creativo y los proyectos de esa etapa. Los capítulos salen del documento,
+igual que en las fichas de caso.
 
 **Cifras con denominador.** Las plantillas de caso tienen tres huecos de cifra
 cada una y no se pueden publicar vacíos. La lista está en

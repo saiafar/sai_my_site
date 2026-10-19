@@ -198,6 +198,11 @@ export const en: Dictionary = {
     links: 'Related documents',
     notFound: 'Document not found',
     notFoundDesc: 'The page you are looking for does not exist or has been moved.',
+    backToProjects: 'Projects',
+    caseLabel: 'Case',
+    images: 'How it looks',
+    results: 'What changed',
+    nextCase: 'Next case',
   },
   footer: {
     copy: 'All rights reserved.',

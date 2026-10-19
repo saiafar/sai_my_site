@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { Etiqueta } from './etiqueta';
 import { Onda } from './onda';
-import { formatPeriod, type SiteDocument } from '@/lib/site/queries';
+import { formatPeriod, shortName, type SiteDocument } from '@/lib/site/queries';
 import { getDictionary, type Lang } from '@/lib/i18n';
 import { TONOS, type Tono } from '@/lib/site/tonos';
 import type { Testimonio } from '@/lib/site/testimonios';
@@ -178,8 +178,8 @@ export function BandaProyecto({
         <div className="flex min-w-0 flex-[1_1_22rem] flex-col gap-5">
           <p className={`font-mono text-[13px] ${t.acento}`}>{kicker}</p>
 
-          <h3 className="text-[clamp(40px,8.3vw,120px)] font-extrabold leading-[0.85] tracking-[-0.05em]">
-            {documento.title}
+          <h3 className="text-[clamp(32px,6.4vw,96px)] font-extrabold leading-[0.85] tracking-[-0.05em]">
+            {shortName(documento)}
           </h3>
 
           {documento.summary ? (
@@ -241,7 +241,7 @@ export function TarjetaProyectoBreve({
       {etiqueta ? <span className="font-mono text-[12px] text-lila">{etiqueta}</span> : null}
 
       <strong className="text-[22px] font-extrabold leading-tight tracking-[-0.02em] group-hover:underline">
-        {documento.title}
+        {shortName(documento)}
       </strong>
 
       {documento.summary ? (

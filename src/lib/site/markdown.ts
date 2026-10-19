@@ -103,3 +103,41 @@ export async function renderMarkdown(markdown: string): Promise<string> {
   if (!markdown) return '';
   return await markedInstance.parse(markdown);
 }
+
+export interface CapituloFicha {
+  titulo: string;
+  html: string;
+}
+
+export interface FichaPartida {
+  /** Lo que va antes del primer `##`. Casi siempre vacío. */
+  entradilla: string;
+  capitulos: CapituloFicha[];
+}
+
+/**
+ * Parte el cuerpo de una ficha en capítulos por sus encabezados de segundo nivel.
+ *
+ * La plantilla de caso del rediseño numera las secciones —01, 02, 03— y pone el
+ * título a un lado y el texto al otro. Esas secciones no hay que inventarlas:
+ * son las que el documento ya tiene escritas, que es justo lo que se quería del
+ * corpus troceado por secciones semánticas. Así una ficha nueva adopta la
+ * plantilla sin tocar nada, y reordenar un documento reordena su página.
+ *
+ * Un `###` no abre capítulo: queda dentro del suyo, donde el autor lo puso.
+ */
+export async function partirEnCapitulos(markdown: string): Promise<FichaPartida> {
+  const partes = markdown.split(/^## /m);
+  const entradilla = (partes.shift() ?? '').trim();
+
+  const capitulos = await Promise.all(
+    partes.map(async (bloque) => {
+      const salto = bloque.indexOf('\n');
+      const titulo = (salto === -1 ? bloque : bloque.slice(0, salto)).trim();
+      const cuerpo = salto === -1 ? '' : bloque.slice(salto + 1).trim();
+      return { titulo, html: await renderMarkdown(cuerpo) };
+    }),
+  );
+
+  return { entradilla: await renderMarkdown(entradilla), capitulos };
+}

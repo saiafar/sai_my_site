@@ -7,7 +7,8 @@ import { Etiqueta } from '@/components/etiqueta';
 import { Telemetria } from '@/components/telemetria';
 import { DatosEstructurados } from '@/components/datos-estructurados';
 import * as jsonLd from '@/lib/site/datos-estructurados';
-import { formatPeriod, getBySlug } from '@/lib/site/queries';
+import { FichaProyecto } from '@/components/ficha-proyecto';
+import { formatPeriod, getByKind, getBySlug } from '@/lib/site/queries';
 import { ENLACES } from '@/lib/site/enlaces';
 import { env } from '@/lib/env';
 import { getDictionary, isValidLang, DEFAULT_LANG, type Lang } from '@/lib/i18n';
@@ -87,6 +88,32 @@ export default async function Ficha({ params }: Props) {
   const slugStr = slug.join('/');
   const documento = await getBySlug(slugStr, lang);
   if (!documento) notFound();
+
+  if (documento.kind === 'proyecto') {
+    // El «siguiente caso» sigue el mismo orden que la portada: lo primero es
+    // lo que se quiere enseñar primero, no lo más reciente.
+    const proyectos = await getByKind('proyecto', lang);
+    const posicion = (proyecto: (typeof proyectos)[number]): number =>
+      typeof proyecto.metadata['destacado'] === 'number'
+        ? proyecto.metadata['destacado']
+        : Number.MAX_SAFE_INTEGER;
+    const ordenados = [...proyectos].sort((a, b) => posicion(a) - posicion(b));
+    const actual = ordenados.findIndex((proyecto) => proyecto.slug === documento.slug);
+    // Al llegar al último se vuelve al primero: el recorrido no tiene final,
+    // que es mejor que un callejón sin salida al fondo de la última ficha.
+    const siguiente = ordenados.length > 1
+      ? ordenados[(actual + 1) % ordenados.length]
+      : undefined;
+
+    return (
+      <>
+        <FichaProyecto documento={documento} siguiente={siguiente} lang={lang} />
+        <Telemetria documentSlug={documento.slug} />
+        <DatosEstructurados datos={jsonLd.ficha(documento, lang)} />
+        <DatosEstructurados datos={jsonLd.migas(documento, lang)} />
+      </>
+    );
+  }
 
   const periodo = formatPeriod(documento.startsOn, documento.endsOn, lang);
   const organizacion =

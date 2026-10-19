@@ -556,3 +556,102 @@ details.desplegable-vermas[open] > summary .texto-vermas-cerrar {
     linear-gradient(90deg, rgb(20 16 18 / 0.07) 1px, transparent 1px);
   background-size: 32px 32px;
 }
+
+/* ---------------------------------------------------------------------------
+   Cuerpo de un capítulo de ficha.
+
+   El texto de una ficha de caso se lee de corrido y a cuerpo grande: 21 px en
+   una columna de dos tercios. Es otra cosa que `.prose-sitio`, que nació para
+   la ficha antigua —14 px en una columna estrecha— y que sigue sirviendo a las
+   páginas que aún no se han rediseñado.
+
+   Los subtítulos de dentro de un capítulo van en display y no en versalitas:
+   aquí ya no hay que distinguir niveles de índice, solo abrir un apartado
+   dentro de algo que ya tiene su número al lado.
+--------------------------------------------------------------------------- */
+.prose-ficha {
+  color: var(--color-ink-muted);
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+@media (min-width: 40rem) {
+  .prose-ficha { font-size: 21px; }
+}
+
+.prose-ficha > * + * { margin-top: 1.25rem; }
+
+.prose-ficha h3 {
+  color: var(--color-ink);
+  font-size: 1.15em;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 2.5rem;
+}
+
+.prose-ficha strong { color: var(--color-ink); font-weight: 600; }
+
+.prose-ficha a {
+  color: var(--color-accent-strong);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.prose-ficha ul, .prose-ficha ol { padding-left: 1.2rem; }
+.prose-ficha ul { list-style: disc; }
+.prose-ficha ol { list-style: decimal; }
+.prose-ficha li::marker { color: var(--color-ink-faint); }
+.prose-ficha li + li { margin-top: 0.5rem; }
+
+.prose-ficha blockquote {
+  border-left: 3px solid var(--color-accent);
+  padding-left: 1.25rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.prose-ficha code {
+  background-color: var(--color-crema-honda);
+  border-radius: 6px;
+  padding: 0.1em 0.35em;
+  font-size: 0.85em;
+  color: var(--color-ink);
+}
+
+.prose-ficha pre {
+  background-color: var(--color-noche);
+  color: var(--color-ink-inverso);
+  border-radius: var(--radius-tarjeta);
+  padding: 1.25rem;
+  overflow-x: auto;
+  font-size: 0.8em;
+}
+
+.prose-ficha pre code { background: none; padding: 0; color: inherit; }
+
+.prose-ficha figure,
+.prose-ficha .prose-media {
+  display: block;
+  margin: 2rem 0;
+  border-radius: var(--radius-tarjeta);
+  overflow: hidden;
+}
+
+.prose-ficha img,
+.prose-ficha video { display: block; width: 100%; height: auto; }
+
+.prose-ficha iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+}
+
+.prose-ficha figcaption,
+.prose-ficha .prose-caption {
+  display: block;
+  padding-top: 0.65rem;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-ink-faint);
+}

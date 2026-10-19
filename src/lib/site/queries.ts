@@ -222,6 +222,28 @@ export async function getMapaCorpus(lang: 'es' | 'en' = 'es'): Promise<NodoCorpu
   }));
 }
 
+/**
+ * El nombre corto de un documento, para los titulares a cuerpo grande.
+ *
+ * Los títulos del corpus son descriptivos —«Balanza PW, balanza comercial con
+ * ESP32 y punto de venta móvil»— porque así se leen en una lista y así los
+ * encuentra la búsqueda. Pero a 200 px eso no es un titular, es un párrafo:
+ * donde el diseño pone el nombre del producto, se pone el nombre del producto.
+ *
+ * Sale de lo que hay antes de la primera coma, que es como están escritos los
+ * que tienen nombre propio. El que no lo tiene —«Cuadro de mando con datos de
+ * Holded y del ERP»— se queda entero, y para esos el titular se compone más
+ * pequeño. Una ficha puede imponer el suyo con `nombre` en el frontmatter.
+ */
+export function shortName(documento: Pick<SiteDocument, 'title' | 'metadata'>): string {
+  const declarado = documento.metadata['nombre'];
+  if (typeof declarado === 'string' && declarado.trim() !== '') return declarado.trim();
+
+  const antesDeLaComa = documento.title.split(',')[0]?.trim() ?? '';
+  // Dos letras no son un nombre; probablemente sea una enumeración.
+  return antesDeLaComa.length >= 3 ? antesDeLaComa : documento.title;
+}
+
 /** Formatea el periodo de un documento: «abr 2023 — nov 2024», «desde 2023» o en inglés. */
 export function formatPeriod(
   startsOn: string | null,

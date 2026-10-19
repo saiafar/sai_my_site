@@ -198,6 +198,11 @@ export const es: Dictionary = {
     links: 'Documentos relacionados',
     notFound: 'Documento no encontrado',
     notFoundDesc: 'La ficha que buscas no existe o ha cambiado de dirección.',
+    backToProjects: 'Proyectos',
+    caseLabel: 'Caso',
+    images: 'Cómo se ve',
+    results: 'Lo que cambió',
+    nextCase: 'Siguiente caso',
   },
   footer: {
     copy: 'Todos los derechos reservados.',

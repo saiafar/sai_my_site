@@ -194,6 +194,12 @@ export interface Dictionary {
     links: string;
     notFound: string;
     notFoundDesc: string;
+    /** Plantilla de caso: vuelta al índice, numeración y bloques. */
+    backToProjects: string;
+    caseLabel: string;
+    images: string;
+    results: string;
+    nextCase: string;
   };
   footer: {
     copy: string;
