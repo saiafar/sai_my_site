@@ -9,6 +9,13 @@ parte_de: experiencia/freelance-2014-2016
 tecnologias: [php, laravel, postgresql, html, css, javascript, api-rest, wordpress, phonegap]
 portada: /imagenes/proyectos/chispa-sport-app.webp
 portada_alt: Baseball statistics app on a mobile phone
+galeria:
+  - src: /imagenes/proyectos/chispa-sport-multiplataforma.webp
+    alt: The app across three screens, published on Google Play and the App Store
+    completa: true
+  - src: /imagenes/proyectos/chispa-sport-flujo-app.webp
+    alt: "App screen flow: standings, schedule, game summary, lineup, plays, team stats and player profile"
+    completa: true
 visibilidad: public
 destacado: 4
 ---
