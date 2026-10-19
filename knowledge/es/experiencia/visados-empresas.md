@@ -114,7 +114,7 @@ que generaba el contenido de las páginas a partir de un prompt configurable,
 migraba y reescribía los artículos del blog antiguo y reestructuraba cada página
 en torno a las palabras clave que me pasaba marketing.
 
-## Lucía
+## Luc.IA
 
 El agente de IA corporativo del grupo, accesible desde Microsoft Teams, que
 responde sobre la documentación de la empresa y consulta el ERP en tiempo real.
@@ -133,7 +133,7 @@ agendar una cita, registran el contacto en el CRM y crean el seguimiento. Si a
 las setenta y dos horas no hay respuesta ni cita, lo descartan solos; si la hay,
 crean la reunión.
 
-El usuario del sistema que hace ese primer contacto se llama Lucía, igual que el
+El usuario del sistema que hace ese primer contacto se llama Luc.IA, igual que el
 agente, para que el equipo comercial sepa de un vistazo qué contactos ha llevado
 la automatización y cuáles una persona.
 

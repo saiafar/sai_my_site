@@ -32,7 +32,7 @@ Es lo que más rinde por palabra escrita. Una cifra sin base es peor que ninguna
 - **Volúmenes que tú mismo dejaste abiertos:** cuántas muestras al año movía
   EVAL y cuántos centros enviaban, cuántas funerarias o pantallas usaban la
   plataforma de NeoSepelios, cuántos comercios y balanzas llegó a haber en
-  PortalWeb, cuántas personas usaban Lucía, y si hay alguna cifra real del
+  PortalWeb, cuántas personas usaban Luc.IA, y si hay alguna cifra real del
   embudo comercial (contactos al mes, citas generadas).
 
 ## 2. Confirmaciones menores

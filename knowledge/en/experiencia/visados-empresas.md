@@ -61,7 +61,7 @@ I deliberately retained Elementor compatibility so marketing could launch campai
 
 For the visa portal, which features extensive country-specific immigration guides, I built a custom WordPress plugin connected to an LLM. It generated structured article drafts from custom prompts, migrated and rewritten legacy blog posts, and optimized on-page SEO targeting key terms provided by the marketing team.
 
-## Lucía
+## Luc.IA
 
 The company's corporate AI agent, integrated directly into Microsoft Teams. It answers employee inquiries regarding internal documentation and queries ERP data in real time. It has its own project case study.
 
@@ -71,7 +71,7 @@ Among all projects built during this tenure, this represents my primary technica
 
 End-to-end n8n workflows, connected to the CRM through my custom API, monitor incoming leads from website forms and corporate mailboxes. An AI model evaluates and classifies each inquiry, identifying high-intent commercial prospects. It sends automated replies inviting them to schedule a discovery call, registers the lead in the CRM, and schedules automated follow-up tasks. If no appointment is booked within 72 hours, it archives the lead; if confirmed, it provisions the calendar event.
 
-The system user executing these automated touches was named Lucía (mirroring the AI assistant) so the sales team could distinguish automated touchpoints from human interventions at a glance.
+The system user executing these automated touches was named Luc.IA (mirroring the AI assistant) so the sales team could distinguish automated touchpoints from human interventions at a glance.
 
 I also built an automated outbound prospecting engine that scans business news for companies announcing international expansions (Spanish companies expanding abroad or foreign firms establishing Spanish branches), extracts verified contact details, and enriches CRM pipeline records for the business development team.
 

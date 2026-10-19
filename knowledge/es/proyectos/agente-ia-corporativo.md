@@ -1,5 +1,5 @@
 ---
-title: Lucía, agente de IA conectado al ERP de la empresa
+title: Luc.IA, agente de IA conectado al ERP de la empresa
 summary: Agente corporativo en Microsoft Teams que responde sobre la documentación interna con búsqueda semántica y consulta el ERP en tiempo real mediante un servidor MCP propio.
 organizacion: Cucalón Estévez y Asociados
 rol: Diseño y desarrollo completo
@@ -19,13 +19,13 @@ procedimientos, requisitos por país— y el ERP, donde vive el estado real de c
 proyecto y cada cliente. Preguntar por cualquiera de las dos cosas significaba
 buscar en un sitio distinto, o preguntarle a alguien.
 
-El nombre del agente es Lucía, de «Luc-IA».
+El nombre del agente es Luc.IA, de «Luc» + «IA». Se pronuncia «Lucía».
 
 ## Decisiones técnicas
 
 **Dos fuentes, no una.** Un agente que solo consulta documentación responde bien
 a «cómo se tramita un permiso» y no sabe nada de «si el proyecto de este cliente
-está facturado». Lucía tiene las dos: una base de conocimiento con búsqueda
+está facturado». Luc.IA tiene las dos: una base de conocimiento con búsqueda
 semántica sobre PostgreSQL con pgvector, y un servidor MCP propio conectado al
 ERP para las consultas concretas sobre proyectos o clientes.
 
@@ -60,5 +60,5 @@ sincronizado con el teléfono, otro consultaba y enviaba correo desde Microsoft
 publicaba en un contenedor.
 
 Los dos primeros funcionaban bien; el tercero publicaba correctamente pero
-devolvía mal los resultados. La idea era llevar esas capacidades a Lucía para
+devolvía mal los resultados. La idea era llevar esas capacidades a Luc.IA para
 todos los empleados, y se quedó en fase de pruebas.
