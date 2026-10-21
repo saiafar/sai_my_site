@@ -171,8 +171,12 @@ export function BandaProyecto({
     .join(' · ');
 
   return (
-    <section data-aparecer className={t.fondo}>
+    // Aparece el contenido y no la banda: la onda de la anterior ya está pintada
+    // en este tono, y si el fondo bajara con el fundido dejaría ver la página
+    // entre las dos.
+    <section className={t.fondo}>
       <div
+        data-aparecer
         className={`mx-auto flex max-w-ancho flex-wrap items-center gap-12 px-6 py-24 sm:gap-16 sm:px-8 sm:py-32 ${
           visualPrimero ? 'flex-wrap-reverse' : ''
         }`}
