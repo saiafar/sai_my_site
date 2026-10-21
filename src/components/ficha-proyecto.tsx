@@ -344,9 +344,12 @@ export async function FichaProyecto({
           </section>
         ) : null}
 
-        {/* Tecnologías */}
+        {/* Tecnologías. Sin «Resultado» delante, lo que queda encima es la
+            galería en noche, y sin aire propio la fila se le pega. */}
         {documento.technologies.length > 0 ? (
-          <section className="mx-auto max-w-ancho px-6 pb-24 sm:px-8">
+          <section
+            className={`mx-auto max-w-ancho px-6 pb-24 sm:px-8 ${cifras.length > 0 ? '' : 'pt-16'}`}
+          >
             <div className="flex flex-wrap gap-2.5">
               {documento.technologies.map((tecnologia) => (
                 <span
