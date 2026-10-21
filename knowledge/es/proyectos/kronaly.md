@@ -7,8 +7,22 @@ inicio: 2025-03
 fin: 2026-08
 tecnologias: [laravel, php, react, postgresql, redis, docker, dokploy, api-rest, github-actions]
 parte_de: experiencia/visados-empresas
+portada: /imagenes/proyectos/kronaly-portada.webp
+portada_alt: Página de inicio de Kronaly, la plataforma de recursos humanos
+portada_2: /imagenes/proyectos/kronaly-dashboard.webp
+portada_2_alt: Dashboard con quién trabaja ahora, actividad semanal, solicitudes pendientes y el estado de la plantilla
+galeria:
+  - src: /imagenes/proyectos/kronaly-mi-jornada.webp
+    alt: Pantalla de fichaje con el cronómetro de la jornada, pausas, horas extra y los eventos del día
+    completa: true
+  - src: /imagenes/proyectos/kronaly-equipos.webp
+    alt: Equipos con su manager, miembros y estado en tiempo real de quién trabaja, está ausente o tiene solicitudes
+    completa: true
+  - src: /imagenes/proyectos/kronaly-formacion.webp
+    alt: Módulo de formación con cursos en vídeo, obligatorios y progreso de cada empleado
+    completa: true
 visibilidad: public
-destacado: 5
+destacado: 2
 ---
 
 ## Contexto

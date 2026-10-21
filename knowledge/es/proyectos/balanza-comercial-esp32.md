@@ -18,7 +18,7 @@ galeria:
   - src: /imagenes/proyectos/local-conectado-cobro.webp
     alt: Pantalla de cobro del punto de venta, con importes rápidos y métodos de pago
 visibilidad: public
-destacado: 2
+destacado: 3
 ---
 
 ## Contexto

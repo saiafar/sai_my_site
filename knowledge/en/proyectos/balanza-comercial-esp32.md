@@ -18,7 +18,7 @@ galeria:
   - src: /imagenes/proyectos/local-conectado-cobro.webp
     alt: Point-of-sale checkout screen, with quick amounts and payment methods
 visibilidad: public
-destacado: 2
+destacado: 3
 ---
 
 ## Context

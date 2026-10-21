@@ -13,7 +13,7 @@ video: /videos/movil-pos-publicidad.mp4
 video_poster: /videos/movil-pos-publicidad.webp
 video_alt: Pieza publicitaria del dispositivo móvil POS
 visibilidad: public
-destacado: 3
+destacado: 5
 ---
 
 ## Contexto
